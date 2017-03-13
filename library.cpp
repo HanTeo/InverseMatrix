@@ -41,16 +41,13 @@ auto combinations(vector<int> A, int k) {
 
 auto kcombinations(vector <vector<int>> A, int k) {
 
-    auto seconds = vector < vector < int >> ();
+    vector <vector<int>> seconds;
+    for (auto a : A) {
 
-    for (auto c : A) {
-
-        auto second = combinations(c, k);
-
-        for (auto d: second) {
+        for (auto b: combinations(a, k)) {
             vector<int> combined;
-            combined.insert(combined.end(), c.begin(), c.end());
-            combined.insert(combined.end(), d.begin(), d.end());
+            combined.insert(combined.end(), a.begin(), a.end());
+            combined.insert(combined.end(), b.begin(), b.end());
             seconds.push_back(combined);
         }
     }
