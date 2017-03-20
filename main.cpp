@@ -81,12 +81,11 @@ SCENARIO("7 choose 4 then 4 choose 3 the permute") {
 
                 REQUIRE(combination.size() == 140);
 
-                for (auto c : combination) {
-
+                auto fn = [](vector<float> c) {
                     auto mat = buildMatrix(c);
 
                     if (mat.determinant() == 0)
-                        continue;
+                        return;
 
                     cout << "Combinations:" << endl;
                     for (auto e : c)
@@ -98,6 +97,12 @@ SCENARIO("7 choose 4 then 4 choose 3 the permute") {
 
                     cout << "Inverse:" << endl;
                     cout << mat.inverse() << endl << endl;
+                };
+
+                vector<future<void>> futures(140);
+
+                for (auto c : combination) {
+                    futures.push_back(async(launch::async, fn, c));
                 }
             }
         }
