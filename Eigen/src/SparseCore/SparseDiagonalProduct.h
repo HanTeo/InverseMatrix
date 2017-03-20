@@ -10,7 +10,7 @@
 #ifndef EIGEN_SPARSE_DIAGONAL_PRODUCT_H
 #define EIGEN_SPARSE_DIAGONAL_PRODUCT_H
 
-namespace Eigen {
+namespace Eigen { 
 
 // The product of a diagonal matrix with a sparse matrix can be easily
 // implemented using expression template.
@@ -69,7 +69,7 @@ struct sparse_diagonal_product_evaluator<SparseXprType, DiagonalCoeffType, SDP_A
 protected:
     typedef typename evaluator<SparseXprType>::InnerIterator SparseXprInnerIterator;
     typedef typename SparseXprType::Scalar Scalar;
-
+  
 public:
     class InnerIterator : public SparseXprInnerIterator {
     public:
@@ -89,7 +89,7 @@ public:
             : m_sparseXprImpl(sparseXpr), m_diagCoeffImpl(diagCoeff) {}
 
     Index nonZerosEstimate() const { return m_sparseXprImpl.nonZerosEstimate(); }
-
+    
 protected:
     evaluator <SparseXprType> m_sparseXprImpl;
     evaluator <DiagonalCoeffType> m_diagCoeffImpl;
@@ -139,7 +139,7 @@ struct sparse_diagonal_product_evaluator<SparseXprType, DiagCoeffType, SDP_AsCwi
             : m_sparseXprEval(sparseXpr), m_diagCoeffNested(diagCoeff) {}
 
     Index nonZerosEstimate() const { return m_sparseXprEval.nonZerosEstimate(); }
-
+    
 protected:
     evaluator <SparseXprType> m_sparseXprEval;
     DiagCoeffNested m_diagCoeffNested;

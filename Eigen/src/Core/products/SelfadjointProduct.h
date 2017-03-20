@@ -23,14 +23,14 @@ namespace Eigen {
     struct selfadjoint_rank1_update<Scalar, Index, ColMajor, UpLo, ConjLhs, ConjRhs> {
         static void
         run(Index size, Scalar *mat, Index stride, const Scalar *vecX, const Scalar *vecY, const Scalar &alpha) {
-            internal::conj_if <ConjRhs> cj;
+            internal::conj_if<ConjRhs> cj;
             typedef Map<const Matrix<Scalar, Dynamic, 1> > OtherMap;
             typedef typename internal::conditional<ConjLhs, typename OtherMap::ConjugateReturnType, const OtherMap &>::type ConjLhsType;
             for (Index i = 0; i < size; ++i) {
-                Map < Matrix < Scalar, Dynamic,
-                        1 > > (mat + stride * i + (UpLo == Lower ? i : 0), (UpLo == Lower ? size - i : (i + 1)))
-                                += (alpha * cj(vecY[i])) * ConjLhsType(
-                                OtherMap(vecX + (UpLo == Lower ? i : 0), UpLo == Lower ? size - i : (i + 1)));
+                Map<Matrix<Scalar, Dynamic, 1> >(mat + stride * i + (UpLo == Lower ? i : 0),
+                                                 (UpLo == Lower ? size - i : (i + 1)))
+                        += (alpha * cj(vecY[i])) *
+                           ConjLhsType(OtherMap(vecX + (UpLo == Lower ? i : 0), UpLo == Lower ? size - i : (i + 1)));
             }
         }
     };
@@ -51,7 +51,7 @@ namespace Eigen {
     struct selfadjoint_product_selector<MatrixType, OtherType, UpLo, true> {
         static void run(MatrixType &mat, const OtherType &other, const typename MatrixType::Scalar &alpha) {
             typedef typename MatrixType::Scalar Scalar;
-            typedef internal::blas_traits <OtherType> OtherBlasTraits;
+            typedef internal::blas_traits<OtherType> OtherBlasTraits;
             typedef typename OtherBlasTraits::DirectLinearAccessType ActualOtherType;
             typedef typename internal::remove_all<ActualOtherType>::type _ActualOtherType;
             typename internal::add_const_on_value_type<ActualOtherType>::type actualOther = OtherBlasTraits::extract(
@@ -83,7 +83,7 @@ namespace Eigen {
     struct selfadjoint_product_selector<MatrixType, OtherType, UpLo, false> {
         static void run(MatrixType &mat, const OtherType &other, const typename MatrixType::Scalar &alpha) {
             typedef typename MatrixType::Scalar Scalar;
-            typedef internal::blas_traits <OtherType> OtherBlasTraits;
+            typedef internal::blas_traits<OtherType> OtherBlasTraits;
             typedef typename OtherBlasTraits::DirectLinearAccessType ActualOtherType;
             typedef typename internal::remove_all<ActualOtherType>::type _ActualOtherType;
             typename internal::add_const_on_value_type<ActualOtherType>::type actualOther = OtherBlasTraits::extract(
@@ -122,10 +122,7 @@ namespace Eigen {
 
     template<typename MatrixType, unsigned int UpLo>
     template<typename DerivedU>
-    EIGEN_DEVICE_FUNC SelfAdjointView<MatrixType, UpLo>
-    &
-
-    SelfAdjointView<MatrixType, UpLo>
+    SelfAdjointView <MatrixType, UpLo> &SelfAdjointView<MatrixType, UpLo>
     ::rankUpdate(const MatrixBase <DerivedU> &u, const Scalar &alpha) {
         selfadjoint_product_selector<MatrixType, DerivedU, UpLo>::run(_expression().const_cast_derived(), u.derived(),
                                                                       alpha);

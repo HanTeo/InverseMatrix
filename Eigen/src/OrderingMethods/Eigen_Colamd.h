@@ -74,7 +74,7 @@ namespace internal {
 /* stats [3]: colamd status:  zero OK, > 0 warning or notice, < 0 error */
 #define COLAMD_STATUS 3
 
-/* stats [4..6]: error info, or info on jumbled columns */
+/* stats [4..6]: error info, or info on jumbled columns */ 
 #define COLAMD_INFO1 4
 #define COLAMD_INFO2 5
 #define COLAMD_INFO3 6
@@ -171,7 +171,7 @@ namespace internal {
         } shared2;
 
     };
-
+ 
 /* ========================================================================== */
 /* === Colamd recommended memory size ======================================= */
 /* ========================================================================== */

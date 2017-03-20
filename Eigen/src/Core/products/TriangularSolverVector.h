@@ -32,11 +32,11 @@ namespace Eigen {
             };
 
             static void run(Index size, const LhsScalar *_lhs, Index lhsStride, RhsScalar *rhs) {
-                typedef Map<const Matrix <LhsScalar, Dynamic, Dynamic, RowMajor>, 0, OuterStride<> > LhsMap;
+                typedef Map<const Matrix<LhsScalar, Dynamic, Dynamic, RowMajor>, 0, OuterStride<> > LhsMap;
                 const LhsMap lhs(_lhs, size, size, OuterStride<>(lhsStride));
 
-                typedef const_blas_data_mapper <LhsScalar, Index, RowMajor> LhsMapper;
-                typedef const_blas_data_mapper <RhsScalar, Index, ColMajor> RhsMapper;
+                typedef const_blas_data_mapper<LhsScalar, Index, RowMajor> LhsMapper;
+                typedef const_blas_data_mapper<RhsScalar, Index, ColMajor> RhsMapper;
 
                 typename internal::conditional<
                         Conjugate,
@@ -87,10 +87,10 @@ namespace Eigen {
             };
 
             static void run(Index size, const LhsScalar *_lhs, Index lhsStride, RhsScalar *rhs) {
-                typedef Map<const Matrix <LhsScalar, Dynamic, Dynamic, ColMajor>, 0, OuterStride<> > LhsMap;
+                typedef Map<const Matrix<LhsScalar, Dynamic, Dynamic, ColMajor>, 0, OuterStride<> > LhsMap;
                 const LhsMap lhs(_lhs, size, size, OuterStride<>(lhsStride));
-                typedef const_blas_data_mapper <LhsScalar, Index, ColMajor> LhsMapper;
-                typedef const_blas_data_mapper <RhsScalar, Index, ColMajor> RhsMapper;
+                typedef const_blas_data_mapper<LhsScalar, Index, ColMajor> LhsMapper;
+                typedef const_blas_data_mapper<RhsScalar, Index, ColMajor> RhsMapper;
                 typename internal::conditional<Conjugate,
                         const CwiseUnaryOp<typename internal::scalar_conjugate_op<LhsScalar>, LhsMap>,
                         const LhsMap &
@@ -112,8 +112,7 @@ namespace Eigen {
                         Index r = actualPanelWidth - k - 1; // remaining size
                         Index s = IsLower ? i + 1 : i - r;
                         if (r > 0)
-                            Map < Matrix < RhsScalar, Dynamic,
-                                    1 > > (rhs + s, r) -= rhs[i] * cjLhs.col(i).segment(s, r);
+                            Map<Matrix<RhsScalar, Dynamic, 1> >(rhs + s, r) -= rhs[i] * cjLhs.col(i).segment(s, r);
                     }
                     Index r = IsLower ? size - endBlock : startBlock; // remaining size
                     if (r > 0) {

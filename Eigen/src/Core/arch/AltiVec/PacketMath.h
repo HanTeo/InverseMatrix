@@ -565,7 +565,6 @@ namespace Eigen {
             EIGEN_DEBUG_UNALIGNED_LOAD
             return (Packet4f) vec_vsx_ld((long) from & 15, (const float *) _EIGEN_ALIGNED_PTR(from));
         }
-
 #endif
 
         template<> EIGEN_STRONG_INLINE Packet4f
@@ -624,7 +623,6 @@ namespace Eigen {
           vec_st( MSQ, 0, (unsigned char *)to );                    // Store the MSQ part
         }
 #else
-
 // We also need ot redefine little endian loading of Packet4i/Packet4f using VSX
         template<>
         EIGEN_STRONG_INLINE void pstoreu<int>(int *to, const Packet4i &from) {
@@ -637,7 +635,6 @@ namespace Eigen {
             EIGEN_DEBUG_ALIGNED_STORE
                     vec_vsx_st(from, (long) to & 15, (float *) _EIGEN_ALIGNED_PTR(to));
         }
-
 #endif
 
         template<>

@@ -213,11 +213,9 @@ public:
     MatrixType reconstructedMatrix() const;
 
     inline Index rows() const { return m_lu.rows(); }
-
     inline Index cols() const { return m_lu.cols(); }
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
     template<typename RhsType, typename DstType>
     EIGEN_DEVICE_FUNC
     void _solve_impl(const RhsType &rhs, DstType &dst) const {

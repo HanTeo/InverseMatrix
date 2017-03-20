@@ -69,6 +69,7 @@ const CwiseBinaryOp<internal::scalar_product_op<T,Scalar>,Constant<T>,Derived> o
 #endif
 
 
+
 #ifndef EIGEN_PARSED_BY_DOXYGEN
 EIGEN_MAKE_SCALAR_BINARY_OP_ONTHERIGHT( operator/, quotient
 )

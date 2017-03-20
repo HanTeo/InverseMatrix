@@ -248,6 +248,7 @@ namespace Eigen {
 #ifndef EIGEN_PARSED_BY_DOXYGEN
 
         template<typename RhsType, typename DstType>
+        EIGEN_DEVICE_FUNC
         void _solve_impl(const RhsType &rhs, DstType &dst) const;
 
 #endif
@@ -332,7 +333,7 @@ namespace Eigen {
                     Index rs = size - k - 1;
                     Block<MatrixType, Dynamic, 1> A21(mat, k + 1, k, rs, 1);
                     Block<MatrixType, 1, Dynamic> A10(mat, k, 0, 1, k);
-                    Block <MatrixType, Dynamic, Dynamic> A20(mat, k + 1, 0, rs, k);
+                    Block<MatrixType, Dynamic, Dynamic> A20(mat, k + 1, 0, rs, k);
 
                     if (k > 0) {
                         temp.head(k) = mat.diagonal().real().head(k).asDiagonal() * A10.adjoint();
@@ -437,7 +438,7 @@ namespace Eigen {
             template<typename MatrixType, typename TranspositionType, typename Workspace>
             static EIGEN_STRONG_INLINE bool
             unblocked(MatrixType &mat, TranspositionType &transpositions, Workspace &temp, SignMatrix &sign) {
-                Transpose <MatrixType> matt(mat);
+                Transpose<MatrixType> matt(mat);
                 return ldlt_inplace<Lower>::unblocked(matt, transpositions, temp, sign);
             }
 
@@ -445,7 +446,7 @@ namespace Eigen {
             static EIGEN_STRONG_INLINE bool
             update(MatrixType &mat, TranspositionType &transpositions, Workspace &tmp, WType &w,
                    const typename MatrixType::RealScalar &sigma = 1) {
-                Transpose <MatrixType> matt(mat);
+                Transpose<MatrixType> matt(mat);
                 return ldlt_inplace<Lower>::update(matt, transpositions, tmp, w.conjugate(), sigma);
             }
         };
@@ -577,7 +578,6 @@ namespace Eigen {
         // dst = P^-1 (L^-T D^-1 L^-1 P b) = A^-1 b
         dst = m_transpositions.transpose() * dst;
     }
-
 #endif
 
 /** \internal use x = ldlt_object.solve(x);

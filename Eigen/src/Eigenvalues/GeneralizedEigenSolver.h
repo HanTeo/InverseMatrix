@@ -14,7 +14,7 @@
 
 #include "./RealQZ.h"
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \eigenvalues_module \ingroup Eigenvalues_Module
   *
@@ -81,7 +81,7 @@ namespace Eigen {
           * \c float or \c double) and just \c Scalar if #Scalar is
           * complex.
           */
-        typedef std::complex <RealScalar> ComplexScalar;
+        typedef std::complex<RealScalar> ComplexScalar;
 
         /** \brief Type for vector of real scalar values eigenvalues as returned by betas().
           *
@@ -270,7 +270,7 @@ namespace Eigen {
         ComplexVectorType m_alphas;
         VectorType m_betas;
         bool m_valuesOkay, m_vectorsOkay;
-        RealQZ<MatrixType> m_realQZ;
+        RealQZ <MatrixType> m_realQZ;
         ComplexVectorType m_tmp;
     };
 
@@ -298,7 +298,7 @@ namespace Eigen {
             }
 
             // Aliases:
-            Map <VectorType> v(reinterpret_cast<Scalar *>(m_tmp.data()), size);
+            Map<VectorType> v(reinterpret_cast<Scalar *>(m_tmp.data()), size);
             ComplexVectorType &cv = m_tmp;
             const MatrixType &mZ = m_realQZ.matrixZ();
             const MatrixType &mS = m_realQZ.matrixS();

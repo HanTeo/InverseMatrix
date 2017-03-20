@@ -37,13 +37,12 @@ namespace Eigen {
     typedef TriangularView <MatrixType, Mode> TriangularViewType;
 
     protected:
-
     // dummy solve function to make TriangularView happy.
     void solve() const;
 
     typedef SparseMatrixBase <TriangularViewType> Base;
     public:
-
+    
     EIGEN_SPARSE_PUBLIC_INTERFACE(TriangularViewType)
 
     typedef typename MatrixType::Nested MatrixTypeNested;
@@ -67,7 +66,7 @@ namespace Eigen {
     /** Applies the inverse of \c *this to the sparse vector or matrix \a other, "in-place" */
     template<typename OtherDerived>
     void solveInPlace(SparseMatrixBase <OtherDerived> &other) const;
-
+  
 };
 
 namespace internal {

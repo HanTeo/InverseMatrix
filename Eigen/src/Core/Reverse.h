@@ -88,23 +88,15 @@ public:
 
     EIGEN_INHERIT_ASSIGNMENT_OPERATORS(Reverse)
 
-    EIGEN_DEVICE_FUNC inline Index
+    EIGEN_DEVICE_FUNC inline Index rows() const { return m_matrix.rows(); }
 
-    rows() const { return m_matrix.rows(); }
+    EIGEN_DEVICE_FUNC inline Index cols() const { return m_matrix.cols(); }
 
-    EIGEN_DEVICE_FUNC inline Index
-
-    cols() const { return m_matrix.cols(); }
-
-    EIGEN_DEVICE_FUNC inline Index
-
-    innerStride() const {
+    EIGEN_DEVICE_FUNC inline Index innerStride() const {
         return -m_matrix.innerStride();
     }
 
-    EIGEN_DEVICE_FUNC const typename internal::remove_all<typename MatrixType::Nested>::type
-    &
-
+    EIGEN_DEVICE_FUNC const typename internal::remove_all<typename MatrixType::Nested>::type &
     nestedExpression() const {
         return m_matrix;
     }
@@ -120,8 +112,7 @@ protected:
   *
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC inline typename DenseBase<Derived>::ReverseReturnType
-
+inline typename DenseBase<Derived>::ReverseReturnType
 DenseBase<Derived>::reverse() {
     return ReverseReturnType(derived());
 }
@@ -142,7 +133,7 @@ DenseBase<Derived>::reverse() {
   *
   * \sa VectorwiseOp::reverseInPlace(), reverse() */
 template<typename Derived>
-EIGEN_DEVICE_FUNC inline void DenseBase<Derived>::reverseInPlace() {
+inline void DenseBase<Derived>::reverseInPlace() {
     if (cols() > rows()) {
         Index half = cols() / 2;
         leftCols(half).swap(rightCols(half).reverse());
@@ -197,7 +188,7 @@ namespace internal {
   *
   * \sa DenseBase::reverseInPlace(), reverse() */
 template<typename ExpressionType, int Direction>
-EIGEN_DEVICE_FUNC void VectorwiseOp<ExpressionType, Direction>::reverseInPlace() {
+void VectorwiseOp<ExpressionType, Direction>::reverseInPlace() {
     internal::vectorwise_reverse_inplace_impl<Direction>::run(_expression().const_cast_derived());
 }
 

@@ -11,7 +11,7 @@
 #ifndef EIGEN_ORTHOMETHODS_H
 #define EIGEN_ORTHOMETHODS_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \geometry_module \ingroup Geometry_Module
   *
@@ -31,7 +31,6 @@ namespace Eigen {
 #else
     inline typename MatrixBase<Derived>::PlainObject
 #endif
-
     MatrixBase<Derived>::cross(const MatrixBase <OtherDerived> &other) const {
         EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(Derived, 3)
         EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(OtherDerived, 3)
@@ -54,7 +53,6 @@ namespace Eigen {
                 bool Vectorizable = bool((VectorLhs::Flags & VectorRhs::Flags) & PacketAccessBit)>
         struct cross3_impl {
             EIGEN_DEVICE_FUNC static inline typename internal::plain_matrix_type<VectorLhs>::type
-
             run(const VectorLhs &lhs, const VectorRhs &rhs) {
                 return typename internal::plain_matrix_type<VectorLhs>::type(
                         numext::conj(lhs.coeff(1) * rhs.coeff(2) - lhs.coeff(2) * rhs.coeff(1)),
@@ -79,7 +77,6 @@ namespace Eigen {
     template<typename Derived>
     template<typename OtherDerived>
     EIGEN_DEVICE_FUNC inline typename MatrixBase<Derived>::PlainObject
-
     MatrixBase<Derived>::cross3(const MatrixBase <OtherDerived> &other) const {
         EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(Derived, 4)
         EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(OtherDerived, 4)
@@ -107,7 +104,6 @@ namespace Eigen {
     template<typename OtherDerived>
     EIGEN_DEVICE_FUNC
     const typename VectorwiseOp<ExpressionType, Direction>::CrossReturnType
-
     VectorwiseOp<ExpressionType, Direction>::cross(const MatrixBase <OtherDerived> &other) const {
         EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(OtherDerived, 3)
         EIGEN_STATIC_ASSERT((internal::is_same<Scalar, typename OtherDerived::Scalar>::value),
@@ -140,9 +136,7 @@ namespace Eigen {
             typedef typename NumTraits<Scalar>::Real RealScalar;
             typedef Matrix<Scalar, 2, 1> Vector2;
             EIGEN_DEVICE_FUNC
-            static inline VectorType
-
-            run(const Derived &src) {
+            static inline VectorType run(const Derived &src) {
                 VectorType perp = VectorType::Zero(src.size());
                 Index maxi = 0;
                 Index sndi = 0;
@@ -163,9 +157,7 @@ namespace Eigen {
             typedef typename traits<Derived>::Scalar Scalar;
             typedef typename NumTraits<Scalar>::Real RealScalar;
             EIGEN_DEVICE_FUNC
-            static inline VectorType
-
-            run(const Derived &src) {
+            static inline VectorType run(const Derived &src) {
                 VectorType perp;
                 /* Let us compute the crossed product of *this with a vector
                  * that is not too close to being colinear to *this.
@@ -200,9 +192,9 @@ namespace Eigen {
         struct unitOrthogonal_selector<Derived, 2> {
             typedef typename plain_matrix_type<Derived>::type VectorType;
             EIGEN_DEVICE_FUNC
-            static inline VectorType
-
-            run(const Derived &src) { return VectorType(-numext::conj(src.y()), numext::conj(src.x())).normalized(); }
+            static inline VectorType run(const Derived &src) {
+                return VectorType(-numext::conj(src.y()), numext::conj(src.x())).normalized();
+            }
         };
 
     } // end namespace internal
@@ -218,7 +210,6 @@ namespace Eigen {
   */
     template<typename Derived>
     EIGEN_DEVICE_FUNC typename MatrixBase<Derived>::PlainObject
-
     MatrixBase<Derived>::unitOrthogonal() const {
         EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
         return internal::unitOrthogonal_selector<Derived>::run(derived());

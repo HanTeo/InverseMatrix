@@ -10,7 +10,7 @@
 #ifndef EIGEN_TRANSLATION_H
 #define EIGEN_TRANSLATION_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \geometry_module \ingroup Geometry_Module
   *
@@ -29,8 +29,7 @@ namespace Eigen {
     template<typename _Scalar, int _Dim>
     class Translation {
     public:
-        EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF_VECTORIZABLE_FIXED_SIZE(_Scalar, _Dim
-        )
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF_VECTORIZABLE_FIXED_SIZE(_Scalar, _Dim)
         /** dimension of the space */
         enum {
             Dim = _Dim
@@ -42,9 +41,9 @@ namespace Eigen {
         /** corresponding linear transformation matrix type */
         typedef Matrix <Scalar, Dim, Dim> LinearMatrixType;
         /** corresponding affine transformation type */
-        typedef Transform<Scalar, Dim, Affine> AffineTransformType;
+        typedef Transform <Scalar, Dim, Affine> AffineTransformType;
         /** corresponding isometric transformation type */
-        typedef Transform<Scalar, Dim, Isometry> IsometryTransformType;
+        typedef Transform <Scalar, Dim, Isometry> IsometryTransformType;
 
     protected:
 
@@ -127,8 +126,8 @@ namespace Eigen {
 
         /** Concatenates a translation and a transformation */
         template<int Mode, int Options>
-        EIGEN_DEVICE_FUNC inline Transform<Scalar, Dim, Mode>
-        operator*(const Transform<Scalar, Dim, Mode, Options> &t) const {
+        EIGEN_DEVICE_FUNC inline Transform <Scalar, Dim, Mode>
+        operator*(const Transform <Scalar, Dim, Mode, Options> &t) const {
             Transform<Scalar, Dim, Mode> res = t;
             res.pretranslate(m_coeffs);
             return res;

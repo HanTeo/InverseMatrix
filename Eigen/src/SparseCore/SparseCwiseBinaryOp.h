@@ -10,7 +10,7 @@
 #ifndef EIGEN_SPARSE_CWISE_BINARY_OP_H
 #define EIGEN_SPARSE_CWISE_BINARY_OP_H
 
-namespace Eigen {
+namespace Eigen { 
 
 // Here we have to handle 3 cases:
 //  1 - sparse op dense
@@ -235,7 +235,8 @@ protected:
 
 enum {
     CoeffReadCost = evaluator<Lhs>::CoeffReadCost + evaluator<Rhs>::CoeffReadCost + functor_traits<BinaryOp>::Cost,
-    Flags = XprType::Flags
+    // Expose storage order of the sparse expression
+            Flags = (XprType::Flags & ~RowMajorBit) | (int(Rhs::Flags) & RowMajorBit)
 };
 
 explicit binary_evaluator(const XprType &xpr)
@@ -337,7 +338,8 @@ protected:
 
 enum {
     CoeffReadCost = evaluator<Lhs>::CoeffReadCost + evaluator<Rhs>::CoeffReadCost + functor_traits<BinaryOp>::Cost,
-    Flags = XprType::Flags
+    // Expose storage order of the sparse expression
+            Flags = (XprType::Flags & ~RowMajorBit) | (int(Lhs::Flags) & RowMajorBit)
 };
 
 explicit binary_evaluator(const XprType &xpr)
@@ -376,7 +378,6 @@ typedef CwiseBinaryOp <scalar_product_op<T1, T2>, Lhs, Rhs> XprType;
 typedef sparse_conjunction_evaluator<XprType> Base;
 
 explicit binary_evaluator(const XprType &xpr) : Base(xpr) {}
-
 };
 // "dense .* sparse"
 template<typename T1, typename T2, typename Lhs, typename Rhs>
@@ -387,7 +388,6 @@ typedef CwiseBinaryOp <scalar_product_op<T1, T2>, Lhs, Rhs> XprType;
 typedef sparse_conjunction_evaluator<XprType> Base;
 
 explicit binary_evaluator(const XprType &xpr) : Base(xpr) {}
-
 };
 // "sparse .* dense"
 template<typename T1, typename T2, typename Lhs, typename Rhs>
@@ -398,7 +398,6 @@ typedef CwiseBinaryOp <scalar_product_op<T1, T2>, Lhs, Rhs> XprType;
 typedef sparse_conjunction_evaluator<XprType> Base;
 
 explicit binary_evaluator(const XprType &xpr) : Base(xpr) {}
-
 };
 
 // "sparse ./ dense"
@@ -410,7 +409,6 @@ typedef CwiseBinaryOp <scalar_quotient_op<T1, T2>, Lhs, Rhs> XprType;
 typedef sparse_conjunction_evaluator<XprType> Base;
 
 explicit binary_evaluator(const XprType &xpr) : Base(xpr) {}
-
 };
 
 // "sparse && sparse"
@@ -422,7 +420,6 @@ typedef CwiseBinaryOp <scalar_boolean_and_op, Lhs, Rhs> XprType;
 typedef sparse_conjunction_evaluator<XprType> Base;
 
 explicit binary_evaluator(const XprType &xpr) : Base(xpr) {}
-
 };
 // "dense && sparse"
 template<typename Lhs, typename Rhs>
@@ -433,7 +430,6 @@ typedef CwiseBinaryOp <scalar_boolean_and_op, Lhs, Rhs> XprType;
 typedef sparse_conjunction_evaluator<XprType> Base;
 
 explicit binary_evaluator(const XprType &xpr) : Base(xpr) {}
-
 };
 // "sparse && dense"
 template<typename Lhs, typename Rhs>
@@ -444,7 +440,6 @@ typedef CwiseBinaryOp <scalar_boolean_and_op, Lhs, Rhs> XprType;
 typedef sparse_conjunction_evaluator<XprType> Base;
 
 explicit binary_evaluator(const XprType &xpr) : Base(xpr) {}
-
 };
 
 // "sparse ^ sparse"
@@ -612,7 +607,8 @@ public:
     enum {
         CoeffReadCost =
         evaluator<LhsArg>::CoeffReadCost + evaluator<RhsArg>::CoeffReadCost + functor_traits<BinaryOp>::Cost,
-        Flags = XprType::Flags
+        // Expose storage order of the sparse expression
+                Flags = (XprType::Flags & ~RowMajorBit) | (int(RhsArg::Flags) & RowMajorBit)
     };
 
     explicit sparse_conjunction_evaluator(const XprType &xpr)
@@ -703,7 +699,8 @@ public:
     enum {
         CoeffReadCost =
         evaluator<LhsArg>::CoeffReadCost + evaluator<RhsArg>::CoeffReadCost + functor_traits<BinaryOp>::Cost,
-        Flags = XprType::Flags
+        // Expose storage order of the sparse expression
+                Flags = (XprType::Flags & ~RowMajorBit) | (int(LhsArg::Flags) & RowMajorBit)
     };
 
     explicit sparse_conjunction_evaluator(const XprType &xpr)

@@ -13,7 +13,7 @@
 
 #include "./HessenbergDecomposition.h"
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \eigenvalues_module \ingroup Eigenvalues_Module
   *
@@ -101,7 +101,7 @@ namespace Eigen {
           * Output: \verbinclude RealSchur_RealSchur_MatrixType.out
           */
         template<typename InputType>
-        explicit RealSchur(const EigenBase <InputType> &matrix, bool computeU = true)
+        explicit RealSchur(const EigenBase<InputType> &matrix, bool computeU = true)
                 : m_matT(matrix.rows(), matrix.cols()),
                   m_matU(matrix.rows(), matrix.cols()),
                   m_workspaceVector(matrix.rows()),
@@ -164,7 +164,7 @@ namespace Eigen {
           * \sa compute(const MatrixType&, bool, Index)
           */
         template<typename InputType>
-        RealSchur &compute(const EigenBase <InputType> &matrix, bool computeU = true);
+        RealSchur &compute(const EigenBase<InputType> &matrix, bool computeU = true);
 
         /** \brief Computes Schur decomposition of a Hessenberg matrix H = Z T Z^T
          *  \param[in] matrixH Matrix in Hessenberg form H
@@ -248,7 +248,7 @@ namespace Eigen {
 
     template<typename MatrixType>
     template<typename InputType>
-    RealSchur<MatrixType> &RealSchur<MatrixType>::compute(const EigenBase <InputType> &matrix, bool computeU) {
+    RealSchur<MatrixType> &RealSchur<MatrixType>::compute(const EigenBase<InputType> &matrix, bool computeU) {
         const Scalar considerAsZero = (std::numeric_limits<Scalar>::min)();
 
         eigen_assert(matrix.cols() == matrix.rows());
@@ -390,7 +390,7 @@ namespace Eigen {
         if (q >= Scalar(0)) // Two real eigenvalues
         {
             Scalar z = sqrt(abs(q));
-            JacobiRotation <Scalar> rot;
+            JacobiRotation<Scalar> rot;
             if (p >= Scalar(0))
                 rot.makeGivens(p + z, m_matT.coeff(iu, iu - 1));
             else

@@ -13,7 +13,7 @@
 
 #include "./RealSchur.h"
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \eigenvalues_module \ingroup Eigenvalues_Module
   *

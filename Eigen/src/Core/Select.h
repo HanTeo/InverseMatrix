@@ -10,7 +10,7 @@
 #ifndef EIGEN_SELECT_H
 #define EIGEN_SELECT_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \class Select
   * \ingroup Core_Module
@@ -64,20 +64,12 @@ public:
         eigen_assert(m_condition.cols() == m_then.cols() && m_condition.cols() == m_else.cols());
     }
 
-    inline EIGEN_DEVICE_FUNC Index
+    inline EIGEN_DEVICE_FUNC Index rows() const { return m_condition.rows(); }
 
-    rows() const { return m_condition.rows(); }
-
-    inline EIGEN_DEVICE_FUNC Index
-
-    cols() const { return m_condition.cols(); }
+    inline EIGEN_DEVICE_FUNC Index cols() const { return m_condition.cols(); }
 
     inline EIGEN_DEVICE_FUNC
-    const Scalar
-    coeff(Index
-    i,
-    Index j
-    ) const
+    const Scalar coeff(Index i, Index j) const
     {
         if (m_condition.coeff(i, j))
             return m_then.coeff(i, j);
@@ -86,9 +78,7 @@ public:
     }
 
     inline EIGEN_DEVICE_FUNC
-    const Scalar
-    coeff(Index
-    i) const
+    const Scalar coeff(Index i) const
     {
         if (m_condition.coeff(i))
             return m_then.coeff(i);
@@ -96,24 +86,15 @@ public:
             return m_else.coeff(i);
     }
 
-    inline EIGEN_DEVICE_FUNC const ConditionMatrixType
-    &
-
-    conditionMatrix() const {
+    inline EIGEN_DEVICE_FUNC const ConditionMatrixType &conditionMatrix() const {
         return m_condition;
     }
 
-    inline EIGEN_DEVICE_FUNC const ThenMatrixType
-    &
-
-    thenMatrix() const {
+    inline EIGEN_DEVICE_FUNC const ThenMatrixType &thenMatrix() const {
         return m_then;
     }
 
-    inline EIGEN_DEVICE_FUNC const ElseMatrixType
-    &
-
-    elseMatrix() const {
+    inline EIGEN_DEVICE_FUNC const ElseMatrixType &elseMatrix() const {
         return m_else;
     }
 

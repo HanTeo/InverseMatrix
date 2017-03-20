@@ -70,7 +70,7 @@ namespace Eigen {
   *     and to \c 0 otherwise.
   * \li Enum values ReadCost, AddCost and MulCost representing a rough estimate of the number of CPU cycles needed
   *     to by move / add / mul instructions respectively, assuming the data is already stored in CPU registers.
-  *     Stay vague here. No need to do architecture-specific stuff. If you don't know what this means, just use \c Eigen::HugeCost.
+  *     Stay vague here. No need to do architecture-specific stuff.
   * \li An enum value \a IsSigned. It is equal to \c 1 if \a T is a signed type and to 0 if \a T is unsigned.
   * \li An enum value \a RequireInitialization. It is equal to \c 1 if the constructor of the numeric type \a T must
   *     be called, and to 0 if it is safe not to call it. Default is 0 if \a T is an arithmetic type, and 1 otherwise.
@@ -106,9 +106,7 @@ namespace Eigen {
         typedef T Literal;
 
         EIGEN_DEVICE_FUNC
-        static inline Real
-
-        epsilon() {
+        static inline Real epsilon() {
             return numext::numeric_limits<T>::epsilon();
         }
 
@@ -118,39 +116,29 @@ namespace Eigen {
         }
 
         EIGEN_DEVICE_FUNC
-        static inline Real
-
-        dummy_precision() {
+        static inline Real dummy_precision() {
             // make sure to override this for floating-point types
             return Real(0);
         }
 
 
         EIGEN_DEVICE_FUNC
-        static inline T
-
-        highest() {
+        static inline T highest() {
             return (numext::numeric_limits<T>::max)();
         }
 
         EIGEN_DEVICE_FUNC
-        static inline T
-
-        lowest() {
+        static inline T lowest() {
             return IsInteger ? (numext::numeric_limits<T>::min)() : (-(numext::numeric_limits<T>::max)());
         }
 
         EIGEN_DEVICE_FUNC
-        static inline T
-
-        infinity() {
+        static inline T infinity() {
             return numext::numeric_limits<T>::infinity();
         }
 
         EIGEN_DEVICE_FUNC
-        static inline T
-
-        quiet_NaN() {
+        static inline T quiet_NaN() {
             return numext::numeric_limits<T>::quiet_NaN();
         }
     };
@@ -179,66 +167,57 @@ namespace Eigen {
     };
 
     template<typename _Real>
-    struct NumTraits<std::complex < _Real> >
-    : GenericNumTraits<std::complex < _Real> > {
-    typedef _Real Real;
-    typedef typename NumTraits<_Real>::Literal Literal;
-    enum {
-        IsComplex = 1,
-        RequireInitialization = NumTraits<_Real>::RequireInitialization,
-        ReadCost = 2 * NumTraits<_Real>::ReadCost,
-        AddCost = 2 * NumTraits<Real>::AddCost,
-        MulCost = 4 * NumTraits<Real>::MulCost + 2 * NumTraits<Real>::AddCost
-    };
+    struct NumTraits<std::complex<_Real> >
+            : GenericNumTraits<std::complex<_Real> > {
+        typedef _Real Real;
+        typedef typename NumTraits<_Real>::Literal Literal;
+        enum {
+            IsComplex = 1,
+            RequireInitialization = NumTraits<_Real>::RequireInitialization,
+            ReadCost = 2 * NumTraits<_Real>::ReadCost,
+            AddCost = 2 * NumTraits<Real>::AddCost,
+            MulCost = 4 * NumTraits<Real>::MulCost + 2 * NumTraits<Real>::AddCost
+        };
 
-    EIGEN_DEVICE_FUNC
-    static inline Real
+        EIGEN_DEVICE_FUNC
+        static inline Real epsilon() { return NumTraits<Real>::epsilon(); }
 
-    epsilon() { return NumTraits<Real>::epsilon(); }
+        EIGEN_DEVICE_FUNC
+        static inline Real dummy_precision() { return NumTraits<Real>::dummy_precision(); }
 
-    EIGEN_DEVICE_FUNC
-    static inline Real
-
-    dummy_precision() { return NumTraits<Real>::dummy_precision(); }
-
-    EIGEN_DEVICE_FUNC
-    static inline int digits10() { return NumTraits<Real>::digits10(); }
+        EIGEN_DEVICE_FUNC
+        static inline int digits10() { return NumTraits<Real>::digits10(); }
 };
 
 template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
 struct NumTraits<Array < Scalar, Rows, Cols, Options, MaxRows, MaxCols> >
 {
-typedef Array <Scalar, Rows, Cols, Options, MaxRows, MaxCols> ArrayType;
-typedef typename NumTraits<Scalar>::Real RealScalar;
-typedef Array <RealScalar, Rows, Cols, Options, MaxRows, MaxCols> Real;
-typedef typename NumTraits<Scalar>::NonInteger NonIntegerScalar;
-typedef Array <NonIntegerScalar, Rows, Cols, Options, MaxRows, MaxCols> NonInteger;
-typedef ArrayType &Nested;
-typedef typename NumTraits<Scalar>::Literal Literal;
+    typedef Array <Scalar, Rows, Cols, Options, MaxRows, MaxCols> ArrayType;
+    typedef typename NumTraits<Scalar>::Real RealScalar;
+    typedef Array <RealScalar, Rows, Cols, Options, MaxRows, MaxCols> Real;
+    typedef typename NumTraits<Scalar>::NonInteger NonIntegerScalar;
+    typedef Array <NonIntegerScalar, Rows, Cols, Options, MaxRows, MaxCols> NonInteger;
+    typedef ArrayType &Nested;
+    typedef typename NumTraits<Scalar>::Literal Literal;
 
-enum {
+    enum {
     IsComplex = NumTraits<Scalar>::IsComplex,
     IsInteger = NumTraits<Scalar>::IsInteger,
-    IsSigned = NumTraits<Scalar>::IsSigned,
+        IsSigned = NumTraits<Scalar>::IsSigned,
     RequireInitialization = 1,
-    ReadCost =
-    ArrayType::SizeAtCompileTime == Dynamic ? HugeCost : ArrayType::SizeAtCompileTime * NumTraits<Scalar>::ReadCost,
-    AddCost =
-    ArrayType::SizeAtCompileTime == Dynamic ? HugeCost : ArrayType::SizeAtCompileTime * NumTraits<Scalar>::AddCost,
-    MulCost =
-    ArrayType::SizeAtCompileTime == Dynamic ? HugeCost : ArrayType::SizeAtCompileTime * NumTraits<Scalar>::MulCost
-};
+        ReadCost =
+        ArrayType::SizeAtCompileTime == Dynamic ? HugeCost : ArrayType::SizeAtCompileTime * NumTraits<Scalar>::ReadCost,
+        AddCost =
+        ArrayType::SizeAtCompileTime == Dynamic ? HugeCost : ArrayType::SizeAtCompileTime * NumTraits<Scalar>::AddCost,
+        MulCost =
+        ArrayType::SizeAtCompileTime == Dynamic ? HugeCost : ArrayType::SizeAtCompileTime * NumTraits<Scalar>::MulCost
+    };
 
-EIGEN_DEVICE_FUNC
-static inline RealScalar
+    EIGEN_DEVICE_FUNC
+    static inline RealScalar epsilon() { return NumTraits<RealScalar>::epsilon(); }
 
-epsilon() { return NumTraits<RealScalar>::epsilon(); }
-
-EIGEN_DEVICE_FUNC
-static inline RealScalar
-
-dummy_precision() { return NumTraits<RealScalar>::dummy_precision(); }
-
+    EIGEN_DEVICE_FUNC
+    static inline RealScalar dummy_precision() { return NumTraits<RealScalar>::dummy_precision(); }
 };
 
 template<>

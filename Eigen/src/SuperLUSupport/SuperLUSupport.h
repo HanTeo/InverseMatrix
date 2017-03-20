@@ -274,7 +274,6 @@ static void run(MatrixType &mat, SluMatrix &res) {
 
     eigen_assert(((MatrixType::Flags & SelfAdjoint) == 0) && "SelfAdjoint matrix shape not supported by SuperLU");
 }
-
 };
 
 namespace internal {
@@ -333,12 +332,11 @@ public:
     }
 
     inline Index rows() const { return m_matrix.rows(); }
-
     inline Index cols() const { return m_matrix.cols(); }
 
     /** \returns a reference to the Super LU option object to configure the  Super LU algorithms. */
     inline superlu_options_t &options() { return m_sluOptions; }
-
+    
     /** \brief Reports whether previous computation was successful.
       *
       * \returns \c Success if computation was succesful,
@@ -475,7 +473,7 @@ public:
     typedef typename Base::RealScalar RealScalar;
     typedef typename Base::StorageIndex StorageIndex;
     typedef typename Base::IntRowVectorType IntRowVectorType;
-    typedef typename Base::IntColVectorType IntColVectorType;
+    typedef typename Base::IntColVectorType IntColVectorType;   
     typedef typename Base::PermutationMap PermutationMap;
     typedef typename Base::LUMatrixType LUMatrixType;
     typedef TriangularView<LUMatrixType, Lower | UnitDiag> LMatrixType;
@@ -513,7 +511,7 @@ public:
       * \sa analyzePattern()
       */
     void factorize(const MatrixType &matrix);
-
+    
     /** \internal */
     template<typename Rhs, typename Dest>
     void _solve_impl(const MatrixBase <Rhs> &b, MatrixBase <Dest> &dest) const;
@@ -541,7 +539,7 @@ public:
     Scalar determinant() const;
 
 protected:
-
+    
     using Base::m_matrix;
     using Base::m_sluOptions;
     using Base::m_sluA;
@@ -843,11 +841,11 @@ class SuperILU : public SuperLUBase<_MatrixType,SuperILU<_MatrixType> >
       */
     void factorize(const MatrixType& matrix);
     
-#ifndef EIGEN_PARSED_BY_DOXYGEN
+    #ifndef EIGEN_PARSED_BY_DOXYGEN
     /** \internal */
     template<typename Rhs,typename Dest>
     void _solve_impl(const MatrixBase<Rhs> &b, MatrixBase<Dest> &dest) const;
-#endif // EIGEN_PARSED_BY_DOXYGEN
+    #endif // EIGEN_PARSED_BY_DOXYGEN
     
   protected:
     

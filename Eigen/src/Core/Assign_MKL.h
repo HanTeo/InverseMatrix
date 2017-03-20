@@ -120,27 +120,27 @@ namespace Eigen {
   EIGEN_MKL_VML_DECLARE_UNARY_CALLS_REAL(EIGENOP, VMLOP, VMLMODE)                                                               \
   EIGEN_MKL_VML_DECLARE_UNARY_CALLS_CPLX(EIGENOP, VMLOP, VMLMODE)
 
-
-EIGEN_MKL_VML_DECLARE_UNARY_CALLS(sin, Sin, LA)
-EIGEN_MKL_VML_DECLARE_UNARY_CALLS(asin, Asin, LA)
-EIGEN_MKL_VML_DECLARE_UNARY_CALLS(sinh, Sinh, LA)
-EIGEN_MKL_VML_DECLARE_UNARY_CALLS(cos, Cos, LA)
-EIGEN_MKL_VML_DECLARE_UNARY_CALLS(acos, Acos, LA)
-EIGEN_MKL_VML_DECLARE_UNARY_CALLS(cosh, Cosh, LA)
-EIGEN_MKL_VML_DECLARE_UNARY_CALLS(tan, Tan, LA)
-EIGEN_MKL_VML_DECLARE_UNARY_CALLS(atan, Atan, LA)
-EIGEN_MKL_VML_DECLARE_UNARY_CALLS(tanh, Tanh, LA)
+  
+EIGEN_MKL_VML_DECLARE_UNARY_CALLS(sin,   Sin,   LA)
+EIGEN_MKL_VML_DECLARE_UNARY_CALLS(asin,  Asin,  LA)
+EIGEN_MKL_VML_DECLARE_UNARY_CALLS(sinh,  Sinh,  LA)
+EIGEN_MKL_VML_DECLARE_UNARY_CALLS(cos,   Cos,   LA)
+EIGEN_MKL_VML_DECLARE_UNARY_CALLS(acos,  Acos,  LA)
+EIGEN_MKL_VML_DECLARE_UNARY_CALLS(cosh,  Cosh,  LA)
+EIGEN_MKL_VML_DECLARE_UNARY_CALLS(tan,   Tan,   LA)
+EIGEN_MKL_VML_DECLARE_UNARY_CALLS(atan,  Atan,  LA)
+EIGEN_MKL_VML_DECLARE_UNARY_CALLS(tanh,  Tanh,  LA)
 // EIGEN_MKL_VML_DECLARE_UNARY_CALLS(abs,   Abs,    _)
-EIGEN_MKL_VML_DECLARE_UNARY_CALLS(exp, Exp, LA)
-EIGEN_MKL_VML_DECLARE_UNARY_CALLS(log, Ln, LA)
+EIGEN_MKL_VML_DECLARE_UNARY_CALLS(exp,   Exp,   LA)
+EIGEN_MKL_VML_DECLARE_UNARY_CALLS(log,   Ln,    LA)
 EIGEN_MKL_VML_DECLARE_UNARY_CALLS(log10, Log10, LA)
-EIGEN_MKL_VML_DECLARE_UNARY_CALLS(sqrt, Sqrt, _)
+EIGEN_MKL_VML_DECLARE_UNARY_CALLS(sqrt,  Sqrt,  _)
 
-EIGEN_MKL_VML_DECLARE_UNARY_CALLS_REAL(square, Sqr, _)
-EIGEN_MKL_VML_DECLARE_UNARY_CALLS_CPLX(arg, Arg, _)
-EIGEN_MKL_VML_DECLARE_UNARY_CALLS_REAL(round, Round, _)
-EIGEN_MKL_VML_DECLARE_UNARY_CALLS_REAL(floor, Floor, _)
-EIGEN_MKL_VML_DECLARE_UNARY_CALLS_REAL(ceil, Ceil, _)
+EIGEN_MKL_VML_DECLARE_UNARY_CALLS_REAL(square, Sqr,   _)
+EIGEN_MKL_VML_DECLARE_UNARY_CALLS_CPLX(arg, Arg,      _)
+EIGEN_MKL_VML_DECLARE_UNARY_CALLS_REAL(round, Round,  _)
+EIGEN_MKL_VML_DECLARE_UNARY_CALLS_REAL(floor, Floor,  _)
+EIGEN_MKL_VML_DECLARE_UNARY_CALLS_REAL(ceil,  Ceil,   _)
 
 #define EIGEN_MKL_VML_DECLARE_POW_CALL(EIGENOP, VMLOP, EIGENTYPE, VMLTYPE, VMLMODE)                                           \
   template< typename DstXprType, typename SrcXprNested, typename Plain>                                                       \
@@ -168,10 +168,10 @@ EIGEN_MKL_VML_DECLARE_UNARY_CALLS_REAL(ceil, Ceil, _)
       }                                                                                                                       \
     }                                                                                                                         \
   };
-
-EIGEN_MKL_VML_DECLARE_POW_CALL(pow, vmsPowx, float, float, LA)
-EIGEN_MKL_VML_DECLARE_POW_CALL(pow, vmdPowx, double, double, LA)
-EIGEN_MKL_VML_DECLARE_POW_CALL(pow, vmcPowx, scomplex, MKL_Complex8, LA)
+  
+EIGEN_MKL_VML_DECLARE_POW_CALL(pow, vmsPowx, float,    float,         LA)
+EIGEN_MKL_VML_DECLARE_POW_CALL(pow, vmdPowx, double,   double,        LA)
+EIGEN_MKL_VML_DECLARE_POW_CALL(pow, vmcPowx, scomplex, MKL_Complex8,  LA)
 EIGEN_MKL_VML_DECLARE_POW_CALL(pow, vmzPowx, dcomplex, MKL_Complex16, LA)
 
 } // end namespace internal

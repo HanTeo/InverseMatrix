@@ -113,8 +113,8 @@ namespace Eigen {
             Index depth = IsLower ? diagSize : _depth;
             Index cols = _cols;
 
-            typedef const_blas_data_mapper <Scalar, Index, LhsStorageOrder> LhsMapper;
-            typedef const_blas_data_mapper <Scalar, Index, RhsStorageOrder> RhsMapper;
+            typedef const_blas_data_mapper<Scalar, Index, LhsStorageOrder> LhsMapper;
+            typedef const_blas_data_mapper<Scalar, Index, RhsStorageOrder> RhsMapper;
             typedef blas_data_mapper<typename Traits::ResScalar, Index, ColMajor> ResMapper;
             LhsMapper lhs(_lhs, lhsStride);
             RhsMapper rhs(_rhs, rhsStride);
@@ -133,7 +133,7 @@ namespace Eigen {
             ei_declare_aligned_stack_constructed_variable(Scalar, blockA, sizeA, blocking.blockA());
             ei_declare_aligned_stack_constructed_variable(Scalar, blockB, sizeB, blocking.blockB());
 
-            Matrix <Scalar, SmallPanelWidth, SmallPanelWidth, LhsStorageOrder> triangularBuffer(
+            Matrix<Scalar, SmallPanelWidth, SmallPanelWidth, LhsStorageOrder> triangularBuffer(
                     (internal::constructor_without_unaligned_array_assert()));
             triangularBuffer.setZero();
             if ((Mode & ZeroDiag) == ZeroDiag)
@@ -141,9 +141,9 @@ namespace Eigen {
             else
                 triangularBuffer.diagonal().setOnes();
 
-            gebp_kernel <Scalar, Scalar, Index, ResMapper, Traits::mr, Traits::nr, ConjugateLhs, ConjugateRhs> gebp_kernel;
-            gemm_pack_lhs <Scalar, Index, LhsMapper, Traits::mr, Traits::LhsProgress, LhsStorageOrder> pack_lhs;
-            gemm_pack_rhs <Scalar, Index, RhsMapper, Traits::nr, RhsStorageOrder> pack_rhs;
+            gebp_kernel<Scalar, Scalar, Index, ResMapper, Traits::mr, Traits::nr, ConjugateLhs, ConjugateRhs> gebp_kernel;
+            gemm_pack_lhs<Scalar, Index, LhsMapper, Traits::mr, Traits::LhsProgress, LhsStorageOrder> pack_lhs;
+            gemm_pack_rhs<Scalar, Index, RhsMapper, Traits::nr, RhsStorageOrder> pack_rhs;
 
             for (Index k2 = IsLower ? depth : 0;
                  IsLower ? k2 > 0 : k2 < depth;
@@ -257,8 +257,8 @@ namespace Eigen {
             Index depth = IsLower ? _depth : diagSize;
             Index cols = IsLower ? diagSize : _cols;
 
-            typedef const_blas_data_mapper <Scalar, Index, LhsStorageOrder> LhsMapper;
-            typedef const_blas_data_mapper <Scalar, Index, RhsStorageOrder> RhsMapper;
+            typedef const_blas_data_mapper<Scalar, Index, LhsStorageOrder> LhsMapper;
+            typedef const_blas_data_mapper<Scalar, Index, RhsStorageOrder> RhsMapper;
             typedef blas_data_mapper<typename Traits::ResScalar, Index, ColMajor> ResMapper;
             LhsMapper lhs(_lhs, lhsStride);
             RhsMapper rhs(_rhs, rhsStride);
@@ -273,7 +273,7 @@ namespace Eigen {
             ei_declare_aligned_stack_constructed_variable(Scalar, blockA, sizeA, blocking.blockA());
             ei_declare_aligned_stack_constructed_variable(Scalar, blockB, sizeB, blocking.blockB());
 
-            Matrix <Scalar, SmallPanelWidth, SmallPanelWidth, RhsStorageOrder> triangularBuffer(
+            Matrix<Scalar, SmallPanelWidth, SmallPanelWidth, RhsStorageOrder> triangularBuffer(
                     (internal::constructor_without_unaligned_array_assert()));
             triangularBuffer.setZero();
             if ((Mode & ZeroDiag) == ZeroDiag)
@@ -281,9 +281,9 @@ namespace Eigen {
             else
                 triangularBuffer.diagonal().setOnes();
 
-            gebp_kernel <Scalar, Scalar, Index, ResMapper, Traits::mr, Traits::nr, ConjugateLhs, ConjugateRhs> gebp_kernel;
-            gemm_pack_lhs <Scalar, Index, LhsMapper, Traits::mr, Traits::LhsProgress, LhsStorageOrder> pack_lhs;
-            gemm_pack_rhs <Scalar, Index, RhsMapper, Traits::nr, RhsStorageOrder> pack_rhs;
+            gebp_kernel<Scalar, Scalar, Index, ResMapper, Traits::mr, Traits::nr, ConjugateLhs, ConjugateRhs> gebp_kernel;
+            gemm_pack_lhs<Scalar, Index, LhsMapper, Traits::mr, Traits::LhsProgress, LhsStorageOrder> pack_lhs;
+            gemm_pack_rhs<Scalar, Index, RhsMapper, Traits::nr, RhsStorageOrder> pack_rhs;
             gemm_pack_rhs<Scalar, Index, RhsMapper, Traits::nr, RhsStorageOrder, false, true> pack_rhs_panel;
 
             for (Index k2 = IsLower ? 0 : depth;

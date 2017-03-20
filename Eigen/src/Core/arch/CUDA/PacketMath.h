@@ -167,10 +167,10 @@ namespace Eigen {
           return make_double2(from[0], from[1]);
         }
 
-        template<> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE float4 ploaddup<float4>(const float*   from) {
+        template<> EIGEN_STRONG_INLINE float4 ploaddup<float4>(const float*   from) {
           return make_float4(from[0], from[0], from[1], from[1]);
         }
-        template<> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE double2 ploaddup<double2>(const double*  from) {
+        template<> EIGEN_STRONG_INLINE double2 ploaddup<double2>(const double*  from) {
           return make_double2(from[0], from[0]);
         }
 
@@ -291,7 +291,7 @@ namespace Eigen {
 
         EIGEN_DEVICE_FUNC inline void
         ptranspose(PacketBlock<float4,4>& kernel) {
-          float tmp = kernel.packet[0].y;
+          double tmp = kernel.packet[0].y;
           kernel.packet[0].y = kernel.packet[1].x;
           kernel.packet[1].x = tmp;
 

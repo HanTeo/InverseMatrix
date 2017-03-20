@@ -112,9 +112,6 @@ namespace Eigen {
     template<typename XprType, int BlockRows = Dynamic, int BlockCols = Dynamic, bool InnerPanel = false>
     class Block;
 
-    template<typename XprType, typename RowIndices, typename ColIndices>
-    class IndexedView;
-
     template<typename MatrixType, int Size = Dynamic>
     class VectorBlock;
 

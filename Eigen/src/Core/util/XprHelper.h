@@ -28,9 +28,7 @@ namespace Eigen {
 
         template<typename IndexDest, typename IndexSrc>
         EIGEN_DEVICE_FUNC
-        inline IndexDest
-
-        convert_index(const IndexSrc &idx) {
+        inline IndexDest convert_index(const IndexSrc &idx) {
             // for sizeof(IndexDest)>=sizeof(IndexSrc) compilers should be able to optimize this away:
             eigen_internal_assert(idx <= NumTraits<IndexDest>::highest() && "Index value to big for target type");
             return IndexDest(idx);
@@ -108,48 +106,28 @@ namespace Eigen {
         class variable_if_dynamic {
         public:
             EIGEN_EMPTY_STRUCT_CTOR(variable_if_dynamic)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            explicit variable_if_dynamic(T v) {
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE explicit variable_if_dynamic(T v) {
                 EIGEN_ONLY_USED_FOR_DEBUG(v);
                 eigen_assert(v == T(Value));
             }
 
-            EIGEN_DEVICE_FUNC static EIGEN_STRONG_INLINE
+            EIGEN_DEVICE_FUNC static EIGEN_STRONG_INLINE T value() { return T(Value); }
 
-            T value() { return T(Value); }
-
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-            operator T() const { return T(Value); }
-
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-            void setValue(T) {}
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void setValue(T) {}
         };
 
         template<typename T>
         class variable_if_dynamic<T, Dynamic> {
             T m_value;
-
             EIGEN_DEVICE_FUNC variable_if_dynamic() { eigen_assert(false); }
 
         public:
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE explicit variable_if_dynamic(T value) : m_value(value) {}
 
-            explicit variable_if_dynamic(T value) : m_value(value) {}
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE T value() const { return m_value; }
 
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-            T value() const { return m_value; }
-
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-            operator T() const { return m_value; }
-
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-            void setValue(T value) { m_value = value; }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void setValue(T value) { m_value = value; }
         };
 
 /** \internal like variable_if_dynamic but for DynamicIndex
@@ -158,40 +136,28 @@ namespace Eigen {
         class variable_if_dynamicindex {
         public:
             EIGEN_EMPTY_STRUCT_CTOR(variable_if_dynamicindex)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            explicit variable_if_dynamicindex(T v) {
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE explicit variable_if_dynamicindex(T v) {
                 EIGEN_ONLY_USED_FOR_DEBUG(v);
                 eigen_assert(v == T(Value));
             }
 
-            EIGEN_DEVICE_FUNC static EIGEN_STRONG_INLINE
+            EIGEN_DEVICE_FUNC static EIGEN_STRONG_INLINE T value() { return T(Value); }
 
-            T value() { return T(Value); }
-
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-            void setValue(T) {}
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void setValue(T) {}
         };
 
         template<typename T>
         class variable_if_dynamicindex<T, DynamicIndex> {
             T m_value;
-
             EIGEN_DEVICE_FUNC variable_if_dynamicindex() { eigen_assert(false); }
 
         public:
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE explicit variable_if_dynamicindex(T value) : m_value(value) {}
 
-            explicit variable_if_dynamicindex(T value) : m_value(value) {}
+            EIGEN_DEVICE_FUNC T EIGEN_STRONG_INLINE value() const { return m_value; }
 
-            EIGEN_DEVICE_FUNC T
-
-            EIGEN_STRONG_INLINE value() const { return m_value; }
-
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-            void setValue(T value) { m_value = value; }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void setValue(T value) { m_value = value; }
         };
 
         template<typename T>
@@ -238,34 +204,38 @@ namespace Eigen {
 
 #if EIGEN_MAX_STATIC_ALIGN_BYTES > 0
         template<int ArrayBytes, int AlignmentBytes,
-                 bool Match     =  bool((ArrayBytes%AlignmentBytes)==0),
-                 bool TryHalf   =  bool(EIGEN_MIN_ALIGN_BYTES<AlignmentBytes) >
-        struct compute_default_alignment_helper
-        {
-          enum { value = 0 };
-        };
-
-        template<int ArrayBytes, int AlignmentBytes, bool TryHalf>
-        struct compute_default_alignment_helper<ArrayBytes, AlignmentBytes, true, TryHalf> // Match
-        {
-          enum { value = AlignmentBytes };
-        };
-
-        template<int ArrayBytes, int AlignmentBytes>
-        struct compute_default_alignment_helper<ArrayBytes, AlignmentBytes, false, true> // Try-half
-        {
-          // current packet too large, try with an half-packet
-          enum { value = compute_default_alignment_helper<ArrayBytes, AlignmentBytes/2>::value };
-        };
-#else
-// If static alignment is disabled, no need to bother.
-// This also avoids a division by zero in "bool Match =  bool((ArrayBytes%AlignmentBytes)==0)"
-        template<int ArrayBytes, int AlignmentBytes>
+                bool Match = bool((ArrayBytes % AlignmentBytes) == 0),
+                bool TryHalf = bool(EIGEN_MIN_ALIGN_BYTES < AlignmentBytes)>
         struct compute_default_alignment_helper {
             enum {
                 value = 0
             };
         };
+
+        template<int ArrayBytes, int AlignmentBytes, bool TryHalf>
+        struct compute_default_alignment_helper<ArrayBytes, AlignmentBytes, true, TryHalf> // Match
+        {
+            enum {
+                value = AlignmentBytes
+            };
+        };
+
+        template<int ArrayBytes, int AlignmentBytes>
+        struct compute_default_alignment_helper<ArrayBytes, AlignmentBytes, false, true> // Try-half
+        {
+            // current packet too large, try with an half-packet
+            enum {
+                value = compute_default_alignment_helper<ArrayBytes, AlignmentBytes / 2>::value
+            };
+        };
+#else
+// If static alignment is disabled, no need to bother.
+// This also avoids a division by zero in "bool Match =  bool((ArrayBytes%AlignmentBytes)==0)"
+template<int ArrayBytes, int AlignmentBytes>
+struct compute_default_alignment_helper
+{
+  enum { value = 0 };
+};
 #endif
 
         template<typename T, int Size>
@@ -517,10 +487,7 @@ struct nested_eval {
 
 template<typename T>
 EIGEN_DEVICE_FUNC
-inline T
-*
-
-const_cast_ptr(const T *ptr) {
+inline T *const_cast_ptr(const T *ptr) {
     return const_cast<T *>(ptr);
 }
 
@@ -831,7 +798,7 @@ bool is_same_dense(const T1 &, const T2 &,
 
 // Internal helper defining the cost of a scalar division for the type T.
 // The default heuristic can be specialized for each scalar type and architecture.
-template<typename T, bool Vectorized = false, typename EnableIf = void>
+template<typename T, bool Vectorized = false, typename EnaleIf = void>
 struct scalar_div_cost {
     enum {
         value = 8 * NumTraits<T>::MulCost
@@ -839,12 +806,12 @@ struct scalar_div_cost {
 };
 
 template<typename T, bool Vectorized>
-struct scalar_div_cost<std::complex < T>, Vectorized> {
-enum {
-    value = 2 * scalar_div_cost<T>::value
-            + 6 * NumTraits<T>::MulCost
-            + 3 * NumTraits<T>::AddCost
-};
+struct scalar_div_cost<std::complex<T>, Vectorized> {
+    enum {
+        value = 2 * scalar_div_cost<T>::value
+                + 6 * NumTraits<T>::MulCost
+                + 3 * NumTraits<T>::AddCost
+    };
 };
 
 

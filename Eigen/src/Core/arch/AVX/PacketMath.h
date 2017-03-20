@@ -285,31 +285,19 @@ template<> struct packet_traits<int>    : default_packet_traits
 
         template<> EIGEN_STRONG_INLINE Packet8f
 
-        pmin<Packet8f>(const Packet8f &a, const Packet8f &b) {
-            // Arguments are swapped to match NaN propagation behavior of std::min.
-            return _mm256_min_ps(b, a);
-        }
+        pmin<Packet8f>(const Packet8f &a, const Packet8f &b) { return _mm256_min_ps(a, b); }
 
         template<> EIGEN_STRONG_INLINE Packet4d
 
-        pmin<Packet4d>(const Packet4d &a, const Packet4d &b) {
-            // Arguments are swapped to match NaN propagation behavior of std::min.
-            return _mm256_min_pd(b, a);
-        }
+        pmin<Packet4d>(const Packet4d &a, const Packet4d &b) { return _mm256_min_pd(a, b); }
 
         template<> EIGEN_STRONG_INLINE Packet8f
 
-        pmax<Packet8f>(const Packet8f &a, const Packet8f &b) {
-            // Arguments are swapped to match NaN propagation behavior of std::max.
-            return _mm256_max_ps(b, a);
-        }
+        pmax<Packet8f>(const Packet8f &a, const Packet8f &b) { return _mm256_max_ps(a, b); }
 
         template<> EIGEN_STRONG_INLINE Packet4d
 
-        pmax<Packet4d>(const Packet4d &a, const Packet4d &b) {
-            // Arguments are swapped to match NaN propagation behavior of std::max.
-            return _mm256_max_pd(b, a);
-        }
+        pmax<Packet4d>(const Packet4d &a, const Packet4d &b) { return _mm256_max_pd(a, b); }
 
         template<> EIGEN_STRONG_INLINE Packet8f
 
@@ -426,7 +414,6 @@ template<> struct packet_traits<int>    : default_packet_traits
             // then we can perform a consistent permutation on the global register to get everything in shape:
             return _mm256_permute_ps(tmp, _MM_SHUFFLE(3, 3, 2, 2));
         }
-
 // Loads 2 doubles from memory a returns the packet {a0, a0  a1, a1}
         template<> EIGEN_STRONG_INLINE Packet4d
 
@@ -541,7 +528,6 @@ template<> struct packet_traits<int>    : default_packet_traits
 
         template<>
         EIGEN_STRONG_INLINE void prefetch<int>(const int *addr) { _mm_prefetch((const char *) (addr), _MM_HINT_T0); }
-
 #endif
 
         template<>

@@ -113,7 +113,6 @@ BlockImpl &operator=(const T &) {
     EIGEN_STATIC_ASSERT(sizeof(T) == 0, THIS_SPARSE_BLOCK_SUBEXPRESSION_IS_READ_ONLY);
     return *this;
 }
-
 };
 
 
@@ -609,7 +608,6 @@ namespace internal {
     struct unary_evaluator<Block < ArgType, BlockRows, BlockCols, InnerPanel>, IteratorBased >
     : public evaluator_base <Block<ArgType, BlockRows, BlockCols, InnerPanel>> {
     class InnerVectorInnerIterator;
-
     class OuterVectorInnerIterator;
 
     public:
@@ -728,7 +726,6 @@ inline Index row() const { return EvalIterator::row() - m_block.startRow(); }
 inline Index col() const { return EvalIterator::col() - m_block.startCol(); }
 
 inline operator bool() const { return EvalIterator::operator bool() && EvalIterator::index() < m_end; }
-
 };
 
 template<typename ArgType, int BlockRows, int BlockCols, bool InnerPanel>
@@ -792,7 +789,6 @@ inline OuterVectorInnerIterator &operator++() {
 }
 
 inline operator bool() const { return m_outerPos < m_end; }
-
 };
 
 template<typename _Scalar, int _Options, typename _StorageIndex, int BlockRows, int BlockCols>
@@ -805,7 +801,6 @@ typedef Block<SparseMatrix<_Scalar, _Options, _StorageIndex>, BlockRows, BlockCo
 typedef evaluator <SparseCompressedBase<XprType>> Base;
 
 explicit unary_evaluator(const XprType &xpr) : Base(xpr) {}
-
 };
 
 template<typename _Scalar, int _Options, typename _StorageIndex, int BlockRows, int BlockCols>
@@ -817,7 +812,6 @@ typedef Block<const SparseMatrix <_Scalar, _Options, _StorageIndex>, BlockRows, 
 typedef evaluator <SparseCompressedBase<XprType>> Base;
 
 explicit unary_evaluator(const XprType &xpr) : Base(xpr) {}
-
 };
 
 } // end namespace internal

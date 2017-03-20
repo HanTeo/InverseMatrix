@@ -67,11 +67,8 @@ public:
             : m_xpr(xpr), m_functor(func) {}
 
     EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
     Index rows() const { return m_xpr.rows(); }
-
     EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
     Index cols() const { return m_xpr.cols(); }
 
     /** \returns the functor representing the unary operation */

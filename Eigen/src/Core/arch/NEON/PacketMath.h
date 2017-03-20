@@ -256,7 +256,6 @@ namespace Eigen {
             return vmlaq_f32(c, a, b);
 #endif
         }
-
 #endif
 
 // No FMA instruction for int, so use MLA unconditionally.

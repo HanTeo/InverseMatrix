@@ -12,7 +12,7 @@
 #ifndef EIGEN_QR_H
 #define EIGEN_QR_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \ingroup QR_Module
   *
@@ -211,6 +211,7 @@ namespace Eigen {
 #ifndef EIGEN_PARSED_BY_DOXYGEN
 
         template<typename RhsType, typename DstType>
+        EIGEN_DEVICE_FUNC
         void _solve_impl(const RhsType &rhs, DstType &dst) const;
 
 #endif
@@ -290,7 +291,7 @@ namespace Eigen {
             static void run(MatrixQR &mat, HCoeffs &hCoeffs, Index maxBlockSize = 32,
                             typename MatrixQR::Scalar *tempData = 0) {
                 typedef typename MatrixQR::Scalar Scalar;
-                typedef Block <MatrixQR, Dynamic, Dynamic> BlockType;
+                typedef Block<MatrixQR, Dynamic, Dynamic> BlockType;
 
                 Index rows = mat.rows();
                 Index cols = mat.cols();
@@ -357,7 +358,6 @@ namespace Eigen {
         dst.topRows(rank) = c.topRows(rank);
         dst.bottomRows(cols() - rank).setZero();
     }
-
 #endif
 
 /** Performs the QR factorization of the given matrix \a matrix. The result of

@@ -130,10 +130,7 @@ namespace Eigen {
   * \sa class CwiseNullaryOp, setRandom(Index), setRandom(Index,Index)
   */
     template<typename Derived>
-    EIGEN_DEVICE_FUNC inline Derived
-    &
-
-    DenseBase<Derived>::setRandom() {
+    inline Derived &DenseBase<Derived>::setRandom() {
         return *this = Random(rows(), cols());
     }
 
@@ -151,14 +148,10 @@ namespace Eigen {
   * \sa DenseBase::setRandom(), setRandom(Index,Index), class CwiseNullaryOp, DenseBase::Random()
   */
     template<typename Derived>
-    EIGEN_STRONG_INLINE Derived
-    &
-    PlainObjectBase<Derived>::setRandom(Index
-    newSize) {
-    resize(newSize);
-    return
-
-    setRandom();
+    EIGEN_STRONG_INLINE Derived &
+    PlainObjectBase<Derived>::setRandom(Index newSize) {
+        resize(newSize);
+        return setRandom();
 }
 
 /** Resizes to the given size, and sets all coefficients in this expression to random values.
@@ -177,19 +170,11 @@ namespace Eigen {
   * \sa DenseBase::setRandom(), setRandom(Index), class CwiseNullaryOp, DenseBase::Random()
   */
 template<typename Derived>
-EIGEN_STRONG_INLINE Derived
-&
-PlainObjectBase<Derived>::setRandom(Index
-rows,
-Index cols
-)
+    EIGEN_STRONG_INLINE Derived &
+    PlainObjectBase<Derived>::setRandom(Index rows, Index cols)
 {
-resize(rows, cols
-);
-return
-
-setRandom();
-
+    resize(rows, cols);
+    return setRandom();
 }
 
 } // end namespace Eigen

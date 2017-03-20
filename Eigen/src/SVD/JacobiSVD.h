@@ -341,7 +341,7 @@ namespace Eigen {
                 using std::sqrt;
                 using std::abs;
                 Scalar z;
-                JacobiRotation <Scalar> rot;
+                JacobiRotation<Scalar> rot;
                 RealScalar n = sqrt(numext::abs2(work_matrix.coeff(p, p)) + numext::abs2(work_matrix.coeff(q, p)));
 
                 const RealScalar considerAsZero = (std::numeric_limits<RealScalar>::min)();

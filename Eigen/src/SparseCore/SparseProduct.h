@@ -10,7 +10,7 @@
 #ifndef EIGEN_SPARSEPRODUCT_H
 #define EIGEN_SPARSEPRODUCT_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \returns an expression of the product of two sparse matrices.
   * By default a conservative product preserving the symbolic non zeros is performed.
@@ -132,7 +132,6 @@ static void run(DstXprType &dst, const SrcXprType &src,
                 const internal::sub_assign_op<typename DstXprType::Scalar, typename SrcXprType::Scalar> &) {
     generic_product_impl<Lhs, Rhs>::subTo(dst, src.lhs(), src.rhs());
 }
-
 };
 
 template<typename Lhs, typename Rhs, int Options>

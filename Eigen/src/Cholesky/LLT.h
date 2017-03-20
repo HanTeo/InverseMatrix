@@ -195,6 +195,7 @@ namespace Eigen {
 #ifndef EIGEN_PARSED_BY_DOXYGEN
 
         template<typename RhsType, typename DstType>
+        EIGEN_DEVICE_FUNC
         void _solve_impl(const RhsType &rhs, DstType &dst) const;
 
 #endif
@@ -244,7 +245,7 @@ namespace Eigen {
                 temp = sqrt(sigma) * vec;
 
                 for (Index i = 0; i < n; ++i) {
-                    JacobiRotation <Scalar> g;
+                    JacobiRotation<Scalar> g;
                     g.makeGivens(mat(i, i), -temp(i), &mat(i, i));
 
                     Index rs = n - i - 1;
@@ -299,7 +300,7 @@ namespace Eigen {
 
                     Block<MatrixType, Dynamic, 1> A21(mat, k + 1, k, rs, 1);
                     Block<MatrixType, 1, Dynamic> A10(mat, k, 0, 1, k);
-                    Block <MatrixType, Dynamic, Dynamic> A20(mat, k + 1, 0, rs, k);
+                    Block<MatrixType, Dynamic, Dynamic> A20(mat, k + 1, 0, rs, k);
 
                     RealScalar x = numext::real(mat.coeff(k, k));
                     if (k > 0) x -= A10.squaredNorm();
@@ -330,9 +331,9 @@ namespace Eigen {
                     //       A20 | A21 | A22
                     Index bs = (std::min)(blockSize, size - k);
                     Index rs = size - k - bs;
-                    Block <MatrixType, Dynamic, Dynamic> A11(m, k, k, bs, bs);
-                    Block <MatrixType, Dynamic, Dynamic> A21(m, k + bs, k, rs, bs);
-                    Block <MatrixType, Dynamic, Dynamic> A22(m, k + bs, k + bs, rs, rs);
+                    Block<MatrixType, Dynamic, Dynamic> A11(m, k, k, bs, bs);
+                    Block<MatrixType, Dynamic, Dynamic> A21(m, k + bs, k, rs, bs);
+                    Block<MatrixType, Dynamic, Dynamic> A22(m, k + bs, k + bs, rs, rs);
 
                     Index ret;
                     if ((ret = unblocked(A11)) >= 0) return k + ret;
@@ -357,25 +358,20 @@ namespace Eigen {
             typedef typename NumTraits<Scalar>::Real RealScalar;
 
             template<typename MatrixType>
-            static EIGEN_STRONG_INLINE Index
-            unblocked(MatrixType
-            & mat)
-            {
-                Transpose <MatrixType> matt(mat);
+            static EIGEN_STRONG_INLINE Index unblocked(MatrixType &mat) {
+                Transpose<MatrixType> matt(mat);
                 return llt_inplace<Scalar, Lower>::unblocked(matt);
             }
+
             template<typename MatrixType>
-            static EIGEN_STRONG_INLINE Index
-            blocked(MatrixType
-            & mat)
-            {
-                Transpose <MatrixType> matt(mat);
+            static EIGEN_STRONG_INLINE Index blocked(MatrixType &mat) {
+                Transpose<MatrixType> matt(mat);
                 return llt_inplace<Scalar, Lower>::blocked(matt);
             }
 
             template<typename MatrixType, typename VectorType>
             static Index rankUpdate(MatrixType &mat, const VectorType &vec, const RealScalar &sigma) {
-                Transpose <MatrixType> matt(mat);
+                Transpose<MatrixType> matt(mat);
                 return llt_inplace<Scalar, Lower>::rankUpdate(matt, vec.conjugate(), sigma);
             }
         };
@@ -476,7 +472,6 @@ namespace Eigen {
         dst = rhs;
         solveInPlace(dst);
     }
-
 #endif
 
 /** \internal use x = llt_object.solve(x);

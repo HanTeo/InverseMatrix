@@ -74,21 +74,13 @@ public:
     }
 
     EIGEN_DEVICE_FUNC
-            EIGEN_STRONG_INLINE
-
-    Index rows() const { return m_rows.value(); }
-
+    EIGEN_STRONG_INLINE Index rows() const { return m_rows.value(); }
     EIGEN_DEVICE_FUNC
-            EIGEN_STRONG_INLINE
-
-    Index cols() const { return m_cols.value(); }
+    EIGEN_STRONG_INLINE Index cols() const { return m_cols.value(); }
 
     /** \returns the functor representing the nullary operation */
     EIGEN_DEVICE_FUNC
-    const NullaryOp
-    &
-
-    functor() const { return m_functor; }
+    const NullaryOp &functor() const { return m_functor; }
 
 protected:
     const internal::variable_if_dynamic <Index, RowsAtCompileTime> m_rows;
@@ -112,9 +104,7 @@ protected:
   */
 template<typename Derived>
 template<typename CustomNullaryOp>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-CwiseNullaryOp<CustomNullaryOp, typename DenseBase<Derived>::PlainObject>
+EIGEN_STRONG_INLINE const CwiseNullaryOp<CustomNullaryOp, typename DenseBase<Derived>::PlainObject>
 DenseBase<Derived>::NullaryExpr(Index rows, Index cols, const CustomNullaryOp &func) {
     return CwiseNullaryOp<CustomNullaryOp, PlainObject>(rows, cols, func);
 }
@@ -139,9 +129,7 @@ DenseBase<Derived>::NullaryExpr(Index rows, Index cols, const CustomNullaryOp &f
   */
 template<typename Derived>
 template<typename CustomNullaryOp>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-CwiseNullaryOp<CustomNullaryOp, typename DenseBase<Derived>::PlainObject>
+EIGEN_STRONG_INLINE const CwiseNullaryOp<CustomNullaryOp, typename DenseBase<Derived>::PlainObject>
 DenseBase<Derived>::NullaryExpr(Index size, const CustomNullaryOp &func) {
     EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
     if (RowsAtCompileTime == 1) return CwiseNullaryOp<CustomNullaryOp, PlainObject>(1, size, func);
@@ -159,9 +147,7 @@ DenseBase<Derived>::NullaryExpr(Index size, const CustomNullaryOp &func) {
   */
 template<typename Derived>
 template<typename CustomNullaryOp>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-CwiseNullaryOp<CustomNullaryOp, typename DenseBase<Derived>::PlainObject>
+EIGEN_STRONG_INLINE const CwiseNullaryOp<CustomNullaryOp, typename DenseBase<Derived>::PlainObject>
 DenseBase<Derived>::NullaryExpr(const CustomNullaryOp &func) {
     return CwiseNullaryOp<CustomNullaryOp, PlainObject>(RowsAtCompileTime, ColsAtCompileTime, func);
 }
@@ -180,9 +166,7 @@ DenseBase<Derived>::NullaryExpr(const CustomNullaryOp &func) {
   * \sa class CwiseNullaryOp
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename DenseBase<Derived>::ConstantReturnType
+EIGEN_STRONG_INLINE const typename DenseBase<Derived>::ConstantReturnType
 DenseBase<Derived>::Constant(Index rows, Index cols, const Scalar &value) {
     return DenseBase<Derived>::NullaryExpr(rows, cols, internal::scalar_constant_op<Scalar>(value));
 }
@@ -203,9 +187,7 @@ DenseBase<Derived>::Constant(Index rows, Index cols, const Scalar &value) {
   * \sa class CwiseNullaryOp
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename DenseBase<Derived>::ConstantReturnType
+EIGEN_STRONG_INLINE const typename DenseBase<Derived>::ConstantReturnType
 DenseBase<Derived>::Constant(Index size, const Scalar &value) {
     return DenseBase<Derived>::NullaryExpr(size, internal::scalar_constant_op<Scalar>(value));
 }
@@ -220,9 +202,7 @@ DenseBase<Derived>::Constant(Index size, const Scalar &value) {
   * \sa class CwiseNullaryOp
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename DenseBase<Derived>::ConstantReturnType
+EIGEN_STRONG_INLINE const typename DenseBase<Derived>::ConstantReturnType
 DenseBase<Derived>::Constant(const Scalar &value) {
     EIGEN_STATIC_ASSERT_FIXED_SIZE(Derived)
     return DenseBase<Derived>::NullaryExpr(RowsAtCompileTime, ColsAtCompileTime,
@@ -234,9 +214,7 @@ DenseBase<Derived>::Constant(const Scalar &value) {
   * \sa LinSpaced(Index,Scalar,Scalar), setLinSpaced(Index,const Scalar&,const Scalar&)
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename DenseBase<Derived>::RandomAccessLinSpacedReturnType
+EIGEN_STRONG_INLINE const typename DenseBase<Derived>::RandomAccessLinSpacedReturnType
 DenseBase<Derived>::LinSpaced(Sequential_t, Index size, const Scalar &low, const Scalar &high) {
     EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
     return DenseBase<Derived>::NullaryExpr(size, internal::linspaced_op<Scalar, PacketScalar>(low, high, size));
@@ -247,9 +225,7 @@ DenseBase<Derived>::LinSpaced(Sequential_t, Index size, const Scalar &low, const
   * \sa LinSpaced(Scalar,Scalar)
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename DenseBase<Derived>::RandomAccessLinSpacedReturnType
+EIGEN_STRONG_INLINE const typename DenseBase<Derived>::RandomAccessLinSpacedReturnType
 DenseBase<Derived>::LinSpaced(Sequential_t, const Scalar &low, const Scalar &high) {
     EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
     EIGEN_STATIC_ASSERT_FIXED_SIZE(Derived)
@@ -282,9 +258,7 @@ DenseBase<Derived>::LinSpaced(Sequential_t, const Scalar &low, const Scalar &hig
   * \sa setLinSpaced(Index,const Scalar&,const Scalar&), CwiseNullaryOp
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename DenseBase<Derived>::RandomAccessLinSpacedReturnType
+EIGEN_STRONG_INLINE const typename DenseBase<Derived>::RandomAccessLinSpacedReturnType
 DenseBase<Derived>::LinSpaced(Index size, const Scalar &low, const Scalar &high) {
     EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
     return DenseBase<Derived>::NullaryExpr(size, internal::linspaced_op<Scalar, PacketScalar>(low, high, size));
@@ -295,9 +269,7 @@ DenseBase<Derived>::LinSpaced(Index size, const Scalar &low, const Scalar &high)
   * Special version for fixed size types which does not require the size parameter.
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename DenseBase<Derived>::RandomAccessLinSpacedReturnType
+EIGEN_STRONG_INLINE const typename DenseBase<Derived>::RandomAccessLinSpacedReturnType
 DenseBase<Derived>::LinSpaced(const Scalar &low, const Scalar &high) {
     EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
     EIGEN_STATIC_ASSERT_FIXED_SIZE(Derived)
@@ -308,7 +280,7 @@ DenseBase<Derived>::LinSpaced(const Scalar &low, const Scalar &high) {
 
 /** \returns true if all coefficients in this matrix are approximately equal to \a val, to within precision \a prec */
 template<typename Derived>
-EIGEN_DEVICE_FUNC bool DenseBase<Derived>::isApproxToConstant
+bool DenseBase<Derived>::isApproxToConstant
         (const Scalar &val, const RealScalar &prec) const {
     typename internal::nested_eval<Derived, 1>::type self(derived());
     for (Index j = 0; j < cols(); ++j)
@@ -322,7 +294,7 @@ EIGEN_DEVICE_FUNC bool DenseBase<Derived>::isApproxToConstant
   *
   * \returns true if all coefficients in this matrix are approximately equal to \a value, to within precision \a prec */
 template<typename Derived>
-EIGEN_DEVICE_FUNC bool DenseBase<Derived>::isConstant
+bool DenseBase<Derived>::isConstant
         (const Scalar &val, const RealScalar &prec) const {
     return isApproxToConstant(val, prec);
 }
@@ -332,9 +304,7 @@ EIGEN_DEVICE_FUNC bool DenseBase<Derived>::isConstant
   * \sa setConstant(), Constant(), class CwiseNullaryOp
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-void DenseBase<Derived>::fill(const Scalar &val) {
+EIGEN_STRONG_INLINE void DenseBase<Derived>::fill(const Scalar &val) {
     setConstant(val);
 }
 
@@ -343,9 +313,7 @@ void DenseBase<Derived>::fill(const Scalar &val) {
   * \sa fill(), setConstant(Index,const Scalar&), setConstant(Index,Index,const Scalar&), setZero(), setOnes(), Constant(), class CwiseNullaryOp, setZero(), setOnes()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-Derived &DenseBase<Derived>::setConstant(const Scalar &val) {
+EIGEN_STRONG_INLINE Derived &DenseBase<Derived>::setConstant(const Scalar &val) {
     return derived() = Constant(rows(), cols(), val);
 }
 
@@ -359,9 +327,7 @@ Derived &DenseBase<Derived>::setConstant(const Scalar &val) {
   * \sa MatrixBase::setConstant(const Scalar&), setConstant(Index,Index,const Scalar&), class CwiseNullaryOp, MatrixBase::Constant(const Scalar&)
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-Derived &
+EIGEN_STRONG_INLINE Derived &
 PlainObjectBase<Derived>::setConstant(Index size, const Scalar &val) {
     resize(size);
     return setConstant(val);
@@ -379,9 +345,7 @@ PlainObjectBase<Derived>::setConstant(Index size, const Scalar &val) {
   * \sa MatrixBase::setConstant(const Scalar&), setConstant(Index,const Scalar&), class CwiseNullaryOp, MatrixBase::Constant(const Scalar&)
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-Derived &
+EIGEN_STRONG_INLINE Derived &
 PlainObjectBase<Derived>::setConstant(Index rows, Index cols, const Scalar &val) {
     resize(rows, cols);
     return setConstant(val);
@@ -404,9 +368,7 @@ PlainObjectBase<Derived>::setConstant(Index rows, Index cols, const Scalar &val)
   * \sa LinSpaced(Index,const Scalar&,const Scalar&), CwiseNullaryOp
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-Derived &DenseBase<Derived>::setLinSpaced(Index newSize, const Scalar &low, const Scalar &high) {
+EIGEN_STRONG_INLINE Derived &DenseBase<Derived>::setLinSpaced(Index newSize, const Scalar &low, const Scalar &high) {
     EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
     return derived() = Derived::NullaryExpr(newSize, internal::linspaced_op<Scalar, PacketScalar>(low, high, newSize));
 }
@@ -425,9 +387,7 @@ Derived &DenseBase<Derived>::setLinSpaced(Index newSize, const Scalar &low, cons
   * \sa LinSpaced(Index,const Scalar&,const Scalar&), setLinSpaced(Index, const Scalar&, const Scalar&), CwiseNullaryOp
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-Derived &DenseBase<Derived>::setLinSpaced(const Scalar &low, const Scalar &high) {
+EIGEN_STRONG_INLINE Derived &DenseBase<Derived>::setLinSpaced(const Scalar &low, const Scalar &high) {
     EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
     return setLinSpaced(size(), low, high);
 }
@@ -449,9 +409,7 @@ Derived &DenseBase<Derived>::setLinSpaced(const Scalar &low, const Scalar &high)
   * \sa Zero(), Zero(Index)
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename DenseBase<Derived>::ConstantReturnType
+EIGEN_STRONG_INLINE const typename DenseBase<Derived>::ConstantReturnType
 DenseBase<Derived>::Zero(Index rows, Index cols) {
     return Constant(rows, cols, Scalar(0));
 }
@@ -473,9 +431,7 @@ DenseBase<Derived>::Zero(Index rows, Index cols) {
   * \sa Zero(), Zero(Index,Index)
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename DenseBase<Derived>::ConstantReturnType
+EIGEN_STRONG_INLINE const typename DenseBase<Derived>::ConstantReturnType
 DenseBase<Derived>::Zero(Index size) {
     return Constant(size, Scalar(0));
 }
@@ -491,9 +447,7 @@ DenseBase<Derived>::Zero(Index size) {
   * \sa Zero(Index), Zero(Index,Index)
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename DenseBase<Derived>::ConstantReturnType
+EIGEN_STRONG_INLINE const typename DenseBase<Derived>::ConstantReturnType
 DenseBase<Derived>::Zero() {
     return Constant(Scalar(0));
 }
@@ -507,7 +461,7 @@ DenseBase<Derived>::Zero() {
   * \sa class CwiseNullaryOp, Zero()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC bool DenseBase<Derived>::isZero(const RealScalar &prec) const {
+bool DenseBase<Derived>::isZero(const RealScalar &prec) const {
     typename internal::nested_eval<Derived, 1>::type self(derived());
     for (Index j = 0; j < cols(); ++j)
         for (Index i = 0; i < rows(); ++i)
@@ -524,9 +478,7 @@ EIGEN_DEVICE_FUNC bool DenseBase<Derived>::isZero(const RealScalar &prec) const 
   * \sa class CwiseNullaryOp, Zero()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-Derived &DenseBase<Derived>::setZero() {
+EIGEN_STRONG_INLINE Derived &DenseBase<Derived>::setZero() {
     return setConstant(Scalar(0));
 }
 
@@ -540,9 +492,7 @@ Derived &DenseBase<Derived>::setZero() {
   * \sa DenseBase::setZero(), setZero(Index,Index), class CwiseNullaryOp, DenseBase::Zero()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-Derived &
+EIGEN_STRONG_INLINE Derived &
 PlainObjectBase<Derived>::setZero(Index newSize) {
     resize(newSize);
     return setConstant(Scalar(0));
@@ -559,9 +509,7 @@ PlainObjectBase<Derived>::setZero(Index newSize) {
   * \sa DenseBase::setZero(), setZero(Index), class CwiseNullaryOp, DenseBase::Zero()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-Derived &
+EIGEN_STRONG_INLINE Derived &
 PlainObjectBase<Derived>::setZero(Index rows, Index cols) {
     resize(rows, cols);
     return setConstant(Scalar(0));
@@ -584,9 +532,7 @@ PlainObjectBase<Derived>::setZero(Index rows, Index cols) {
   * \sa Ones(), Ones(Index), isOnes(), class Ones
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename DenseBase<Derived>::ConstantReturnType
+EIGEN_STRONG_INLINE const typename DenseBase<Derived>::ConstantReturnType
 DenseBase<Derived>::Ones(Index rows, Index cols) {
     return Constant(rows, cols, Scalar(1));
 }
@@ -608,9 +554,7 @@ DenseBase<Derived>::Ones(Index rows, Index cols) {
   * \sa Ones(), Ones(Index,Index), isOnes(), class Ones
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename DenseBase<Derived>::ConstantReturnType
+EIGEN_STRONG_INLINE const typename DenseBase<Derived>::ConstantReturnType
 DenseBase<Derived>::Ones(Index newSize) {
     return Constant(newSize, Scalar(1));
 }
@@ -626,9 +570,7 @@ DenseBase<Derived>::Ones(Index newSize) {
   * \sa Ones(Index), Ones(Index,Index), isOnes(), class Ones
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename DenseBase<Derived>::ConstantReturnType
+EIGEN_STRONG_INLINE const typename DenseBase<Derived>::ConstantReturnType
 DenseBase<Derived>::Ones() {
     return Constant(Scalar(1));
 }
@@ -642,7 +584,7 @@ DenseBase<Derived>::Ones() {
   * \sa class CwiseNullaryOp, Ones()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC bool DenseBase<Derived>::isOnes
+bool DenseBase<Derived>::isOnes
         (const RealScalar &prec) const {
     return isApproxToConstant(Scalar(1), prec);
 }
@@ -655,9 +597,7 @@ EIGEN_DEVICE_FUNC bool DenseBase<Derived>::isOnes
   * \sa class CwiseNullaryOp, Ones()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-Derived &DenseBase<Derived>::setOnes() {
+EIGEN_STRONG_INLINE Derived &DenseBase<Derived>::setOnes() {
     return setConstant(Scalar(1));
 }
 
@@ -671,9 +611,7 @@ Derived &DenseBase<Derived>::setOnes() {
   * \sa MatrixBase::setOnes(), setOnes(Index,Index), class CwiseNullaryOp, MatrixBase::Ones()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-Derived &
+EIGEN_STRONG_INLINE Derived &
 PlainObjectBase<Derived>::setOnes(Index newSize) {
     resize(newSize);
     return setConstant(Scalar(1));
@@ -690,9 +628,7 @@ PlainObjectBase<Derived>::setOnes(Index newSize) {
   * \sa MatrixBase::setOnes(), setOnes(Index), class CwiseNullaryOp, MatrixBase::Ones()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-Derived &
+EIGEN_STRONG_INLINE Derived &
 PlainObjectBase<Derived>::setOnes(Index rows, Index cols) {
     resize(rows, cols);
     return setConstant(Scalar(1));
@@ -715,9 +651,7 @@ PlainObjectBase<Derived>::setOnes(Index rows, Index cols) {
   * \sa Identity(), setIdentity(), isIdentity()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename MatrixBase<Derived>::IdentityReturnType
+EIGEN_STRONG_INLINE const typename MatrixBase<Derived>::IdentityReturnType
 MatrixBase<Derived>::Identity(Index rows, Index cols) {
     return DenseBase<Derived>::NullaryExpr(rows, cols, internal::scalar_identity_op<Scalar>());
 }
@@ -733,9 +667,7 @@ MatrixBase<Derived>::Identity(Index rows, Index cols) {
   * \sa Identity(Index,Index), setIdentity(), isIdentity()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename MatrixBase<Derived>::IdentityReturnType
+EIGEN_STRONG_INLINE const typename MatrixBase<Derived>::IdentityReturnType
 MatrixBase<Derived>::Identity() {
     EIGEN_STATIC_ASSERT_FIXED_SIZE(Derived)
     return MatrixBase<Derived>::NullaryExpr(RowsAtCompileTime, ColsAtCompileTime,
@@ -774,9 +706,7 @@ namespace internal {
     template<typename Derived, bool Big = (Derived::SizeAtCompileTime >= 16)>
     struct setIdentity_impl {
         EIGEN_DEVICE_FUNC
-        static EIGEN_STRONG_INLINE
-
-        Derived &run(Derived &m) {
+        static EIGEN_STRONG_INLINE Derived &run(Derived &m) {
             return m = Derived::Identity(m.rows(), m.cols());
         }
     };
@@ -784,9 +714,7 @@ namespace internal {
     template<typename Derived>
     struct setIdentity_impl<Derived, true> {
         EIGEN_DEVICE_FUNC
-        static EIGEN_STRONG_INLINE
-
-        Derived &run(Derived &m) {
+        static EIGEN_STRONG_INLINE Derived &run(Derived &m) {
             m.setZero();
             const Index size = numext::mini(m.rows(), m.cols());
             for (Index i = 0; i < size; ++i) m.coeffRef(i, i) = typename Derived::Scalar(1);
@@ -804,9 +732,7 @@ namespace internal {
   * \sa class CwiseNullaryOp, Identity(), Identity(Index,Index), isIdentity()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-Derived &MatrixBase<Derived>::setIdentity() {
+EIGEN_STRONG_INLINE Derived &MatrixBase<Derived>::setIdentity() {
     return internal::setIdentity_impl<Derived>::run(derived());
 }
 
@@ -821,9 +747,7 @@ Derived &MatrixBase<Derived>::setIdentity() {
   * \sa MatrixBase::setIdentity(), class CwiseNullaryOp, MatrixBase::Identity()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-Derived &MatrixBase<Derived>::setIdentity(Index rows, Index cols) {
+EIGEN_STRONG_INLINE Derived &MatrixBase<Derived>::setIdentity(Index rows, Index cols) {
     derived().resize(rows, cols);
     return setIdentity();
 }
@@ -835,9 +759,8 @@ Derived &MatrixBase<Derived>::setIdentity(Index rows, Index cols) {
   * \sa MatrixBase::Unit(Index), MatrixBase::UnitX(), MatrixBase::UnitY(), MatrixBase::UnitZ(), MatrixBase::UnitW()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename MatrixBase<Derived>::BasisReturnType MatrixBase<Derived>::Unit(Index newSize, Index i) {
+EIGEN_STRONG_INLINE const typename MatrixBase<Derived>::BasisReturnType
+MatrixBase<Derived>::Unit(Index newSize, Index i) {
     EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
     return BasisReturnType(SquareMatrixType::Identity(newSize, newSize), i);
 }
@@ -851,9 +774,7 @@ const typename MatrixBase<Derived>::BasisReturnType MatrixBase<Derived>::Unit(In
   * \sa MatrixBase::Unit(Index,Index), MatrixBase::UnitX(), MatrixBase::UnitY(), MatrixBase::UnitZ(), MatrixBase::UnitW()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename MatrixBase<Derived>::BasisReturnType MatrixBase<Derived>::Unit(Index i) {
+EIGEN_STRONG_INLINE const typename MatrixBase<Derived>::BasisReturnType MatrixBase<Derived>::Unit(Index i) {
     EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
     return BasisReturnType(SquareMatrixType::Identity(), i);
 }
@@ -865,9 +786,8 @@ const typename MatrixBase<Derived>::BasisReturnType MatrixBase<Derived>::Unit(In
   * \sa MatrixBase::Unit(Index,Index), MatrixBase::Unit(Index), MatrixBase::UnitY(), MatrixBase::UnitZ(), MatrixBase::UnitW()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename MatrixBase<Derived>::BasisReturnType MatrixBase<Derived>::UnitX() { return Derived::Unit(0); }
+EIGEN_STRONG_INLINE const typename MatrixBase<Derived>::BasisReturnType
+MatrixBase<Derived>::UnitX() { return Derived::Unit(0); }
 
 /** \returns an expression of the Y axis unit vector (0,1{,0}^*)
   *
@@ -876,9 +796,8 @@ const typename MatrixBase<Derived>::BasisReturnType MatrixBase<Derived>::UnitX()
   * \sa MatrixBase::Unit(Index,Index), MatrixBase::Unit(Index), MatrixBase::UnitY(), MatrixBase::UnitZ(), MatrixBase::UnitW()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename MatrixBase<Derived>::BasisReturnType MatrixBase<Derived>::UnitY() { return Derived::Unit(1); }
+EIGEN_STRONG_INLINE const typename MatrixBase<Derived>::BasisReturnType
+MatrixBase<Derived>::UnitY() { return Derived::Unit(1); }
 
 /** \returns an expression of the Z axis unit vector (0,0,1{,0}^*)
   *
@@ -887,9 +806,8 @@ const typename MatrixBase<Derived>::BasisReturnType MatrixBase<Derived>::UnitY()
   * \sa MatrixBase::Unit(Index,Index), MatrixBase::Unit(Index), MatrixBase::UnitY(), MatrixBase::UnitZ(), MatrixBase::UnitW()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename MatrixBase<Derived>::BasisReturnType MatrixBase<Derived>::UnitZ() { return Derived::Unit(2); }
+EIGEN_STRONG_INLINE const typename MatrixBase<Derived>::BasisReturnType
+MatrixBase<Derived>::UnitZ() { return Derived::Unit(2); }
 
 /** \returns an expression of the W axis unit vector (0,0,0,1)
   *
@@ -898,9 +816,8 @@ const typename MatrixBase<Derived>::BasisReturnType MatrixBase<Derived>::UnitZ()
   * \sa MatrixBase::Unit(Index,Index), MatrixBase::Unit(Index), MatrixBase::UnitY(), MatrixBase::UnitZ(), MatrixBase::UnitW()
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const typename MatrixBase<Derived>::BasisReturnType MatrixBase<Derived>::UnitW() { return Derived::Unit(3); }
+EIGEN_STRONG_INLINE const typename MatrixBase<Derived>::BasisReturnType
+MatrixBase<Derived>::UnitW() { return Derived::Unit(3); }
 
 } // end namespace Eigen
 

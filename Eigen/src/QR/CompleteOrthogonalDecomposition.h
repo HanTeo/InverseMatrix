@@ -369,8 +369,7 @@ public:
 #ifndef EIGEN_PARSED_BY_DOXYGEN
 
     template<typename RhsType, typename DstType>
-    void _solve_impl(const RhsType &rhs, DstType &dst) const;
-
+    EIGEN_DEVICE_FUNC void _solve_impl(const RhsType &rhs, DstType &dst) const;
 #endif
 
 protected:
@@ -526,7 +525,6 @@ void CompleteOrthogonalDecomposition<_MatrixType>::_solve_impl(
     // Undo permutation to get x = P^{-1} * y.
     dst = colsPermutation() * dst;
 }
-
 #endif
 
 namespace internal {

@@ -41,81 +41,53 @@ public:
 
     EIGEN_DEVICE_FUNC explicit inline NestByValue(const ExpressionType &matrix) : m_expression(matrix) {}
 
-    EIGEN_DEVICE_FUNC inline Index
+    EIGEN_DEVICE_FUNC inline Index rows() const { return m_expression.rows(); }
 
-    rows() const { return m_expression.rows(); }
+    EIGEN_DEVICE_FUNC inline Index cols() const { return m_expression.cols(); }
 
-    EIGEN_DEVICE_FUNC inline Index
+    EIGEN_DEVICE_FUNC inline Index outerStride() const { return m_expression.outerStride(); }
 
-    cols() const { return m_expression.cols(); }
+    EIGEN_DEVICE_FUNC inline Index innerStride() const { return m_expression.innerStride(); }
 
-    EIGEN_DEVICE_FUNC inline Index
-
-    outerStride() const { return m_expression.outerStride(); }
-
-    EIGEN_DEVICE_FUNC inline Index
-
-    innerStride() const { return m_expression.innerStride(); }
-
-    EIGEN_DEVICE_FUNC inline const CoeffReturnType
-    coeff(Index
-    row,
-    Index col
-    ) const
+    EIGEN_DEVICE_FUNC inline const CoeffReturnType coeff(Index row, Index col) const
     {
         return m_expression.coeff(row, col);
     }
 
-    EIGEN_DEVICE_FUNC inline Scalar
-    &
-    coeffRef(Index
-    row,
-    Index col
-    )
+    EIGEN_DEVICE_FUNC inline Scalar &coeffRef(Index row, Index col)
     {
         return m_expression.const_cast_derived().coeffRef(row, col);
     }
 
-    EIGEN_DEVICE_FUNC inline const CoeffReturnType
-    coeff(Index
-    index) const
+    EIGEN_DEVICE_FUNC inline const CoeffReturnType coeff(Index index) const
     {
         return m_expression.coeff(index);
     }
 
-    EIGEN_DEVICE_FUNC inline Scalar
-    &
-    coeffRef(Index
-    index)
+    EIGEN_DEVICE_FUNC inline Scalar &coeffRef(Index index)
     {
         return m_expression.const_cast_derived().coeffRef(index);
     }
 
     template<int LoadMode>
-    EIGEN_DEVICE_FUNC inline const PacketScalar
-    packet(Index
-    row,
-    Index col
-    ) const
+    inline const PacketScalar packet(Index row, Index col) const
     {
         return m_expression.template packet<LoadMode>(row, col);
     }
 
     template<int LoadMode>
-    EIGEN_DEVICE_FUNC inline void writePacket(Index row, Index col, const PacketScalar &x) {
+    inline void writePacket(Index row, Index col, const PacketScalar &x) {
         m_expression.const_cast_derived().template writePacket<LoadMode>(row, col, x);
     }
 
     template<int LoadMode>
-    EIGEN_DEVICE_FUNC inline const PacketScalar
-    packet(Index
-    index) const
+    inline const PacketScalar packet(Index index) const
     {
         return m_expression.template packet<LoadMode>(index);
     }
 
     template<int LoadMode>
-    EIGEN_DEVICE_FUNC inline void writePacket(Index index, const PacketScalar &x) {
+    inline void writePacket(Index index, const PacketScalar &x) {
         m_expression.const_cast_derived().template writePacket<LoadMode>(index, x);
     }
 
@@ -128,10 +100,9 @@ protected:
 /** \returns an expression of the temporary version of *this.
   */
 template<typename Derived>
-EIGEN_DEVICE_FUNC inline const NestByValue<Derived>
-
+inline const NestByValue<Derived>
 DenseBase<Derived>::nestByValue() const {
-    return NestByValue < Derived > (derived());
+    return NestByValue<Derived>(derived());
 }
 
 } // end namespace Eigen

@@ -149,11 +149,11 @@ namespace Eigen {
         struct triangular_solver_selector<Lhs, Rhs, OnTheRight, Mode, CompleteUnrolling, 1> {
             static void run(const Lhs &lhs, Rhs &rhs) {
                 Transpose<const Lhs> trLhs(lhs);
-                Transpose <Rhs> trRhs(rhs);
+                Transpose<Rhs> trRhs(rhs);
 
-                triangular_solver_unroller<Transpose<const Lhs>, Transpose < Rhs>,
+                triangular_solver_unroller<Transpose<const Lhs>, Transpose<Rhs>,
                         ((Mode & Upper) == Upper ? Lower : Upper) | (Mode & UnitDiag),
-                        0, Rhs::SizeAtCompileTime > ::run(trLhs, trRhs);
+                        0, Rhs::SizeAtCompileTime>::run(trLhs, trRhs);
             }
         };
 
@@ -167,8 +167,7 @@ namespace Eigen {
 
     template<typename MatrixType, unsigned int Mode>
     template<int Side, typename OtherDerived>
-    EIGEN_DEVICE_FUNC void
-    TriangularViewImpl<MatrixType, Mode, Dense>::solveInPlace(const MatrixBase <OtherDerived> &_other) const {
+    void TriangularViewImpl<MatrixType, Mode, Dense>::solveInPlace(const MatrixBase <OtherDerived> &_other) const {
         OtherDerived &other = _other.const_cast_derived();
         eigen_assert(derived().cols() == derived().rows() && ((Side == OnTheLeft && derived().cols() == other.rows()) ||
                                                               (Side == OnTheRight &&
@@ -197,7 +196,6 @@ namespace Eigen {
     TriangularViewImpl<Derived, Mode, Dense>::solve(const MatrixBase <Other> &other) const {
         return internal::triangular_solve_retval<Side, TriangularViewType, Other>(derived(), other.derived());
     }
-
 #endif
 
     namespace internal {

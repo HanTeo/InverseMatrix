@@ -60,9 +60,7 @@ namespace Eigen {
         using Base::derived;
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        Index rowIndexByOuterInner(Index outer, Index inner) const {
+        EIGEN_STRONG_INLINE Index rowIndexByOuterInner(Index outer, Index inner) const {
             return int(Derived::RowsAtCompileTime) == 1 ? 0
                                                         : int(Derived::ColsAtCompileTime) == 1 ? inner
                                                                                                : int(Derived::Flags) &
@@ -71,9 +69,7 @@ namespace Eigen {
         }
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        Index colIndexByOuterInner(Index outer, Index inner) const {
+        EIGEN_STRONG_INLINE Index colIndexByOuterInner(Index outer, Index inner) const {
             return int(Derived::ColsAtCompileTime) == 1 ? 0
                                                         : int(Derived::RowsAtCompileTime) == 1 ? inner
                                                                                                : int(Derived::Flags) &
@@ -96,18 +92,14 @@ namespace Eigen {
           * \sa operator()(Index,Index) const, coeffRef(Index,Index), coeff(Index) const
           */
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        CoeffReturnType coeff(Index row, Index col) const {
+        EIGEN_STRONG_INLINE CoeffReturnType coeff(Index row, Index col) const {
             eigen_internal_assert(row >= 0 && row < rows()
                                   && col >= 0 && col < cols());
             return internal::evaluator<Derived>(derived()).coeff(row, col);
         }
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        CoeffReturnType coeffByOuterInner(Index outer, Index inner) const {
+        EIGEN_STRONG_INLINE CoeffReturnType coeffByOuterInner(Index outer, Index inner) const {
             return coeff(rowIndexByOuterInner(outer, inner),
                          colIndexByOuterInner(outer, inner));
         }
@@ -117,9 +109,7 @@ namespace Eigen {
           * \sa operator()(Index,Index), operator[](Index)
           */
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        CoeffReturnType operator()(Index row, Index col) const {
+        EIGEN_STRONG_INLINE CoeffReturnType operator()(Index row, Index col) const {
             eigen_assert(row >= 0 && row < rows()
                          && col >= 0 && col < cols());
             return coeff(row, col);
@@ -141,11 +131,9 @@ namespace Eigen {
           */
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        CoeffReturnType
+        EIGEN_STRONG_INLINE CoeffReturnType
         coeff(Index index) const {
-            EIGEN_STATIC_ASSERT(internal::evaluator<Derived>::Flags & LinearAccessBit,
+            EIGEN_STATIC_ASSERT(internal::evaluator<Derived>::Flags &LinearAccessBit,
                                 THIS_COEFFICIENT_ACCESSOR_TAKING_ONE_ACCESS_IS_ONLY_FOR_EXPRESSIONS_ALLOWING_LINEAR_ACCESS)
             eigen_internal_assert(index >= 0 && index < size());
             return internal::evaluator<Derived>(derived()).coeff(index);
@@ -161,9 +149,7 @@ namespace Eigen {
           */
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        CoeffReturnType
+        EIGEN_STRONG_INLINE CoeffReturnType
         operator[](Index index) const {
             EIGEN_STATIC_ASSERT(Derived::IsVectorAtCompileTime,
                                 THE_BRACKET_OPERATOR_IS_ONLY_FOR_VECTORS__USE_THE_PARENTHESIS_OPERATOR_INSTEAD)
@@ -182,9 +168,7 @@ namespace Eigen {
           */
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        CoeffReturnType
+        EIGEN_STRONG_INLINE CoeffReturnType
         operator()(Index index) const {
             eigen_assert(index >= 0 && index < size());
             return coeff(index);
@@ -193,17 +177,13 @@ namespace Eigen {
         /** equivalent to operator[](0).  */
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        CoeffReturnType
+        EIGEN_STRONG_INLINE CoeffReturnType
         x() const { return (*this)[0]; }
 
         /** equivalent to operator[](1).  */
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        CoeffReturnType
+        EIGEN_STRONG_INLINE CoeffReturnType
         y() const {
             EIGEN_STATIC_ASSERT(Derived::SizeAtCompileTime == -1 || Derived::SizeAtCompileTime >= 2,
                                 OUT_OF_RANGE_ACCESS);
@@ -213,9 +193,7 @@ namespace Eigen {
         /** equivalent to operator[](2).  */
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        CoeffReturnType
+        EIGEN_STRONG_INLINE CoeffReturnType
         z() const {
             EIGEN_STATIC_ASSERT(Derived::SizeAtCompileTime == -1 || Derived::SizeAtCompileTime >= 3,
                                 OUT_OF_RANGE_ACCESS);
@@ -225,9 +203,7 @@ namespace Eigen {
         /** equivalent to operator[](3).  */
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        CoeffReturnType
+        EIGEN_STRONG_INLINE CoeffReturnType
         w() const {
             EIGEN_STATIC_ASSERT(Derived::SizeAtCompileTime == -1 || Derived::SizeAtCompileTime >= 4,
                                 OUT_OF_RANGE_ACCESS);
@@ -245,12 +221,7 @@ namespace Eigen {
           */
 
         template<int LoadMode>
-        EIGEN_STRONG_INLINE PacketReturnType
-        packet(Index
-        row,
-        Index col
-        ) const
-        {
+        EIGEN_STRONG_INLINE PacketReturnType packet(Index row, Index col) const {
             typedef typename internal::packet_traits<Scalar>::type DefaultPacketType;
             eigen_internal_assert(row >= 0 && row < rows() && col >= 0 && col < cols());
             return internal::evaluator<Derived>(derived()).template packet<LoadMode, DefaultPacketType>(row, col);
@@ -259,12 +230,7 @@ namespace Eigen {
 
         /** \internal */
         template<int LoadMode>
-        EIGEN_STRONG_INLINE PacketReturnType
-        packetByOuterInner(Index
-        outer,
-        Index inner
-        ) const
-        {
+        EIGEN_STRONG_INLINE PacketReturnType packetByOuterInner(Index outer, Index inner) const {
             return packet<LoadMode>(rowIndexByOuterInner(outer, inner),
                                     colIndexByOuterInner(outer, inner));
         }
@@ -280,11 +246,8 @@ namespace Eigen {
           */
 
         template<int LoadMode>
-        EIGEN_STRONG_INLINE PacketReturnType
-        packet(Index
-        index) const
-        {
-            EIGEN_STATIC_ASSERT(internal::evaluator<Derived>::Flags & LinearAccessBit,
+        EIGEN_STRONG_INLINE PacketReturnType packet(Index index) const {
+            EIGEN_STATIC_ASSERT(internal::evaluator<Derived>::Flags &LinearAccessBit,
                                 THIS_COEFFICIENT_ACCESSOR_TAKING_ONE_ACCESS_IS_ONLY_FOR_EXPRESSIONS_ALLOWING_LINEAR_ACCESS)
             typedef typename internal::packet_traits<Scalar>::type DefaultPacketType;
             eigen_internal_assert(index >= 0 && index < size());
@@ -375,18 +338,14 @@ namespace Eigen {
           * \sa operator()(Index,Index), coeff(Index, Index) const, coeffRef(Index)
           */
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        Scalar &coeffRef(Index row, Index col) {
+        EIGEN_STRONG_INLINE Scalar &coeffRef(Index row, Index col) {
             eigen_internal_assert(row >= 0 && row < rows()
                                   && col >= 0 && col < cols());
             return internal::evaluator<Derived>(derived()).coeffRef(row, col);
         }
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        Scalar &
+        EIGEN_STRONG_INLINE Scalar &
         coeffRefByOuterInner(Index outer, Index inner) {
             return coeffRef(rowIndexByOuterInner(outer, inner),
                             colIndexByOuterInner(outer, inner));
@@ -398,9 +357,7 @@ namespace Eigen {
           */
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        Scalar &
+        EIGEN_STRONG_INLINE Scalar &
         operator()(Index row, Index col) {
             eigen_assert(row >= 0 && row < rows()
                          && col >= 0 && col < cols());
@@ -424,11 +381,9 @@ namespace Eigen {
           */
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        Scalar &
+        EIGEN_STRONG_INLINE Scalar &
         coeffRef(Index index) {
-            EIGEN_STATIC_ASSERT(internal::evaluator<Derived>::Flags & LinearAccessBit,
+            EIGEN_STATIC_ASSERT(internal::evaluator<Derived>::Flags &LinearAccessBit,
                                 THIS_COEFFICIENT_ACCESSOR_TAKING_ONE_ACCESS_IS_ONLY_FOR_EXPRESSIONS_ALLOWING_LINEAR_ACCESS)
             eigen_internal_assert(index >= 0 && index < size());
             return internal::evaluator<Derived>(derived()).coeffRef(index);
@@ -442,9 +397,7 @@ namespace Eigen {
           */
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        Scalar &
+        EIGEN_STRONG_INLINE Scalar &
         operator[](Index index) {
             EIGEN_STATIC_ASSERT(Derived::IsVectorAtCompileTime,
                                 THE_BRACKET_OPERATOR_IS_ONLY_FOR_VECTORS__USE_THE_PARENTHESIS_OPERATOR_INSTEAD)
@@ -462,9 +415,7 @@ namespace Eigen {
           */
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        Scalar &
+        EIGEN_STRONG_INLINE Scalar &
         operator()(Index index) {
             eigen_assert(index >= 0 && index < size());
             return coeffRef(index);
@@ -473,17 +424,13 @@ namespace Eigen {
         /** equivalent to operator[](0).  */
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        Scalar &
+        EIGEN_STRONG_INLINE Scalar &
         x() { return (*this)[0]; }
 
         /** equivalent to operator[](1).  */
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        Scalar &
+        EIGEN_STRONG_INLINE Scalar &
         y() {
             EIGEN_STATIC_ASSERT(Derived::SizeAtCompileTime == -1 || Derived::SizeAtCompileTime >= 2,
                                 OUT_OF_RANGE_ACCESS);
@@ -493,9 +440,7 @@ namespace Eigen {
         /** equivalent to operator[](2).  */
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        Scalar &
+        EIGEN_STRONG_INLINE Scalar &
         z() {
             EIGEN_STATIC_ASSERT(Derived::SizeAtCompileTime == -1 || Derived::SizeAtCompileTime >= 3,
                                 OUT_OF_RANGE_ACCESS);
@@ -505,9 +450,7 @@ namespace Eigen {
         /** equivalent to operator[](3).  */
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE
-
-        Scalar &
+        EIGEN_STRONG_INLINE Scalar &
         w() {
             EIGEN_STATIC_ASSERT(Derived::SizeAtCompileTime == -1 || Derived::SizeAtCompileTime >= 4,
                                 OUT_OF_RANGE_ACCESS);
@@ -544,9 +487,7 @@ namespace Eigen {
           * \sa outerStride(), rowStride(), colStride()
           */
         EIGEN_DEVICE_FUNC
-        inline Index
-
-        innerStride() const {
+        inline Index innerStride() const {
             return derived().innerStride();
         }
 
@@ -556,9 +497,7 @@ namespace Eigen {
           * \sa innerStride(), rowStride(), colStride()
           */
         EIGEN_DEVICE_FUNC
-        inline Index
-
-        outerStride() const {
+        inline Index outerStride() const {
             return derived().outerStride();
         }
 
@@ -572,9 +511,7 @@ namespace Eigen {
           * \sa innerStride(), outerStride(), colStride()
           */
         EIGEN_DEVICE_FUNC
-        inline Index
-
-        rowStride() const {
+        inline Index rowStride() const {
             return Derived::IsRowMajor ? outerStride() : innerStride();
         }
 
@@ -583,9 +520,7 @@ namespace Eigen {
           * \sa innerStride(), outerStride(), rowStride()
           */
         EIGEN_DEVICE_FUNC
-        inline Index
-
-        colStride() const {
+        inline Index colStride() const {
             return Derived::IsRowMajor ? innerStride() : outerStride();
         }
     };
@@ -620,9 +555,7 @@ namespace Eigen {
           * \sa outerStride(), rowStride(), colStride()
           */
         EIGEN_DEVICE_FUNC
-        inline Index
-
-        innerStride() const {
+        inline Index innerStride() const {
             return derived().innerStride();
         }
 
@@ -632,9 +565,7 @@ namespace Eigen {
           * \sa innerStride(), rowStride(), colStride()
           */
         EIGEN_DEVICE_FUNC
-        inline Index
-
-        outerStride() const {
+        inline Index outerStride() const {
             return derived().outerStride();
         }
 
@@ -648,9 +579,7 @@ namespace Eigen {
           * \sa innerStride(), outerStride(), colStride()
           */
         EIGEN_DEVICE_FUNC
-        inline Index
-
-        rowStride() const {
+        inline Index rowStride() const {
             return Derived::IsRowMajor ? outerStride() : innerStride();
         }
 
@@ -659,9 +588,7 @@ namespace Eigen {
           * \sa innerStride(), outerStride(), rowStride()
           */
         EIGEN_DEVICE_FUNC
-        inline Index
-
-        colStride() const {
+        inline Index colStride() const {
             return Derived::IsRowMajor ? innerStride() : outerStride();
         }
     };

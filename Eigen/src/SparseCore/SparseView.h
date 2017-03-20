@@ -68,7 +68,7 @@ public:
     Scalar reference() const { return m_reference; }
 
     RealScalar epsilon() const { return m_epsilon; }
-
+  
 protected:
     MatrixTypeNested m_matrix;
     Scalar m_reference;

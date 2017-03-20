@@ -31,25 +31,24 @@ namespace Eigen {
         struct scalar_sum_op : binary_op_base<LhsScalar, RhsScalar> {
             typedef typename ScalarBinaryOpTraits<LhsScalar, RhsScalar, scalar_sum_op>::ReturnType result_type;
 #ifndef EIGEN_SCALAR_BINARY_OP_PLUGIN
+
             EIGEN_EMPTY_STRUCT_CTOR(scalar_sum_op)
 #else
             scalar_sum_op() {
               EIGEN_SCALAR_BINARY_OP_PLUGIN
             }
 #endif
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
 
-            result_type operator()(const LhsScalar &a, const RhsScalar &b) const { return a + b; }
-
-            template<typename Packet>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            Packet packetOp(const Packet &a, const Packet &b) const { return internal::padd(a, b); }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const result_type
+            operator()(const LhsScalar &a, const RhsScalar &b) const { return a + b; }
 
             template<typename Packet>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Packet
+            packetOp(const Packet &a, const Packet &b) const { return internal::padd(a, b); }
 
-            result_type predux(const Packet &a) const { return internal::predux(a); }
+            template<typename Packet>
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const result_type
+            predux(const Packet &a) const { return internal::predux(a); }
         };
 
         template<typename LhsScalar, typename RhsScalar>
@@ -83,25 +82,24 @@ namespace Eigen {
         struct scalar_product_op : binary_op_base<LhsScalar, RhsScalar> {
             typedef typename ScalarBinaryOpTraits<LhsScalar, RhsScalar, scalar_product_op>::ReturnType result_type;
 #ifndef EIGEN_SCALAR_BINARY_OP_PLUGIN
+
             EIGEN_EMPTY_STRUCT_CTOR(scalar_product_op)
 #else
             scalar_product_op() {
               EIGEN_SCALAR_BINARY_OP_PLUGIN
             }
 #endif
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
 
-            result_type operator()(const LhsScalar &a, const RhsScalar &b) const { return a * b; }
-
-            template<typename Packet>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            Packet packetOp(const Packet &a, const Packet &b) const { return internal::pmul(a, b); }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const result_type
+            operator()(const LhsScalar &a, const RhsScalar &b) const { return a * b; }
 
             template<typename Packet>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Packet
+            packetOp(const Packet &a, const Packet &b) const { return internal::pmul(a, b); }
 
-            result_type predux(const Packet &a) const { return internal::predux_mul(a); }
+            template<typename Packet>
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const result_type
+            predux(const Packet &a) const { return internal::predux_mul(a); }
         };
 
         template<typename LhsScalar, typename RhsScalar>
@@ -129,16 +127,14 @@ namespace Eigen {
             typedef typename ScalarBinaryOpTraits<LhsScalar, RhsScalar, scalar_conj_product_op>::ReturnType result_type;
 
             EIGEN_EMPTY_STRUCT_CTOR(scalar_conj_product_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
 
-            result_type operator()(const LhsScalar &a, const RhsScalar &b) const {
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const result_type operator()(const LhsScalar &a,
+                                                                               const RhsScalar &b) const {
                 return conj_helper<LhsScalar, RhsScalar, Conj, false>().pmul(a, b);
             }
 
             template<typename Packet>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            Packet packetOp(const Packet &a, const Packet &b) const {
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Packet packetOp(const Packet &a, const Packet &b) const {
                 return conj_helper<Packet, Packet, Conj, false>().pmul(a, b);
             }
         };
@@ -159,20 +155,19 @@ namespace Eigen {
         template<typename LhsScalar, typename RhsScalar>
         struct scalar_min_op : binary_op_base<LhsScalar, RhsScalar> {
             typedef typename ScalarBinaryOpTraits<LhsScalar, RhsScalar, scalar_min_op>::ReturnType result_type;
+
             EIGEN_EMPTY_STRUCT_CTOR(scalar_min_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
 
-            result_type operator()(const LhsScalar &a, const RhsScalar &b) const { return numext::mini(a, b); }
-
-            template<typename Packet>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            Packet packetOp(const Packet &a, const Packet &b) const { return internal::pmin(a, b); }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const result_type
+            operator()(const LhsScalar &a, const RhsScalar &b) const { return numext::mini(a, b); }
 
             template<typename Packet>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Packet
+            packetOp(const Packet &a, const Packet &b) const { return internal::pmin(a, b); }
 
-            result_type predux(const Packet &a) const { return internal::predux_min(a); }
+            template<typename Packet>
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const result_type
+            predux(const Packet &a) const { return internal::predux_min(a); }
         };
 
         template<typename LhsScalar, typename RhsScalar>
@@ -191,20 +186,19 @@ namespace Eigen {
         template<typename LhsScalar, typename RhsScalar>
         struct scalar_max_op : binary_op_base<LhsScalar, RhsScalar> {
             typedef typename ScalarBinaryOpTraits<LhsScalar, RhsScalar, scalar_max_op>::ReturnType result_type;
+
             EIGEN_EMPTY_STRUCT_CTOR(scalar_max_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
 
-            result_type operator()(const LhsScalar &a, const RhsScalar &b) const { return numext::maxi(a, b); }
-
-            template<typename Packet>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            Packet packetOp(const Packet &a, const Packet &b) const { return internal::pmax(a, b); }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const result_type
+            operator()(const LhsScalar &a, const RhsScalar &b) const { return numext::maxi(a, b); }
 
             template<typename Packet>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Packet
+            packetOp(const Packet &a, const Packet &b) const { return internal::pmax(a, b); }
 
-            result_type predux(const Packet &a) const { return internal::predux_max(a); }
+            template<typename Packet>
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const result_type
+            predux(const Packet &a) const { return internal::predux_max(a); }
         };
 
         template<typename LhsScalar, typename RhsScalar>
@@ -239,64 +233,77 @@ namespace Eigen {
         template<typename LhsScalar, typename RhsScalar>
         struct scalar_cmp_op<LhsScalar, RhsScalar, cmp_EQ> : binary_op_base<LhsScalar, RhsScalar> {
             typedef bool result_type;
-            EIGEN_EMPTY_STRUCT_CTOR(scalar_cmp_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            bool operator()(const LhsScalar &a, const RhsScalar &b) const { return a == b; }
+            EIGEN_EMPTY_STRUCT_CTOR(scalar_cmp_op)
+
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE bool operator()(const LhsScalar &a, const RhsScalar &b) const {
+                return a == b;
+            }
         };
 
         template<typename LhsScalar, typename RhsScalar>
         struct scalar_cmp_op<LhsScalar, RhsScalar, cmp_LT> : binary_op_base<LhsScalar, RhsScalar> {
             typedef bool result_type;
-            EIGEN_EMPTY_STRUCT_CTOR(scalar_cmp_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            bool operator()(const LhsScalar &a, const RhsScalar &b) const { return a < b; }
+            EIGEN_EMPTY_STRUCT_CTOR(scalar_cmp_op)
+
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE bool operator()(const LhsScalar &a, const RhsScalar &b) const {
+                return a < b;
+            }
         };
 
         template<typename LhsScalar, typename RhsScalar>
         struct scalar_cmp_op<LhsScalar, RhsScalar, cmp_LE> : binary_op_base<LhsScalar, RhsScalar> {
             typedef bool result_type;
-            EIGEN_EMPTY_STRUCT_CTOR(scalar_cmp_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            bool operator()(const LhsScalar &a, const RhsScalar &b) const { return a <= b; }
+            EIGEN_EMPTY_STRUCT_CTOR(scalar_cmp_op)
+
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE bool operator()(const LhsScalar &a, const RhsScalar &b) const {
+                return a <= b;
+            }
         };
 
         template<typename LhsScalar, typename RhsScalar>
         struct scalar_cmp_op<LhsScalar, RhsScalar, cmp_GT> : binary_op_base<LhsScalar, RhsScalar> {
             typedef bool result_type;
-            EIGEN_EMPTY_STRUCT_CTOR(scalar_cmp_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            bool operator()(const LhsScalar &a, const RhsScalar &b) const { return a > b; }
+            EIGEN_EMPTY_STRUCT_CTOR(scalar_cmp_op)
+
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE bool operator()(const LhsScalar &a, const RhsScalar &b) const {
+                return a > b;
+            }
         };
 
         template<typename LhsScalar, typename RhsScalar>
         struct scalar_cmp_op<LhsScalar, RhsScalar, cmp_GE> : binary_op_base<LhsScalar, RhsScalar> {
             typedef bool result_type;
-            EIGEN_EMPTY_STRUCT_CTOR(scalar_cmp_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            bool operator()(const LhsScalar &a, const RhsScalar &b) const { return a >= b; }
+            EIGEN_EMPTY_STRUCT_CTOR(scalar_cmp_op)
+
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE bool operator()(const LhsScalar &a, const RhsScalar &b) const {
+                return a >= b;
+            }
         };
 
         template<typename LhsScalar, typename RhsScalar>
         struct scalar_cmp_op<LhsScalar, RhsScalar, cmp_UNORD> : binary_op_base<LhsScalar, RhsScalar> {
             typedef bool result_type;
-            EIGEN_EMPTY_STRUCT_CTOR(scalar_cmp_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            bool operator()(const LhsScalar &a, const RhsScalar &b) const { return !(a <= b || b <= a); }
+            EIGEN_EMPTY_STRUCT_CTOR(scalar_cmp_op)
+
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE bool
+            operator()(const LhsScalar &a, const RhsScalar &b) const { return !(a <= b || b <= a); }
         };
 
         template<typename LhsScalar, typename RhsScalar>
         struct scalar_cmp_op<LhsScalar, RhsScalar, cmp_NEQ> : binary_op_base<LhsScalar, RhsScalar> {
             typedef bool result_type;
-            EIGEN_EMPTY_STRUCT_CTOR(scalar_cmp_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            bool operator()(const LhsScalar &a, const RhsScalar &b) const { return a != b; }
+            EIGEN_EMPTY_STRUCT_CTOR(scalar_cmp_op)
+
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE bool operator()(const LhsScalar &a, const RhsScalar &b) const {
+                return a != b;
+            }
         };
 
 
@@ -309,9 +316,7 @@ namespace Eigen {
         struct scalar_hypot_op<Scalar, Scalar> : binary_op_base<Scalar, Scalar> {
             EIGEN_EMPTY_STRUCT_CTOR(scalar_hypot_op)
 //   typedef typename NumTraits<Scalar>::Real result_type;
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            Scalar operator()(const Scalar &_x, const Scalar &_y) const {
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Scalar operator()(const Scalar &_x, const Scalar &_y) const {
                 EIGEN_USING_STD_MATH(sqrt)
                 Scalar p, qp;
                 if (_x > _y) {
@@ -342,6 +347,7 @@ namespace Eigen {
         struct scalar_pow_op : binary_op_base<Scalar, Exponent> {
             typedef typename ScalarBinaryOpTraits<Scalar, Exponent, scalar_pow_op>::ReturnType result_type;
 #ifndef EIGEN_SCALAR_BINARY_OP_PLUGIN
+
             EIGEN_EMPTY_STRUCT_CTOR(scalar_pow_op)
 #else
             scalar_pow_op() {
@@ -350,10 +356,9 @@ namespace Eigen {
               EIGEN_SCALAR_BINARY_OP_PLUGIN
             }
 #endif
-            EIGEN_DEVICE_FUNC
-            inline result_type
 
-            operator()(const Scalar &a, const Exponent &b) const { return numext::pow(a, b); }
+            EIGEN_DEVICE_FUNC
+            inline result_type operator()(const Scalar &a, const Exponent &b) const { return numext::pow(a, b); }
         };
 
         template<typename Scalar, typename Exponent>
@@ -376,20 +381,20 @@ namespace Eigen {
         struct scalar_difference_op : binary_op_base<LhsScalar, RhsScalar> {
             typedef typename ScalarBinaryOpTraits<LhsScalar, RhsScalar, scalar_difference_op>::ReturnType result_type;
 #ifndef EIGEN_SCALAR_BINARY_OP_PLUGIN
+
             EIGEN_EMPTY_STRUCT_CTOR(scalar_difference_op)
 #else
             scalar_difference_op() {
               EIGEN_SCALAR_BINARY_OP_PLUGIN
             }
 #endif
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
 
-            result_type operator()(const LhsScalar &a, const RhsScalar &b) const { return a - b; }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const result_type
+            operator()(const LhsScalar &a, const RhsScalar &b) const { return a - b; }
 
             template<typename Packet>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            Packet packetOp(const Packet &a, const Packet &b) const { return internal::psub(a, b); }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Packet
+            packetOp(const Packet &a, const Packet &b) const { return internal::psub(a, b); }
         };
 
         template<typename LhsScalar, typename RhsScalar>
@@ -410,20 +415,20 @@ namespace Eigen {
         struct scalar_quotient_op : binary_op_base<LhsScalar, RhsScalar> {
             typedef typename ScalarBinaryOpTraits<LhsScalar, RhsScalar, scalar_quotient_op>::ReturnType result_type;
 #ifndef EIGEN_SCALAR_BINARY_OP_PLUGIN
+
             EIGEN_EMPTY_STRUCT_CTOR(scalar_quotient_op)
 #else
             scalar_quotient_op() {
               EIGEN_SCALAR_BINARY_OP_PLUGIN
             }
 #endif
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
 
-            result_type operator()(const LhsScalar &a, const RhsScalar &b) const { return a / b; }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const result_type
+            operator()(const LhsScalar &a, const RhsScalar &b) const { return a / b; }
 
             template<typename Packet>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            Packet packetOp(const Packet &a, const Packet &b) const { return internal::pdiv(a, b); }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Packet
+            packetOp(const Packet &a, const Packet &b) const { return internal::pdiv(a, b); }
         };
 
         template<typename LhsScalar, typename RhsScalar>
@@ -437,6 +442,7 @@ namespace Eigen {
         };
 
 
+
 /** \internal
   * \brief Template functor to compute the and of two booleans
   *
@@ -444,9 +450,8 @@ namespace Eigen {
   */
         struct scalar_boolean_and_op {
             EIGEN_EMPTY_STRUCT_CTOR(scalar_boolean_and_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            bool operator()(const bool &a, const bool &b) const { return a && b; }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE bool operator()(const bool &a, const bool &b) const { return a && b; }
         };
 
         template<>
@@ -464,9 +469,8 @@ namespace Eigen {
   */
         struct scalar_boolean_or_op {
             EIGEN_EMPTY_STRUCT_CTOR(scalar_boolean_or_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            bool operator()(const bool &a, const bool &b) const { return a || b; }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE bool operator()(const bool &a, const bool &b) const { return a || b; }
         };
 
         template<>
@@ -484,9 +488,8 @@ namespace Eigen {
  */
         struct scalar_boolean_xor_op {
             EIGEN_EMPTY_STRUCT_CTOR(scalar_boolean_xor_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            bool operator()(const bool &a, const bool &b) const { return a ^ b; }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE bool operator()(const bool &a, const bool &b) const { return a ^ b; }
         };
 
         template<>
@@ -514,14 +517,12 @@ namespace Eigen {
 
             bind1st_op(const first_argument_type &val) : m_value(val) {}
 
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            result_type operator()(const second_argument_type &b) const { return BinaryOp::operator()(m_value, b); }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const result_type
+            operator()(const second_argument_type &b) const { return BinaryOp::operator()(m_value, b); }
 
             template<typename Packet>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            Packet packetOp(const Packet &b) const { return BinaryOp::packetOp(internal::pset1<Packet>(m_value), b); }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Packet
+            packetOp(const Packet &b) const { return BinaryOp::packetOp(internal::pset1<Packet>(m_value), b); }
 
             first_argument_type m_value;
         };
@@ -540,14 +541,12 @@ namespace Eigen {
 
             bind2nd_op(const second_argument_type &val) : m_value(val) {}
 
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            result_type operator()(const first_argument_type &a) const { return BinaryOp::operator()(a, m_value); }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const result_type
+            operator()(const first_argument_type &a) const { return BinaryOp::operator()(a, m_value); }
 
             template<typename Packet>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            Packet packetOp(const Packet &a) const { return BinaryOp::packetOp(a, internal::pset1<Packet>(m_value)); }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Packet
+            packetOp(const Packet &a) const { return BinaryOp::packetOp(a, internal::pset1<Packet>(m_value)); }
 
             second_argument_type m_value;
         };

@@ -10,7 +10,7 @@
 #ifndef EIGEN_ROTATION2D_H
 #define EIGEN_ROTATION2D_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \geometry_module \ingroup Geometry_Module
   *
@@ -75,28 +75,19 @@ public:
     }
 
     /** \returns the rotation angle */
-    EIGEN_DEVICE_FUNC inline Scalar
-
-    angle() const { return m_angle; }
+    EIGEN_DEVICE_FUNC inline Scalar angle() const { return m_angle; }
 
     /** \returns a read-write reference to the rotation angle */
-    EIGEN_DEVICE_FUNC inline Scalar
-    &
-
-    angle() { return m_angle; }
+    EIGEN_DEVICE_FUNC inline Scalar &angle() { return m_angle; }
 
     /** \returns the rotation angle in [0,2pi] */
-    EIGEN_DEVICE_FUNC inline Scalar
-
-    smallestPositiveAngle() const {
+    EIGEN_DEVICE_FUNC inline Scalar smallestPositiveAngle() const {
         Scalar tmp = numext::fmod(m_angle, Scalar(2 * EIGEN_PI));
         return tmp < Scalar(0) ? tmp + Scalar(2 * EIGEN_PI) : tmp;
     }
 
     /** \returns the rotation angle in [-pi,pi] */
-    EIGEN_DEVICE_FUNC inline Scalar
-
-    smallestAngle() const {
+    EIGEN_DEVICE_FUNC inline Scalar smallestAngle() const {
         Scalar tmp = numext::fmod(m_angle, Scalar(2 * EIGEN_PI));
         if (tmp > Scalar(EIGEN_PI)) tmp -= Scalar(2 * EIGEN_PI);
         else if (tmp < -Scalar(EIGEN_PI)) tmp += Scalar(2 * EIGEN_PI);
@@ -104,38 +95,26 @@ public:
     }
 
     /** \returns the inverse rotation */
-    EIGEN_DEVICE_FUNC inline Rotation2D
-
-    inverse() const { return Rotation2D(-m_angle); }
+    EIGEN_DEVICE_FUNC inline Rotation2D inverse() const { return Rotation2D(-m_angle); }
 
     /** Concatenates two rotations */
-    EIGEN_DEVICE_FUNC inline Rotation2D
-
-    operator*(const Rotation2D &other) const { return Rotation2D(m_angle + other.m_angle); }
+    EIGEN_DEVICE_FUNC inline Rotation2D operator*(const Rotation2D &other) const {
+        return Rotation2D(m_angle + other.m_angle);
+    }
 
     /** Concatenates two rotations */
-    EIGEN_DEVICE_FUNC inline Rotation2D
-    &
-
-    operator*=(const Rotation2D &other) {
+    EIGEN_DEVICE_FUNC inline Rotation2D &operator*=(const Rotation2D &other) {
         m_angle += other.m_angle;
         return *this;
     }
 
     /** Applies the rotation to a 2D vector */
-    EIGEN_DEVICE_FUNC Vector2
-
-    operator*(const Vector2 &vec) const { return toRotationMatrix() * vec; }
+    EIGEN_DEVICE_FUNC Vector2 operator*(const Vector2 &vec) const { return toRotationMatrix() * vec; }
 
     template<typename Derived>
-    EIGEN_DEVICE_FUNC Rotation2D
-    &
+    EIGEN_DEVICE_FUNC Rotation2D &fromRotationMatrix(const MatrixBase <Derived> &m);
 
-    fromRotationMatrix(const MatrixBase <Derived> &m);
-
-    EIGEN_DEVICE_FUNC Matrix2
-
-    toRotationMatrix() const;
+    EIGEN_DEVICE_FUNC Matrix2 toRotationMatrix() const;
 
     /** Set \c *this from a 2x2 rotation matrix \a mat.
       * In other words, this function extract the rotation angle from the rotation matrix.
@@ -145,17 +124,12 @@ public:
       * \sa fromRotationMatrix()
       */
     template<typename Derived>
-    EIGEN_DEVICE_FUNC Rotation2D
-    &
-
-    operator=(const MatrixBase <Derived> &m) { return fromRotationMatrix(m.derived()); }
+    EIGEN_DEVICE_FUNC Rotation2D &operator=(const MatrixBase <Derived> &m) { return fromRotationMatrix(m.derived()); }
 
     /** \returns the spherical interpolation between \c *this and \a other using
       * parameter \a t. It is in fact equivalent to a linear interpolation.
       */
-    EIGEN_DEVICE_FUNC inline Rotation2D
-
-    slerp(const Scalar &t, const Rotation2D &other) const {
+    EIGEN_DEVICE_FUNC inline Rotation2D slerp(const Scalar &t, const Rotation2D &other) const {
         Scalar dist = Rotation2D(other.m_angle - m_angle).smallestAngle();
         return Rotation2D(m_angle + dist * t);
     }
@@ -167,7 +141,6 @@ public:
       */
     template<typename NewScalarType>
     EIGEN_DEVICE_FUNC inline typename internal::cast_return_type<Rotation2D, Rotation2D<NewScalarType> >::type
-
     cast() const { return typename internal::cast_return_type<Rotation2D, Rotation2D<NewScalarType> >::type(*this); }
 
     /** Copy constructor with scalar type conversion */
@@ -176,9 +149,7 @@ public:
         m_angle = Scalar(other.angle());
     }
 
-    EIGEN_DEVICE_FUNC static inline Rotation2D
-
-    Identity() { return Rotation2D(0); }
+    EIGEN_DEVICE_FUNC static inline Rotation2D Identity() { return Rotation2D(0); }
 
     /** \returns \c true if \c *this is approximately equal to \a other, within the precision
       * determined by \a prec.
@@ -188,7 +159,7 @@ public:
                                     const typename NumTraits<Scalar>::Real &prec = NumTraits<Scalar>::dummy_precision()) const {
         return internal::isApprox(m_angle, other.m_angle, prec);
     }
-
+  
 };
 
 /** \ingroup Geometry_Module
@@ -204,10 +175,7 @@ typedef Rotation2D<double> Rotation2Dd;
   */
 template<typename Scalar>
 template<typename Derived>
-EIGEN_DEVICE_FUNC Rotation2D<Scalar>
-&
-
-Rotation2D<Scalar>::fromRotationMatrix(const MatrixBase <Derived> &mat) {
+EIGEN_DEVICE_FUNC Rotation2D<Scalar> &Rotation2D<Scalar>::fromRotationMatrix(const MatrixBase <Derived> &mat) {
     EIGEN_USING_STD_MATH(atan2)
     EIGEN_STATIC_ASSERT(Derived::RowsAtCompileTime == 2 && Derived::ColsAtCompileTime == 2,
                         YOU_MADE_A_PROGRAMMING_MISTAKE)
@@ -219,9 +187,7 @@ Rotation2D<Scalar>::fromRotationMatrix(const MatrixBase <Derived> &mat) {
   */
 template<typename Scalar>
 typename Rotation2D<Scalar>::Matrix2
-        EIGEN_DEVICE_FUNC
-
-Rotation2D<Scalar>::toRotationMatrix(void) const {
+EIGEN_DEVICE_FUNC Rotation2D<Scalar>::toRotationMatrix(void) const {
     EIGEN_USING_STD_MATH(sin)
     EIGEN_USING_STD_MATH(cos)
     Scalar sinA = sin(m_angle);

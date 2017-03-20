@@ -90,7 +90,7 @@ namespace Eigen {
   */
     template<typename Derived>
     template<typename OtherDerived>
-    EIGEN_DEVICE_FUNC bool DenseBase<Derived>::isApprox(
+    bool DenseBase<Derived>::isApprox(
             const DenseBase <OtherDerived> &other,
             const RealScalar &prec
     ) const {
@@ -111,7 +111,7 @@ namespace Eigen {
   * \sa isApprox(), isMuchSmallerThan(const DenseBase<OtherDerived>&, RealScalar) const
   */
     template<typename Derived>
-    EIGEN_DEVICE_FUNC bool DenseBase<Derived>::isMuchSmallerThan(
+    bool DenseBase<Derived>::isMuchSmallerThan(
             const typename NumTraits<Scalar>::Real &other,
             const RealScalar &prec
     ) const {
@@ -130,7 +130,7 @@ namespace Eigen {
   */
     template<typename Derived>
     template<typename OtherDerived>
-    EIGEN_DEVICE_FUNC bool DenseBase<Derived>::isMuchSmallerThan(
+    bool DenseBase<Derived>::isMuchSmallerThan(
             const DenseBase <OtherDerived> &other,
             const RealScalar &prec
     ) const {

@@ -66,7 +66,7 @@ namespace Eigen {
     template<typename XprType, int BlockRows = Dynamic, int BlockCols = Dynamic, bool InnerPanel = false,
             bool HasDirectAccess = internal::has_direct_access<XprType>::ret>
     class BlockImpl_dense;
-
+         
 } // end namespace internal
 
 template<typename XprType, int BlockRows, int BlockCols, bool InnerPanel, typename StorageKind>
@@ -166,7 +166,6 @@ public:
     EIGEN_DEVICE_FUNC inline BlockImpl(XprType &xpr, Index i) : Impl(xpr, i) {}
 
     EIGEN_DEVICE_FUNC inline BlockImpl(XprType &xpr, Index startRow, Index startCol) : Impl(xpr, startRow, startCol) {}
-
     EIGEN_DEVICE_FUNC
     inline BlockImpl(XprType &xpr, Index startRow, Index startCol, Index blockRows, Index blockCols)
             : Impl(xpr, startRow, startCol, blockRows, blockCols) {}
@@ -218,70 +217,41 @@ namespace internal {
                 : m_xpr(xpr), m_startRow(startRow), m_startCol(startCol),
                   m_blockRows(blockRows), m_blockCols(blockCols) {}
 
-        EIGEN_DEVICE_FUNC inline Index
+        EIGEN_DEVICE_FUNC inline Index rows() const { return m_blockRows.value(); }
 
-        rows() const { return m_blockRows.value(); }
-
-        EIGEN_DEVICE_FUNC inline Index
-
-        cols() const { return m_blockCols.value(); }
+        EIGEN_DEVICE_FUNC inline Index cols() const { return m_blockCols.value(); }
 
         EIGEN_DEVICE_FUNC
-        inline Scalar
-        &
-        coeffRef(Index
-        rowId,
-        Index colId
-        )
-        {
+        inline Scalar &coeffRef(Index rowId, Index colId) {
             EIGEN_STATIC_ASSERT_LVALUE(XprType)
             return m_xpr.coeffRef(rowId + m_startRow.value(), colId + m_startCol.value());
         }
 
         EIGEN_DEVICE_FUNC
-        inline const Scalar
-        &
-        coeffRef(Index
-        rowId,
-        Index colId
-        ) const
-        {
+        inline const Scalar &coeffRef(Index rowId, Index colId) const {
             return m_xpr.derived().coeffRef(rowId + m_startRow.value(), colId + m_startCol.value());
         }
 
         EIGEN_DEVICE_FUNC
-                EIGEN_STRONG_INLINE const
-
-        CoeffReturnType coeff(Index rowId, Index colId) const {
+        EIGEN_STRONG_INLINE const CoeffReturnType coeff(Index rowId, Index colId) const {
             return m_xpr.coeff(rowId + m_startRow.value(), colId + m_startCol.value());
         }
 
         EIGEN_DEVICE_FUNC
-        inline Scalar
-        &
-        coeffRef(Index
-        index)
-        {
+        inline Scalar &coeffRef(Index index) {
             EIGEN_STATIC_ASSERT_LVALUE(XprType)
             return m_xpr.coeffRef(m_startRow.value() + (RowsAtCompileTime == 1 ? 0 : index),
                                   m_startCol.value() + (RowsAtCompileTime == 1 ? index : 0));
         }
 
         EIGEN_DEVICE_FUNC
-        inline const Scalar
-        &
-        coeffRef(Index
-        index) const
-        {
+        inline const Scalar &coeffRef(Index index) const {
             return m_xpr.coeffRef(m_startRow.value() + (RowsAtCompileTime == 1 ? 0 : index),
                                   m_startCol.value() + (RowsAtCompileTime == 1 ? index : 0));
         }
 
         EIGEN_DEVICE_FUNC
-        inline const CoeffReturnType
-        coeff(Index
-        index) const
-        {
+        inline const CoeffReturnType coeff(Index index) const {
             return m_xpr.coeff(m_startRow.value() + (RowsAtCompileTime == 1 ? 0 : index),
                                m_startCol.value() + (RowsAtCompileTime == 1 ? index : 0));
         }
@@ -318,30 +288,20 @@ namespace internal {
 #endif
 
         EIGEN_DEVICE_FUNC
-        const typename internal::remove_all<XprTypeNested>::type
-        &
-
-        nestedExpression() const {
+        const typename internal::remove_all<XprTypeNested>::type &nestedExpression() const {
             return m_xpr;
         }
 
         EIGEN_DEVICE_FUNC
-                XprType
-        &
-
-        nestedExpression() { return m_xpr; }
+        XprType &nestedExpression() { return m_xpr; }
 
         EIGEN_DEVICE_FUNC
-                StorageIndex
-
-        startRow() const {
+        StorageIndex startRow() const {
             return m_startRow.value();
         }
 
         EIGEN_DEVICE_FUNC
-                StorageIndex
-
-        startCol() const {
+        StorageIndex startCol() const {
             return m_startCol.value();
         }
 
@@ -410,24 +370,16 @@ namespace internal {
         }
 
         EIGEN_DEVICE_FUNC
-        const typename internal::remove_all<XprTypeNested>::type
-        &
-
-        nestedExpression() const {
+        const typename internal::remove_all<XprTypeNested>::type &nestedExpression() const {
             return m_xpr;
         }
 
         EIGEN_DEVICE_FUNC
-                XprType
-        &
-
-        nestedExpression() { return m_xpr; }
+        XprType &nestedExpression() { return m_xpr; }
 
         /** \sa MapBase::innerStride() */
         EIGEN_DEVICE_FUNC
-        inline Index
-
-        innerStride() const {
+        inline Index innerStride() const {
             return internal::traits<BlockType>::HasSameStorageOrderAsXprType
                    ? m_xpr.innerStride()
                    : m_xpr.outerStride();
@@ -435,23 +387,17 @@ namespace internal {
 
         /** \sa MapBase::outerStride() */
         EIGEN_DEVICE_FUNC
-        inline Index
-
-        outerStride() const {
+        inline Index outerStride() const {
             return m_outerStride;
         }
 
         EIGEN_DEVICE_FUNC
-                StorageIndex
-
-        startRow() const {
+        StorageIndex startRow() const {
             return m_startRow.value();
         }
 
         EIGEN_DEVICE_FUNC
-                StorageIndex
-
-        startCol() const {
+        StorageIndex startCol() const {
             return m_startCol.value();
         }
 
@@ -462,7 +408,6 @@ namespace internal {
 #endif
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
         /** \internal used by allowAligned() */
         EIGEN_DEVICE_FUNC
         inline BlockImpl_dense(XprType &xpr, const Scalar *data, Index blockRows, Index blockCols)

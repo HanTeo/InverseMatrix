@@ -10,7 +10,7 @@
 #ifndef EIGEN_SCALING_H
 #define EIGEN_SCALING_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \geometry_module \ingroup Geometry_Module
   *
@@ -126,10 +126,8 @@ namespace Eigen {
 
 /** Constructs a uniform scaling from scale factor \a s */
     inline UniformScaling<float> Scaling(float s) { return UniformScaling<float>(s); }
-
 /** Constructs a uniform scaling from scale factor \a s */
     inline UniformScaling<double> Scaling(double s) { return UniformScaling<double>(s); }
-
 /** Constructs a uniform scaling from scale factor \a s */
     template<typename RealScalar>
     inline UniformScaling<std::complex<RealScalar> >
@@ -140,7 +138,6 @@ namespace Eigen {
     inline DiagonalMatrix<Scalar, 2> Scaling(const Scalar &sx, const Scalar &sy) {
         return DiagonalMatrix<Scalar, 2>(sx, sy);
     }
-
 /** Constructs a 3D axis aligned scaling */
     template<typename Scalar>
     inline DiagonalMatrix<Scalar, 3>

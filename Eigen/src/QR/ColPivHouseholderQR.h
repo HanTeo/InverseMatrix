@@ -315,7 +315,6 @@ public:
     }
 
     inline Index rows() const { return m_qr.rows(); }
-
     inline Index cols() const { return m_qr.cols(); }
 
     /** \returns a const reference to the vector of Householder coefficients used to represent the factor \c Q.
@@ -401,8 +400,8 @@ public:
     }
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
     template<typename RhsType, typename DstType>
+    EIGEN_DEVICE_FUNC
     void _solve_impl(const RhsType &rhs, DstType &dst) const;
 
 #endif
@@ -563,7 +562,6 @@ void ColPivHouseholderQR<MatrixType>::computeInPlace() {
 }
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
 template<typename _MatrixType>
 template<typename RhsType, typename DstType>
 void ColPivHouseholderQR<_MatrixType>::_solve_impl(const RhsType &rhs, DstType &dst) const {
@@ -591,7 +589,6 @@ void ColPivHouseholderQR<_MatrixType>::_solve_impl(const RhsType &rhs, DstType &
     for (Index i = 0; i < nonzero_pivots; ++i) dst.row(m_colsPermutation.indices().coeff(i)) = c.row(i);
     for (Index i = nonzero_pivots; i < cols(); ++i) dst.row(m_colsPermutation.indices().coeff(i)).setZero();
 }
-
 #endif
 
 namespace internal {

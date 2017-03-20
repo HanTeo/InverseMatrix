@@ -97,21 +97,15 @@ public:
     typedef typename Base::PointerType PointerType;
     typedef PointerType PointerArgType;
     EIGEN_DEVICE_FUNC
-    inline PointerType
-    cast_to_pointer_type(PointerArgType
-    ptr) { return ptr; }
+    inline PointerType cast_to_pointer_type(PointerArgType ptr) { return ptr; }
 
     EIGEN_DEVICE_FUNC
-    inline Index
-
-    innerStride() const {
+    inline Index innerStride() const {
         return StrideType::InnerStrideAtCompileTime != 0 ? m_stride.inner() : 1;
     }
 
     EIGEN_DEVICE_FUNC
-    inline Index
-
-    outerStride() const {
+    inline Index outerStride() const {
         return StrideType::OuterStrideAtCompileTime != 0 ? m_stride.outer()
                                                          : IsVectorAtCompileTime ? this->size()
                                                                                  : int(Flags) & RowMajorBit

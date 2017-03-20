@@ -41,48 +41,27 @@ namespace Eigen {
 
         /** \returns a reference to the derived object */
         EIGEN_DEVICE_FUNC
-                Derived
-        &
-
-        derived() { return *static_cast<Derived *>(this); }
-
+        Derived &derived() { return *static_cast<Derived *>(this); }
         /** \returns a const reference to the derived object */
         EIGEN_DEVICE_FUNC
-        const Derived
-        &
-
-        derived() const { return *static_cast<const Derived *>(this); }
+        const Derived &derived() const { return *static_cast<const Derived *>(this); }
 
         EIGEN_DEVICE_FUNC
-        inline Derived
-        &
-
-        const_cast_derived() const { return *static_cast<Derived *>(const_cast<EigenBase *>(this)); }
+        inline Derived &const_cast_derived() const { return *static_cast<Derived *>(const_cast<EigenBase *>(this)); }
 
         EIGEN_DEVICE_FUNC
-        inline const Derived
-        &
-
-        const_derived() const { return *static_cast<const Derived *>(this); }
+        inline const Derived &const_derived() const { return *static_cast<const Derived *>(this); }
 
         /** \returns the number of rows. \sa cols(), RowsAtCompileTime */
         EIGEN_DEVICE_FUNC
-        inline Index
-
-        rows() const { return derived().rows(); }
-
+        inline Index rows() const { return derived().rows(); }
         /** \returns the number of columns. \sa rows(), ColsAtCompileTime*/
         EIGEN_DEVICE_FUNC
-        inline Index
-
-        cols() const { return derived().cols(); }
-
+        inline Index cols() const { return derived().cols(); }
         /** \returns the number of coefficients, which is rows()*cols().
           * \sa rows(), cols(), SizeAtCompileTime. */
         EIGEN_DEVICE_FUNC
-        inline Index
-
-        size() const { return rows() * cols(); }
+        inline Index size() const { return rows() * cols(); }
 
         /** \internal Don't use it, but do the equivalent: \code dst = *this; \endcode */
         template<typename Dest>
@@ -143,33 +122,21 @@ namespace Eigen {
   */
     template<typename Derived>
     template<typename OtherDerived>
-    EIGEN_DEVICE_FUNC
-            Derived
-    &
-
-    DenseBase<Derived>::operator=(const EigenBase<OtherDerived> &other) {
+    Derived &DenseBase<Derived>::operator=(const EigenBase<OtherDerived> &other) {
         call_assignment(derived(), other.derived());
         return derived();
     }
 
     template<typename Derived>
     template<typename OtherDerived>
-    EIGEN_DEVICE_FUNC
-            Derived
-    &
-
-    DenseBase<Derived>::operator+=(const EigenBase<OtherDerived> &other) {
+    Derived &DenseBase<Derived>::operator+=(const EigenBase<OtherDerived> &other) {
         call_assignment(derived(), other.derived(), internal::add_assign_op<Scalar, typename OtherDerived::Scalar>());
         return derived();
     }
 
     template<typename Derived>
     template<typename OtherDerived>
-    EIGEN_DEVICE_FUNC
-            Derived
-    &
-
-    DenseBase<Derived>::operator-=(const EigenBase<OtherDerived> &other) {
+    Derived &DenseBase<Derived>::operator-=(const EigenBase<OtherDerived> &other) {
         call_assignment(derived(), other.derived(), internal::sub_assign_op<Scalar, typename OtherDerived::Scalar>());
         return derived();
     }

@@ -26,10 +26,9 @@ namespace Eigen {
             static void run(Scalar *mat, Index stride, const UType &u, const VType &v, const Scalar &alpha) {
                 const Index size = u.size();
                 for (Index i = 0; i < size; ++i) {
-                    Map < Matrix < Scalar, Dynamic, 1 > > (mat + stride * i + i, size - i) +=
-                                                            (numext::conj(alpha) * numext::conj(u.coeff(i))) *
-                                                            v.tail(size - i)
-                                                            + (alpha * numext::conj(v.coeff(i))) * u.tail(size - i);
+                    Map<Matrix<Scalar, Dynamic, 1> >(mat + stride * i + i, size - i) +=
+                            (numext::conj(alpha) * numext::conj(u.coeff(i))) * v.tail(size - i)
+                            + (alpha * numext::conj(v.coeff(i))) * u.tail(size - i);
                 }
             }
         };
@@ -39,10 +38,9 @@ namespace Eigen {
             static void run(Scalar *mat, Index stride, const UType &u, const VType &v, const Scalar &alpha) {
                 const Index size = u.size();
                 for (Index i = 0; i < size; ++i)
-                    Map < Matrix < Scalar, Dynamic, 1 > > (mat + stride * i, i + 1) +=
-                                                            (numext::conj(alpha) * numext::conj(u.coeff(i))) *
-                                                            v.head(i + 1)
-                                                            + (alpha * numext::conj(v.coeff(i))) * u.head(i + 1);
+                    Map<Matrix<Scalar, Dynamic, 1> >(mat + stride * i, i + 1) +=
+                            (numext::conj(alpha) * numext::conj(u.coeff(i))) * v.head(i + 1)
+                            + (alpha * numext::conj(v.coeff(i))) * u.head(i + 1);
             }
         };
 
@@ -55,10 +53,7 @@ namespace Eigen {
 
 template<typename MatrixType, unsigned int UpLo>
 template<typename DerivedU, typename DerivedV>
-EIGEN_DEVICE_FUNC SelfAdjointView<MatrixType, UpLo>
-&
-
-SelfAdjointView<MatrixType, UpLo>
+SelfAdjointView <MatrixType, UpLo> &SelfAdjointView<MatrixType, UpLo>
 ::rankUpdate(const MatrixBase <DerivedU> &u, const MatrixBase <DerivedV> &v, const Scalar &alpha) {
     typedef internal::blas_traits <DerivedU> UBlasTraits;
     typedef typename UBlasTraits::DirectLinearAccessType ActualUType;

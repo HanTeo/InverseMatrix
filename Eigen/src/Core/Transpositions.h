@@ -175,7 +175,6 @@ public:
             : m_indices(other.indices()) {}
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
     /** Standard copy constructor. Defined only to prevent a default copy constructor
       * from hiding the other templated constructor */
     inline Transpositions(const Transpositions &other) : m_indices(other.indices()) {}
@@ -193,7 +192,6 @@ public:
     }
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
     /** This is a special case of the templated operator=. Its purpose is to
       * prevent a default operator= from hiding the templated operator=.
       */
@@ -210,7 +208,6 @@ public:
 
     /** const version of indices(). */
     const IndicesType &indices() const { return m_indices; }
-
     /** \returns a reference to the stored array representing the transpositions. */
     IndicesType &indices() { return m_indices; }
 
@@ -253,7 +250,6 @@ public:
     }
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
     /** This is a special case of the templated operator=. Its purpose is to
       * prevent a default operator= from hiding the templated operator=.
       */
@@ -266,7 +262,7 @@ public:
 
     /** const version of indices(). */
     const IndicesType &indices() const { return m_indices; }
-
+    
     /** \returns a reference to the stored array representing the transpositions. */
     IndicesType &indices() { return m_indices; }
 
@@ -303,7 +299,6 @@ public:
     }
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
     /** This is a special case of the templated operator=. Its purpose is to
       * prevent a default operator= from hiding the templated operator=.
       */
@@ -326,12 +321,12 @@ protected:
 };
 
 
+
 /** \returns the \a matrix with the \a transpositions applied to the columns.
   */
 template<typename MatrixDerived, typename TranspositionsDerived>
 EIGEN_DEVICE_FUNC
 const Product<MatrixDerived, TranspositionsDerived, AliasFreeProduct>
-
 operator*(const MatrixBase <MatrixDerived> &matrix,
           const TranspositionsBase <TranspositionsDerived> &transpositions) {
     return Product<MatrixDerived, TranspositionsDerived, AliasFreeProduct>
@@ -343,7 +338,6 @@ operator*(const MatrixBase <MatrixDerived> &matrix,
 template<typename TranspositionsDerived, typename MatrixDerived>
 EIGEN_DEVICE_FUNC
 const Product<TranspositionsDerived, MatrixDerived, AliasFreeProduct>
-
 operator*(const TranspositionsBase <TranspositionsDerived> &transpositions,
           const MatrixBase <MatrixDerived> &matrix) {
     return Product<TranspositionsDerived, MatrixDerived, AliasFreeProduct>
@@ -382,7 +376,7 @@ Index cols() const { return m_transpositions.size(); }
   */
 template<typename OtherDerived>
 friend
-const Product<OtherDerived, Transpose, AliasFreeProduct>
+const Product <OtherDerived, Transpose, AliasFreeProduct>
 operator*(const MatrixBase <OtherDerived> &matrix, const Transpose &trt) {
     return Product<OtherDerived, Transpose, AliasFreeProduct>(matrix.derived(), trt.derived());
 }
@@ -390,7 +384,7 @@ operator*(const MatrixBase <OtherDerived> &matrix, const Transpose &trt) {
 /** \returns the \a matrix with the inverse transpositions applied to the rows.
   */
 template<typename OtherDerived>
-const Product<Transpose, OtherDerived, AliasFreeProduct>
+const Product <Transpose, OtherDerived, AliasFreeProduct>
 operator*(const MatrixBase <OtherDerived> &matrix) const {
     return Product<Transpose, OtherDerived, AliasFreeProduct>(*this, matrix.derived());
 }

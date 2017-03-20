@@ -27,7 +27,7 @@ namespace Eigen {
 // forward declarations (defined at the end of this file)
         template<typename LhsScalar, typename RhsScalar, typename Index, int mr, int nr, bool ConjLhs, bool ConjRhs, int UpLo>
         struct tribb_kernel;
-
+  
 /* Optimized matrix-matrix product evaluating only one triangular half */
         template<typename Index,
                 typename LhsScalar, int LhsStorageOrder, bool ConjugateLhs,
@@ -63,10 +63,10 @@ namespace Eigen {
                                                 Index resStride,
                                                 const ResScalar &alpha,
                                                 level3_blocking <LhsScalar, RhsScalar> &blocking) {
-                typedef gebp_traits <LhsScalar, RhsScalar> Traits;
+                typedef gebp_traits<LhsScalar, RhsScalar> Traits;
 
-                typedef const_blas_data_mapper <LhsScalar, Index, LhsStorageOrder> LhsMapper;
-                typedef const_blas_data_mapper <RhsScalar, Index, RhsStorageOrder> RhsMapper;
+                typedef const_blas_data_mapper<LhsScalar, Index, LhsStorageOrder> LhsMapper;
+                typedef const_blas_data_mapper<RhsScalar, Index, RhsStorageOrder> RhsMapper;
                 typedef blas_data_mapper<typename Traits::ResScalar, Index, ColMajor> ResMapper;
                 LhsMapper lhs(_lhs, lhsStride);
                 RhsMapper rhs(_rhs, rhsStride);
@@ -85,9 +85,9 @@ namespace Eigen {
                 ei_declare_aligned_stack_constructed_variable(LhsScalar, blockA, sizeA, blocking.blockA());
                 ei_declare_aligned_stack_constructed_variable(RhsScalar, blockB, sizeB, blocking.blockB());
 
-                gemm_pack_lhs <LhsScalar, Index, LhsMapper, Traits::mr, Traits::LhsProgress, LhsStorageOrder> pack_lhs;
-                gemm_pack_rhs <RhsScalar, Index, RhsMapper, Traits::nr, RhsStorageOrder> pack_rhs;
-                gebp_kernel <LhsScalar, RhsScalar, Index, ResMapper, Traits::mr, Traits::nr, ConjugateLhs, ConjugateRhs> gebp;
+                gemm_pack_lhs<LhsScalar, Index, LhsMapper, Traits::mr, Traits::LhsProgress, LhsStorageOrder> pack_lhs;
+                gemm_pack_rhs<RhsScalar, Index, RhsMapper, Traits::nr, RhsStorageOrder> pack_rhs;
+                gebp_kernel<LhsScalar, RhsScalar, Index, ResMapper, Traits::mr, Traits::nr, ConjugateLhs, ConjugateRhs> gebp;
                 tribb_kernel<LhsScalar, RhsScalar, Index, Traits::mr, Traits::nr, ConjugateLhs, ConjugateRhs, UpLo> sybb;
 
                 for (Index k2 = 0; k2 < depth; k2 += kc) {
@@ -144,11 +144,11 @@ namespace Eigen {
             void
             operator()(ResScalar *_res, Index resStride, const LhsScalar *blockA, const RhsScalar *blockB, Index size,
                        Index depth, const ResScalar &alpha) {
-                typedef blas_data_mapper <ResScalar, Index, ColMajor> ResMapper;
+                typedef blas_data_mapper<ResScalar, Index, ColMajor> ResMapper;
                 ResMapper res(_res, resStride);
-                gebp_kernel <LhsScalar, RhsScalar, Index, ResMapper, mr, nr, ConjLhs, ConjRhs> gebp_kernel;
+                gebp_kernel<LhsScalar, RhsScalar, Index, ResMapper, mr, nr, ConjLhs, ConjRhs> gebp_kernel;
 
-                Matrix <ResScalar, BlockSize, BlockSize, ColMajor> buffer(
+                Matrix<ResScalar, BlockSize, BlockSize, ColMajor> buffer(
                         (internal::constructor_without_unaligned_array_assert()));
 
                 // let's process the block per panel of actual_mc x BlockSize,
@@ -294,9 +294,7 @@ namespace Eigen {
 
     template<typename MatrixType, unsigned int UpLo>
     template<typename ProductType>
-    EIGEN_DEVICE_FUNC TriangularView<MatrixType, UpLo>
-    &
-
+    TriangularView <MatrixType, UpLo> &
     TriangularViewImpl<MatrixType, UpLo, Dense>::_assignProduct(const ProductType &prod, const Scalar &alpha,
                                                                 bool beta) {
         eigen_assert(derived().nestedExpression().rows() == prod.rows() && derived().cols() == prod.cols());

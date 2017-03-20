@@ -16,22 +16,16 @@ namespace Eigen {
 
         template<typename Scalar>
         struct scalar_constant_op {
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE scalar_constant_op(const scalar_constant_op &other) : m_other(
+                    other.m_other) {}
 
-            scalar_constant_op(const scalar_constant_op &other) : m_other(other.m_other) {}
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE scalar_constant_op(const Scalar &other) : m_other(other) {}
 
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-            scalar_constant_op(const Scalar &other) : m_other(other) {}
-
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            Scalar operator()() const { return m_other; }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Scalar operator()() const { return m_other; }
 
             template<typename PacketType>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            PacketType packetOp() const { return internal::pset1<PacketType>(m_other); }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const PacketType
+            packetOp() const { return internal::pset1<PacketType>(m_other); }
 
             const Scalar m_other;
         };
@@ -47,10 +41,11 @@ namespace Eigen {
         template<typename Scalar>
         struct scalar_identity_op {
             EIGEN_EMPTY_STRUCT_CTOR(scalar_identity_op)
-            template<typename IndexType>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
 
-            Scalar operator()(IndexType row, IndexType col) const { return row == col ? Scalar(1) : Scalar(0); }
+            template<typename IndexType>
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Scalar operator()(IndexType row, IndexType col) const {
+                return row == col ? Scalar(1) : Scalar(0);
+            }
         };
 
         template<typename Scalar>
@@ -72,9 +67,7 @@ namespace Eigen {
                     m_flip(numext::abs(high) < numext::abs(low)) {}
 
             template<typename IndexType>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            Scalar operator()(IndexType i) const {
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Scalar operator()(IndexType i) const {
                 if (m_flip)
                     return (i == 0) ? m_low : (m_high - (m_size1 - i) * m_step);
                 else
@@ -82,9 +75,7 @@ namespace Eigen {
             }
 
             template<typename IndexType>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            Packet packetOp(IndexType i) const {
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Packet packetOp(IndexType i) const {
                 // Principle:
                 // [low, ..., low] + ( [step, ..., step] * ( [i, ..., i] + [0, ..., size] ) )
                 if (m_flip) {
@@ -121,9 +112,7 @@ namespace Eigen {
 
             template<typename IndexType>
             EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-                    const
-
-            Scalar operator()(IndexType i) const {
+            const Scalar operator()(IndexType i) const {
                 if (m_use_divisor) return m_low + convert_index<Scalar>(i) / m_divisor;
                 else return m_low + convert_index<Scalar>(i) * m_multiplier;
             }
@@ -158,14 +147,10 @@ namespace Eigen {
                     : impl((num_steps == 1 ? high : low), high, num_steps) {}
 
             template<typename IndexType>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            Scalar operator()(IndexType i) const { return impl(i); }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Scalar operator()(IndexType i) const { return impl(i); }
 
             template<typename Packet, typename IndexType>
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-            Packet packetOp(IndexType i) const { return impl.packetOp(i); }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Packet packetOp(IndexType i) const { return impl.packetOp(i); }
 
             // This proxy object handles the actual required temporaries and the different
             // implementations (integer vs. floating point).
@@ -186,36 +171,83 @@ namespace Eigen {
 // For unreliable compilers, let's specialize the has_*ary_operator
 // helpers so that at least built-in nullary functors work fine.
 #if !((EIGEN_COMP_MSVC > 1600) || (EIGEN_GNUC_AT_LEAST(4, 8)) || (EIGEN_COMP_ICC >= 1600))
-        template<typename Scalar,typename IndexType>
-        struct has_nullary_operator<scalar_constant_op<Scalar>,IndexType> { enum { value = 1}; };
-        template<typename Scalar,typename IndexType>
-        struct has_unary_operator<scalar_constant_op<Scalar>,IndexType> { enum { value = 0}; };
-        template<typename Scalar,typename IndexType>
-        struct has_binary_operator<scalar_constant_op<Scalar>,IndexType> { enum { value = 0}; };
+        template<typename Scalar, typename IndexType>
+        struct has_nullary_operator<scalar_constant_op<Scalar>, IndexType> {
+            enum {
+                value = 1
+            };
+        };
+        template<typename Scalar, typename IndexType>
+        struct has_unary_operator<scalar_constant_op<Scalar>, IndexType> {
+            enum {
+                value = 0
+            };
+        };
+        template<typename Scalar, typename IndexType>
+        struct has_binary_operator<scalar_constant_op<Scalar>, IndexType> {
+            enum {
+                value = 0
+            };
+        };
 
-        template<typename Scalar,typename IndexType>
-        struct has_nullary_operator<scalar_identity_op<Scalar>,IndexType> { enum { value = 0}; };
-        template<typename Scalar,typename IndexType>
-        struct has_unary_operator<scalar_identity_op<Scalar>,IndexType> { enum { value = 0}; };
-        template<typename Scalar,typename IndexType>
-        struct has_binary_operator<scalar_identity_op<Scalar>,IndexType> { enum { value = 1}; };
+        template<typename Scalar, typename IndexType>
+        struct has_nullary_operator<scalar_identity_op<Scalar>, IndexType> {
+            enum {
+                value = 0
+            };
+        };
+        template<typename Scalar, typename IndexType>
+        struct has_unary_operator<scalar_identity_op<Scalar>, IndexType> {
+            enum {
+                value = 0
+            };
+        };
+        template<typename Scalar, typename IndexType>
+        struct has_binary_operator<scalar_identity_op<Scalar>, IndexType> {
+            enum {
+                value = 1
+            };
+        };
 
-        template<typename Scalar, typename PacketType,typename IndexType>
-        struct has_nullary_operator<linspaced_op<Scalar,PacketType>,IndexType> { enum { value = 0}; };
-        template<typename Scalar, typename PacketType,typename IndexType>
-        struct has_unary_operator<linspaced_op<Scalar,PacketType>,IndexType> { enum { value = 1}; };
-        template<typename Scalar, typename PacketType,typename IndexType>
-        struct has_binary_operator<linspaced_op<Scalar,PacketType>,IndexType> { enum { value = 0}; };
+        template<typename Scalar, typename PacketType, typename IndexType>
+        struct has_nullary_operator<linspaced_op<Scalar, PacketType>, IndexType> {
+            enum {
+                value = 0
+            };
+        };
+        template<typename Scalar, typename PacketType, typename IndexType>
+        struct has_unary_operator<linspaced_op<Scalar, PacketType>, IndexType> {
+            enum {
+                value = 1
+            };
+        };
+        template<typename Scalar, typename PacketType, typename IndexType>
+        struct has_binary_operator<linspaced_op<Scalar, PacketType>, IndexType> {
+            enum {
+                value = 0
+            };
+        };
 
-        template<typename Scalar,typename IndexType>
-        struct has_nullary_operator<scalar_random_op<Scalar>,IndexType> { enum { value = 1}; };
-        template<typename Scalar,typename IndexType>
-        struct has_unary_operator<scalar_random_op<Scalar>,IndexType> { enum { value = 0}; };
-        template<typename Scalar,typename IndexType>
-        struct has_binary_operator<scalar_random_op<Scalar>,IndexType> { enum { value = 0}; };
+        template<typename Scalar, typename IndexType>
+        struct has_nullary_operator<scalar_random_op < Scalar>,IndexType> {
+        enum {
+            value = 1
+        };
+    };
+    template<typename Scalar, typename IndexType>
+    struct has_unary_operator<scalar_random_op < Scalar>,IndexType> {
+    enum {
+        value = 0
+    };
+};
+template<typename Scalar, typename IndexType>
+struct has_binary_operator<scalar_random_op < Scalar>,IndexType> {
+enum {
+    value = 0
+}; };
 #endif
 
-    } // end namespace internal
+} // end namespace internal
 
 } // end namespace Eigen
 

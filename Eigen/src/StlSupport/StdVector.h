@@ -120,7 +120,6 @@ namespace std {
             else if (new_size > vector_base::size())
                 vector_base::insert(vector_base::end(), new_size - vector_base::size(), x);
         }
-
 #endif
     };
 }

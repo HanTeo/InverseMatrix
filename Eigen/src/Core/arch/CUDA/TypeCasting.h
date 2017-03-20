@@ -17,10 +17,9 @@ namespace Eigen {
         template<>
         struct scalar_cast_op<float, Eigen::half> {
             EIGEN_EMPTY_STRUCT_CTOR(scalar_cast_op)
-            typedef Eigen::half result_type;
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            Eigen::half operator()(const float &a) const {
+            typedef Eigen::half result_type;
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Eigen::half operator()(const float &a) const {
 #if defined(EIGEN_HAS_CUDA_FP16) && defined(__CUDA_ARCH__) && __CUDA_ARCH__ >= 300
                 return __float2half(a);
 #else
@@ -40,10 +39,9 @@ namespace Eigen {
         template<>
         struct scalar_cast_op<int, Eigen::half> {
             EIGEN_EMPTY_STRUCT_CTOR(scalar_cast_op)
-            typedef Eigen::half result_type;
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            Eigen::half operator()(const int &a) const {
+            typedef Eigen::half result_type;
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Eigen::half operator()(const int &a) const {
 #if defined(EIGEN_HAS_CUDA_FP16) && defined(__CUDA_ARCH__) && __CUDA_ARCH__ >= 300
                 return __float2half(static_cast<float>(a));
 #else
@@ -63,10 +61,9 @@ namespace Eigen {
         template<>
         struct scalar_cast_op<Eigen::half, float> {
             EIGEN_EMPTY_STRUCT_CTOR(scalar_cast_op)
-            typedef float result_type;
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            float operator()(const Eigen::half &a) const {
+            typedef float result_type;
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE float operator()(const Eigen::half &a) const {
 #if defined(EIGEN_HAS_CUDA_FP16) && defined(__CUDA_ARCH__) && __CUDA_ARCH__ >= 300
                 return __half2float(a);
 #else
@@ -81,6 +78,7 @@ namespace Eigen {
                 Cost = NumTraits<float>::AddCost, PacketAccess = false
             };
         };
+
 
 
 #if defined(EIGEN_HAS_CUDA_FP16) && defined(__CUDA_ARCH__) && __CUDA_ARCH__ >= 300

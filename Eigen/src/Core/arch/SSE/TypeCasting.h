@@ -23,9 +23,8 @@ namespace Eigen {
             };
         };
 
-        template<> EIGEN_STRONG_INLINE Packet4i
-
-        pcast<Packet4f, Packet4i>(const Packet4f &a) {
+        template<>
+        EIGEN_STRONG_INLINE Packet4i pcast<Packet4f, Packet4i>(const Packet4f &a) {
             return _mm_cvttps_epi32(a);
         }
 
@@ -39,9 +38,8 @@ namespace Eigen {
             };
         };
 
-        template<> EIGEN_STRONG_INLINE Packet4f
-
-        pcast<Packet4i, Packet4f>(const Packet4i &a) {
+        template<>
+        EIGEN_STRONG_INLINE Packet4f pcast<Packet4i, Packet4f>(const Packet4i &a) {
             return _mm_cvtepi32_ps(a);
         }
 
@@ -55,9 +53,8 @@ namespace Eigen {
             };
         };
 
-        template<> EIGEN_STRONG_INLINE Packet4f
-
-        pcast<Packet2d, Packet4f>(const Packet2d &a, const Packet2d &b) {
+        template<>
+        EIGEN_STRONG_INLINE Packet4f pcast<Packet2d, Packet4f>(const Packet2d &a, const Packet2d &b) {
             return _mm_shuffle_ps(_mm_cvtpd_ps(a), _mm_cvtpd_ps(b), (1 << 2) | (1 << 6));
         }
 
@@ -70,9 +67,8 @@ namespace Eigen {
             };
         };
 
-        template<> EIGEN_STRONG_INLINE Packet2d
-
-        pcast<Packet4f, Packet2d>(const Packet4f &a) {
+        template<>
+        EIGEN_STRONG_INLINE Packet2d pcast<Packet4f, Packet2d>(const Packet4f &a) {
             // Simply discard the second half of the input
             return _mm_cvtps_pd(a);
         }

@@ -314,7 +314,7 @@ namespace Eigen {
 
     explicit product_evaluator(const XprType &xpr)
             : Base(xpr.lhs(), xpr.rhs()) {}
-
+  
 };
 
 } // end namespace internal

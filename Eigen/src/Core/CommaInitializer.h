@@ -11,7 +11,7 @@
 #ifndef EIGEN_COMMAINITIALIZER_H
 #define EIGEN_COMMAINITIALIZER_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \class CommaInitializer
   * \ingroup Core_Module
@@ -55,10 +55,7 @@ namespace Eigen {
 
         /* inserts a scalar value in the target matrix */
         EIGEN_DEVICE_FUNC
-                CommaInitializer
-        &
-
-        operator,(const Scalar &s) {
+        CommaInitializer &operator,(const Scalar &s) {
             if (m_col == m_xpr.cols()) {
                 m_row += m_currentBlockRows;
                 m_col = 0;
@@ -76,10 +73,7 @@ namespace Eigen {
         /* inserts a matrix expression in the target matrix */
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC
-                CommaInitializer
-        &
-
-        operator,(const DenseBase <OtherDerived> &other) {
+        CommaInitializer &operator,(const DenseBase <OtherDerived> &other) {
             if (m_col == m_xpr.cols() && (other.cols() != 0 || other.rows() != m_currentBlockRows)) {
                 m_row += m_currentBlockRows;
                 m_col = 0;
@@ -113,10 +107,7 @@ namespace Eigen {
           * \endcode
           */
         EIGEN_DEVICE_FUNC
-        inline XprType
-        &
-
-        finished() {
+        inline XprType &finished() {
             eigen_assert(((m_row + m_currentBlockRows) == m_xpr.rows() || m_xpr.cols() == 0)
                          && m_col == m_xpr.cols()
                          && "Too few coefficients passed to comma initializer (operator<<)");
@@ -143,19 +134,16 @@ namespace Eigen {
   * \sa CommaInitializer::finished(), class CommaInitializer
   */
     template<typename Derived>
-    EIGEN_DEVICE_FUNC inline CommaInitializer<Derived>
-
-    DenseBase<Derived>::operator<<(const Scalar &s) {
-        return CommaInitializer < Derived > (*static_cast<Derived *>(this), s);
+    inline CommaInitializer<Derived> DenseBase<Derived>::operator<<(const Scalar &s) {
+        return CommaInitializer<Derived>(*static_cast<Derived *>(this), s);
     }
 
 /** \sa operator<<(const Scalar&) */
     template<typename Derived>
     template<typename OtherDerived>
-    EIGEN_DEVICE_FUNC inline CommaInitializer<Derived>
-
+    inline CommaInitializer<Derived>
     DenseBase<Derived>::operator<<(const DenseBase <OtherDerived> &other) {
-        return CommaInitializer < Derived > (*static_cast<Derived *>(this), other);
+        return CommaInitializer<Derived>(*static_cast<Derived *>(this), other);
     }
 
 } // end namespace Eigen

@@ -14,7 +14,7 @@
 
 #include "./ComplexSchur.h"
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \eigenvalues_module \ingroup Eigenvalues_Module
   *
@@ -68,7 +68,7 @@ namespace Eigen {
           * \c float or \c double) and just \c Scalar if #Scalar is
           * complex.
           */
-        typedef std::complex <RealScalar> ComplexScalar;
+        typedef std::complex<RealScalar> ComplexScalar;
 
         /** \brief Type for vector of eigenvalues as returned by eigenvalues().
           *
@@ -236,7 +236,7 @@ namespace Eigen {
 
         EigenvectorType m_eivec;
         EigenvalueType m_eivalues;
-        ComplexSchur<MatrixType> m_schur;
+        ComplexSchur <MatrixType> m_schur;
         bool m_isInitialized;
         bool m_eigenvectorsOk;
         EigenvectorType m_matX;

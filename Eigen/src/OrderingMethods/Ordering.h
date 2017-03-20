@@ -16,7 +16,7 @@ namespace Eigen {
 #include "Eigen_Colamd.h"
 
     namespace internal {
-
+    
 /** \internal
   * \ingroup OrderingMethods_Module
   * \param[in] A the input non-symmetric matrix

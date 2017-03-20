@@ -393,14 +393,12 @@ namespace Eigen {
         Packet8f psqrt<Packet8f>(const Packet8f &x) {
             return _mm256_sqrt_ps(x);
         }
-
 #endif
         template<> EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED
 
         Packet4d psqrt<Packet4d>(const Packet4d &x) {
             return _mm256_sqrt_pd(x);
         }
-
 #if EIGEN_FAST_MATH
 
         template<> EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED
@@ -438,7 +436,6 @@ namespace Eigen {
             _EIGEN_DECLARE_CONST_Packet8f(one, 1.0f);
             return _mm256_div_ps(p8f_one, _mm256_sqrt_ps(x));
         }
-
 #endif
 
         template<> EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED

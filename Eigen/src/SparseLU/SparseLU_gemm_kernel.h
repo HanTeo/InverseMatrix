@@ -98,7 +98,7 @@ namespace Eigen {
                             // workaround "may be used uninitialized in this function" warning
                             a2 = a3 = a0;
                         }
-
+        
 #define KMADD(c, a, b, tmp) {tmp = b; tmp = pmul(a,tmp); c = padd(c,tmp);}
 #define WORK(I)  \
                      c0 = pload<Packet>(C0+i+(I)*PacketSize);    \
@@ -186,7 +186,7 @@ namespace Eigen {
                             // workaround "may be used uninitialized in this function" warning
                             a2 = a3 = a0;
                         }
-
+        
 #define WORK(I) \
                    c0 = pload<Packet>(C0+i+(I)*PacketSize);     \
                    KMADD(c0, a0, b00, t0)                       \
@@ -256,7 +256,6 @@ namespace Eigen {
 
             } // blocking on the rows of A and C
         }
-
 #undef KMADD
 
     } // namespace internal

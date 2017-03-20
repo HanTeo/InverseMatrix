@@ -63,7 +63,6 @@ EIGEN_DOC_UNARY_ADDONS(cwiseSqrt, square
 ///
 EIGEN_DEVICE_FUNC
 inline const CwiseSqrtReturnType
-
 cwiseSqrt() const { return CwiseSqrtReturnType(derived()); }
 
 /// \returns an expression of the coefficient-wise signum of *this.
@@ -76,7 +75,6 @@ function)
 ///
 EIGEN_DEVICE_FUNC
 inline const CwiseSignReturnType
-
 cwiseSign() const { return CwiseSignReturnType(derived()); }
 
 
@@ -92,7 +90,6 @@ EIGEN_DOC_UNARY_ADDONS(cwiseInverse, inverse
 ///
 EIGEN_DEVICE_FUNC
 inline const CwiseInverseReturnType
-
 cwiseInverse() const { return CwiseInverseReturnType(derived()); }
 
 

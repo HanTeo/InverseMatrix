@@ -31,11 +31,9 @@ namespace Eigen {
         typedef Product <Lhs, Rhs, Options> XprType;
         typedef product_evaluator <XprType> Base;
 
-        EIGEN_DEVICE_FUNC explicit evaluator(const XprType &xpr) :
-
-        Base(xpr) {}
+        EIGEN_DEVICE_FUNC explicit evaluator(const XprType &xpr) : Base(xpr) {}
     };
-
+ 
 // Catch "scalar * ( A * B )" and transform it to "(A*scalar) * B"
 // TODO we should apply that rule only if that's really helpful
     template<typename Lhs, typename Rhs, typename Scalar1, typename Scalar2, typename Plain1>
@@ -57,37 +55,7 @@ namespace Eigen {
     Base;
 
     EIGEN_DEVICE_FUNC explicit evaluator(const XprType &xpr)
-            :
-
-    Base(xpr
-    .
-
-    lhs()
-
-    .
-
-    functor()
-
-    .
-    m_other *xpr
-    .
-
-    rhs()
-
-    .
-
-    lhs()
-
-    * xpr.
-
-    rhs()
-
-    .
-
-    rhs()
-
-    ) {
-}
+            : Base(xpr.lhs().functor().m_other * xpr.rhs().lhs() * xpr.rhs().rhs()) {}
 };
 
 
@@ -132,11 +100,10 @@ enum {
 };
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
 explicit product_evaluator(const XprType &xpr)
         : m_result(xpr.rows(), xpr.cols()) {
     ::new(static_cast<Base *>(this)) Base(m_result);
-
+    
 // FIXME shall we handle nested_eval here?,
 // if so, then we must take care at removing the call to nested_eval in the specializations (e.g., in permutation_matrix_product, transposition_matrix_product, etc.)
 //     typedef typename internal::nested_eval<Lhs,Rhs::ColsAtCompileTime>::type LhsNested;
@@ -175,7 +142,6 @@ void run(DstXprType &dst, const SrcXprType &src, const internal::assign_op <Scal
     // FIXME shall we handle nested_eval here?
     generic_product_impl<Lhs, Rhs>::evalTo(dst, src.lhs(), src.rhs());
 }
-
 };
 
 // Dense += Product
@@ -191,7 +157,6 @@ void run(DstXprType &dst, const SrcXprType &src, const internal::add_assign_op <
     // FIXME shall we handle nested_eval here?
     generic_product_impl<Lhs, Rhs>::addTo(dst, src.lhs(), src.rhs());
 }
-
 };
 
 // Dense -= Product
@@ -207,7 +172,6 @@ void run(DstXprType &dst, const SrcXprType &src, const internal::sub_assign_op <
     // FIXME shall we handle nested_eval here?
     generic_product_impl<Lhs, Rhs>::subTo(dst, src.lhs(), src.rhs());
 }
-
 };
 
 
@@ -227,7 +191,6 @@ static EIGEN_STRONG_INLINE
 void run(DstXprType &dst, const SrcXprType &src, const AssignFunc &func) {
     call_assignment_no_alias(dst, (src.lhs().functor().m_other * src.rhs().lhs()) * src.rhs().rhs(), func);
 }
-
 };
 
 //----------------------------------------
@@ -369,7 +332,7 @@ struct generic_product_impl<Lhs, Rhs, DenseShape, DenseShape, OuterProduct> {
     static inline void scaleAndAddTo(Dst &dst, const Lhs &lhs, const Rhs &rhs, const Scalar &alpha) {
         internal::outer_product_selector_run(dst, lhs, rhs, adds(alpha), is_row_major<Dst>());
     }
-
+  
 };
 
 
@@ -446,7 +409,7 @@ struct generic_product_impl<Lhs, Rhs, DenseShape, DenseShape, CoeffBasedProductM
         // dst.noalias() -= lhs.lazyProduct(rhs);
         call_assignment_no_alias(dst, lhs.lazyProduct(rhs), internal::sub_assign_op<typename Dst::Scalar, Scalar>());
     }
-
+  
 //   template<typename Dst>
 //   static inline void scaleAndAddTo(Dst& dst, const Lhs& lhs, const Rhs& rhs, const Scalar& alpha)
 //   { dst.noalias() += alpha * lhs.lazyProduct(rhs); }
@@ -479,7 +442,6 @@ typedef typename XprType::Scalar Scalar;
 typedef typename XprType::CoeffReturnType CoeffReturnType;
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
 explicit product_evaluator(const XprType &xpr)
         : m_lhs(xpr.lhs()),
           m_rhs(xpr.rhs()),
@@ -528,7 +490,7 @@ typedef typename find_best_packet<Scalar, RowsAtCompileTime>::type LhsVecPacketT
 typedef typename find_best_packet<Scalar, ColsAtCompileTime>::type RhsVecPacketType;
 
 enum {
-
+      
     LhsCoeffReadCost = LhsEtorType::CoeffReadCost,
     RhsCoeffReadCost = RhsEtorType::CoeffReadCost,
     CoeffReadCost = InnerSize == 0 ? NumTraits<Scalar>::ReadCost
@@ -598,9 +560,7 @@ enum {
                                 && (InnerSize % packet_traits<Scalar>::size == 0)
 };
 
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-const CoeffReturnType coeff(Index row, Index col) const {
+EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const CoeffReturnType coeff(Index row, Index col) const {
     return (m_lhs.row(row).transpose().cwiseProduct(m_rhs.col(col))).sum();
 }
 
@@ -608,26 +568,10 @@ const CoeffReturnType coeff(Index row, Index col) const {
  * which is why we don't set the LinearAccessBit.
  * TODO: this seems possible when the result is a vector
  */
-EIGEN_DEVICE_FUNC const CoeffReturnType
-coeff(Index
-index) const
-{
-const Index row = (RowsAtCompileTime == 1 || MaxRowsAtCompileTime == 1) ? 0 : index;
-const Index col = (RowsAtCompileTime == 1 || MaxRowsAtCompileTime == 1) ? index : 0;
-return (m_lhs.
-row(row)
-.
-
-transpose()
-
-.
-cwiseProduct( m_rhs
-.
-col(col)
-)).
-
-sum();
-
+EIGEN_DEVICE_FUNC const CoeffReturnType coeff(Index index) const {
+    const Index row = (RowsAtCompileTime == 1 || MaxRowsAtCompileTime == 1) ? 0 : index;
+    const Index col = (RowsAtCompileTime == 1 || MaxRowsAtCompileTime == 1) ? index : 0;
+    return (m_lhs.row(row).transpose().cwiseProduct(m_rhs.col(col))).sum();
 }
 
 template<int LoadMode, typename PacketType>
@@ -668,12 +612,8 @@ typedef product_evaluator<BaseProduct, CoeffBasedProductMode, DenseShape, DenseS
 enum {
     Flags = Base::Flags | EvalBeforeNestingBit
 };
-
 EIGEN_DEVICE_FUNC explicit product_evaluator(const XprType &xpr)
-        :
-
-Base(BaseProduct(xpr.lhs(), xpr.rhs()))
-        {}
+        : Base(BaseProduct(xpr.lhs(), xpr.rhs())) {}
 };
 
 /****************************************
@@ -857,31 +797,19 @@ public:
         EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
     }
 
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-    Scalar coeff(Index idx) const {
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Scalar coeff(Index idx) const {
         return m_diagImpl.coeff(idx) * m_matImpl.coeff(idx);
     }
-
+  
 protected:
     template<int LoadMode, typename PacketType>
-    EIGEN_STRONG_INLINE PacketType
-    packet_impl(Index
-    row,
-    Index col, Index
-    id, internal::true_type) const
-    {
+    EIGEN_STRONG_INLINE PacketType packet_impl(Index row, Index col, Index id, internal::true_type) const {
         return internal::pmul(m_matImpl.template packet<LoadMode, PacketType>(row, col),
                               internal::pset1<PacketType>(m_diagImpl.coeff(id)));
     }
 
     template<int LoadMode, typename PacketType>
-    EIGEN_STRONG_INLINE PacketType
-    packet_impl(Index
-    row,
-    Index col, Index
-    id, internal::false_type) const
-    {
+    EIGEN_STRONG_INLINE PacketType packet_impl(Index row, Index col, Index id, internal::false_type) const {
         enum {
             InnerSize = (MatrixType::Flags & RowMajorBit) ? MatrixType::ColsAtCompileTime
                                                           : MatrixType::RowsAtCompileTime,
@@ -917,70 +845,28 @@ enum {
 };
 
 EIGEN_DEVICE_FUNC explicit product_evaluator(const XprType &xpr)
-        :
-
-Base(xpr
-.
-
-rhs(), xpr
-
-.
-
-lhs()
-
-.
-
-diagonal()
-
-)
-{
+        : Base(xpr.rhs(), xpr.lhs().diagonal()) {
 }
 
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-Scalar coeff(Index
-row,
-Index col
-) const
-{
-return m_diagImpl.
-coeff(row)
-* m_matImpl.
-coeff(row, col
-);
+EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Scalar coeff(Index row, Index col) const {
+    return m_diagImpl.coeff(row) * m_matImpl.coeff(row, col);
 }
-
+  
 #ifndef __CUDACC__
+
 template<int LoadMode, typename PacketType>
-EIGEN_STRONG_INLINE PacketType
-packet(Index
-row,
-Index col
-) const
-{
-// FIXME: NVCC used to complain about the template keyword, but we have to check whether this is still the case.
-// See also similar calls below.
-return this->
-template packet_impl<LoadMode, PacketType>(row, col, row,
-
-typename internal::conditional<int(StorageOrder) == RowMajor, internal::true_type, internal::false_type>::type()
-
-);
+EIGEN_STRONG_INLINE PacketType packet(Index row, Index col) const {
+    // FIXME: NVCC used to complain about the template keyword, but we have to check whether this is still the case.
+    // See also similar calls below.
+    return this->template packet_impl<LoadMode, PacketType>(row, col, row,
+                                                            typename internal::conditional<int(StorageOrder) ==
+                                                                                           RowMajor, internal::true_type, internal::false_type>::type());
 }
 
 template<int LoadMode, typename PacketType>
-EIGEN_STRONG_INLINE PacketType
-packet(Index
-idx) const
-{
-return
-
-packet<LoadMode, PacketType>(int(StorageOrder)
-
-==ColMajor?
-idx:
-0,
-int(StorageOrder)
-==ColMajor?0:idx);
+EIGEN_STRONG_INLINE PacketType packet(Index idx) const {
+    return packet<LoadMode, PacketType>(int(StorageOrder) == ColMajor ? idx : 0,
+                                        int(StorageOrder) == ColMajor ? 0 : idx);
 }
 #endif
 };
@@ -1006,67 +892,26 @@ enum {
 };
 
 EIGEN_DEVICE_FUNC explicit product_evaluator(const XprType &xpr)
-        :
-
-Base(xpr
-.
-
-lhs(), xpr
-
-.
-
-rhs()
-
-.
-
-diagonal()
-
-)
-{
+        : Base(xpr.lhs(), xpr.rhs().diagonal()) {
 }
 
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-Scalar coeff(Index
-row,
-Index col
-) const
-{
-return m_matImpl.
-coeff(row, col
-) * m_diagImpl.
-coeff(col);
+EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Scalar coeff(Index row, Index col) const {
+    return m_matImpl.coeff(row, col) * m_diagImpl.coeff(col);
 }
-
+  
 #ifndef __CUDACC__
+
 template<int LoadMode, typename PacketType>
-EIGEN_STRONG_INLINE PacketType
-packet(Index
-row,
-Index col
-) const
-{
-return this->
-template packet_impl<LoadMode, PacketType>(row, col, col,
-
-typename internal::conditional<int(StorageOrder) == ColMajor, internal::true_type, internal::false_type>::type()
-
-);
+EIGEN_STRONG_INLINE PacketType packet(Index row, Index col) const {
+    return this->template packet_impl<LoadMode, PacketType>(row, col, col,
+                                                            typename internal::conditional<int(StorageOrder) ==
+                                                                                           ColMajor, internal::true_type, internal::false_type>::type());
 }
 
 template<int LoadMode, typename PacketType>
-EIGEN_STRONG_INLINE PacketType
-packet(Index
-idx) const
-{
-return
-
-packet<LoadMode, PacketType>(int(StorageOrder)
-
-==ColMajor?
-idx:
-0,
-int(StorageOrder)
-==ColMajor?0:idx);
+EIGEN_STRONG_INLINE PacketType packet(Index idx) const {
+    return packet<LoadMode, PacketType>(int(StorageOrder) == ColMajor ? idx : 0,
+                                        int(StorageOrder) == ColMajor ? 0 : idx);
 }
 #endif
 };
@@ -1164,7 +1009,6 @@ template<typename Dest>
 static void evalTo(Dest &dst, const Inverse <Lhs> &lhs, const Rhs &rhs) {
     permutation_matrix_product<Rhs, OnTheLeft, true, MatrixShape>::run(dst, lhs.nestedExpression(), rhs);
 }
-
 };
 
 template<typename Lhs, typename Rhs, int ProductTag, typename MatrixShape>
@@ -1174,7 +1018,6 @@ template<typename Dest>
 static void evalTo(Dest &dst, const Lhs &lhs, const Inverse <Rhs> &rhs) {
     permutation_matrix_product<Lhs, OnTheRight, true, MatrixShape>::run(dst, rhs.nestedExpression(), lhs);
 }
-
 };
 
 
@@ -1235,7 +1078,6 @@ template<typename Dest>
 static void evalTo(Dest &dst, const Transpose <Lhs> &lhs, const Rhs &rhs) {
     transposition_matrix_product<Rhs, OnTheLeft, true, MatrixShape>::run(dst, lhs.nestedExpression(), rhs);
 }
-
 };
 
 template<typename Lhs, typename Rhs, int ProductTag, typename MatrixShape>
@@ -1245,7 +1087,6 @@ template<typename Dest>
 static void evalTo(Dest &dst, const Lhs &lhs, const Transpose <Rhs> &rhs) {
     transposition_matrix_product<Lhs, OnTheRight, true, MatrixShape>::run(dst, rhs.nestedExpression(), lhs);
 }
-
 };
 
 } // end namespace internal

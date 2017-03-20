@@ -82,7 +82,7 @@ class Product : public ProductImpl<_Lhs, _Rhs, Option,
                 typename internal::traits<_Rhs>::StorageKind,
                 internal::product_type<_Lhs, _Rhs>::ret>::ret> {
 public:
-
+    
     typedef _Lhs Lhs;
     typedef _Rhs Rhs;
 
@@ -104,23 +104,13 @@ public:
                      && "if you wanted a coeff-wise or a dot product use the respective explicit functions");
     }
 
-    EIGEN_DEVICE_FUNC inline Index
+    EIGEN_DEVICE_FUNC inline Index rows() const { return m_lhs.rows(); }
 
-    rows() const { return m_lhs.rows(); }
+    EIGEN_DEVICE_FUNC inline Index cols() const { return m_rhs.cols(); }
 
-    EIGEN_DEVICE_FUNC inline Index
+    EIGEN_DEVICE_FUNC const LhsNestedCleaned &lhs() const { return m_lhs; }
 
-    cols() const { return m_rhs.cols(); }
-
-    EIGEN_DEVICE_FUNC const LhsNestedCleaned
-    &
-
-    lhs() const { return m_lhs; }
-
-    EIGEN_DEVICE_FUNC const RhsNestedCleaned
-    &
-
-    rhs() const { return m_rhs; }
+    EIGEN_DEVICE_FUNC const RhsNestedCleaned &rhs() const { return m_rhs; }
 
 protected:
 
@@ -165,7 +155,7 @@ class ProductImpl<Lhs, Rhs, Option, Dense>
     typedef Product<Lhs, Rhs, Option> Derived;
 
 public:
-
+    
     typedef typename internal::dense_product_base<Lhs, Rhs, Option> Base;
     EIGEN_DENSE_PUBLIC_INTERFACE(Derived)
 protected:
@@ -177,11 +167,7 @@ protected:
 
 public:
 
-    EIGEN_DEVICE_FUNC Scalar
-    coeff(Index
-    row,
-    Index col
-    ) const
+    EIGEN_DEVICE_FUNC Scalar coeff(Index row, Index col) const
     {
         EIGEN_STATIC_ASSERT(EnableCoeff, THIS_METHOD_IS_ONLY_FOR_INNER_OR_LAZY_PRODUCTS);
         eigen_assert((Option == LazyProduct) || (this->rows() == 1 && this->cols() == 1));
@@ -189,9 +175,7 @@ public:
         return internal::evaluator<Derived>(derived()).coeff(row, col);
     }
 
-    EIGEN_DEVICE_FUNC Scalar
-    coeff(Index
-    i) const
+    EIGEN_DEVICE_FUNC Scalar coeff(Index i) const
     {
         EIGEN_STATIC_ASSERT(EnableCoeff, THIS_METHOD_IS_ONLY_FOR_INNER_OR_LAZY_PRODUCTS);
         eigen_assert((Option == LazyProduct) || (this->rows() == 1 && this->cols() == 1));

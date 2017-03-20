@@ -16,7 +16,7 @@
 namespace Eigen {
 
     namespace internal {
-
+  
 /** \internal */
 // template<typename TriangularFactorType,typename VectorsType,typename CoeffsType>
 // void make_block_householder_triangular_factor(TriangularFactorType& triFactor, const VectorsType& vectors, const CoeffsType& hCoeffs)

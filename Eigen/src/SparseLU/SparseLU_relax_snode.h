@@ -31,7 +31,7 @@
 namespace Eigen {
 
     namespace internal {
-
+ 
 /** 
  * \brief Identify the initial relaxed supernodes
  * 

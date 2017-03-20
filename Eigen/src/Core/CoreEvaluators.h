@@ -79,7 +79,7 @@ namespace Eigen {
                 typename Kind   = typename evaluator_traits<typename T::NestedExpression>::Kind,
                 typename Scalar = typename T::Scalar>
         struct unary_evaluator;
-
+          
 // evaluator_traits<T> contains traits for evaluator<T> 
 
         template<typename T>
@@ -103,7 +103,6 @@ namespace Eigen {
         template<typename T>
         struct evaluator : public unary_evaluator<T> {
             typedef unary_evaluator<T> Base;
-
             EIGEN_DEVICE_FUNC explicit evaluator(const T &xpr) : Base(xpr) {}
         };
 
@@ -119,31 +118,13 @@ namespace Eigen {
 // ---------- base class for all evaluators ----------
 
         template<typename ExpressionType>
-        struct evaluator_base {
+        struct evaluator_base : public noncopyable {
             // TODO that's not very nice to have to propagate all these traits. They are currently only needed to handle outer,inner indices.
             typedef traits <ExpressionType> ExpressionTraits;
 
             enum {
                 Alignment = 0
             };
-            // noncopyable:
-            // Don't make this class inherit noncopyable as this kills EBO (Empty Base Optimization)
-            // and make complex evaluator much larger than then should do.
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-            evaluator_base() {}
-
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-            ~evaluator_base() {}
-
-        private:
-            EIGEN_DEVICE_FUNC evaluator_base(const evaluator_base &);
-
-            EIGEN_DEVICE_FUNC const evaluator_base
-            &
-
-            operator=(const evaluator_base &);
         };
 
 // -------------------- Matrix and Array --------------------
@@ -152,38 +133,6 @@ namespace Eigen {
 // Matrix and Array evaluators.
 // Here we directly specialize evaluator. This is not really a unary expression, and it is, by definition, dense,
 // so no need for more sophisticated dispatching.
-
-// this helper permits to completely eliminate m_outerStride if it is known at compiletime.
-        template<typename Scalar, int OuterStride>
-        class plainobjectbase_evaluator_data {
-        public:
-            EIGEN_DEVICE_FUNC plainobjectbase_evaluator_data(const Scalar *ptr, Index outerStride) : data(ptr) {
-                EIGEN_ONLY_USED_FOR_DEBUG(outerStride);
-                eigen_internal_assert(outerStride == OuterStride);
-            }
-
-            EIGEN_DEVICE_FUNC Index
-
-            outerStride() const { return OuterStride; }
-
-            const Scalar *data;
-        };
-
-        template<typename Scalar>
-        class plainobjectbase_evaluator_data<Scalar, Dynamic> {
-        public:
-            EIGEN_DEVICE_FUNC plainobjectbase_evaluator_data(const Scalar *ptr, Index outerStride) : data(ptr),
-                                                                                                     m_outerStride(
-                                                                                                             outerStride) {}
-
-            EIGEN_DEVICE_FUNC Index
-
-            outerStride() const { return m_outerStride; }
-
-            const Scalar *data;
-        protected:
-            Index m_outerStride;
-        };
 
         template<typename Derived>
         struct evaluator<PlainObjectBase < Derived> >
@@ -202,142 +151,99 @@ namespace Eigen {
             Flags = traits<Derived>::EvaluatorFlags,
             Alignment = traits<Derived>::Alignment
         };
-        enum {
-            // We do not need to know the outer stride for vectors
-                    OuterStrideAtCompileTime = IsVectorAtCompileTime ? 0
-                                                                     : int(IsRowMajor) ? ColsAtCompileTime
-                                                                                       : RowsAtCompileTime
-        };
 
         EIGEN_DEVICE_FUNC evaluator()
-                :
+                : m_data(0),
+                  m_outerStride(IsVectorAtCompileTime ? 0
+                                                      : int(IsRowMajor) ? ColsAtCompileTime
+                                                                        : RowsAtCompileTime) {
+            EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
+        }
 
-        m_d(0,OuterStrideAtCompileTime) {
-        EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
-    }
-
-    EIGEN_DEVICE_FUNC explicit evaluator(const PlainObjectType &m)
-            :
-
-    m_d(m
-    .
-
-    data(), IsVectorAtCompileTime
-
-    ? 0 : m.
-
-    outerStride()
-
-    ) {
+        EIGEN_DEVICE_FUNC explicit evaluator(const PlainObjectType &m)
+                : m_data(m.data()), m_outerStride(IsVectorAtCompileTime ? 0 : m.outerStride()) {
     EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
-}
+        }
 
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-CoeffReturnType coeff(Index row, Index col) const {
+        EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+        CoeffReturnType coeff(Index row, Index col) const {
     if (IsRowMajor)
-        return m_d.data[row * m_d.outerStride() + col];
+        return m_data[row * m_outerStride.value() + col];
     else
-        return m_d.data[row + col * m_d.outerStride()];
-}
+        return m_data[row + col * m_outerStride.value()];
+        }
 
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+        EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+        CoeffReturnType coeff(Index index) const {
+            return m_data[index];
+        }
 
-CoeffReturnType coeff(Index index) const {
-    return m_d.data[index];
-}
-
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-Scalar &coeffRef(Index row, Index col) {
+        EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+        Scalar &coeffRef(Index row, Index col) {
     if (IsRowMajor)
-        return const_cast<Scalar *>(m_d.data)[row * m_d.outerStride() + col];
+        return const_cast<Scalar *>(m_data)[row * m_outerStride.value() + col];
     else
-        return const_cast<Scalar *>(m_d.data)[row + col * m_d.outerStride()];
-}
+        return const_cast<Scalar *>(m_data)[row + col * m_outerStride.value()];
+        }
 
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+        EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+        Scalar &coeffRef(Index index) {
+            return const_cast<Scalar *>(m_data)[index];
+        }
 
-Scalar &coeffRef(Index index) {
-    return const_cast<Scalar *>(m_d.data)[index];
-}
+        template<int LoadMode, typename PacketType>
+        EIGEN_STRONG_INLINE
+        PacketType packet(Index row, Index col) const {
+            if (IsRowMajor)
+                return ploadt<PacketType, LoadMode>(m_data + row * m_outerStride.value() + col);
+            else
+                return ploadt<PacketType, LoadMode>(m_data + row + col * m_outerStride.value());
+        }
 
-template<int LoadMode, typename PacketType>
-EIGEN_STRONG_INLINE
-        PacketType
-packet(Index
-row,
-Index col
-) const
-{
-if (IsRowMajor)
-return
-ploadt<PacketType, LoadMode>(m_d
-.data +
-row *m_d
-.
+        template<int LoadMode, typename PacketType>
+        EIGEN_STRONG_INLINE
+        PacketType packet(Index index) const {
+            return ploadt<PacketType, LoadMode>(m_data + index);
+        }
 
-outerStride()
-
-+ col);
-else
-return
-ploadt<PacketType, LoadMode>(m_d
-.data + row +
-col *m_d
-.
-
-outerStride()
-
-);
-}
-
-template<int LoadMode, typename PacketType>
-EIGEN_STRONG_INLINE
-        PacketType
-packet(Index
-index) const
-{
-return
-ploadt<PacketType, LoadMode>(m_d
-.data + index);
-}
-
-template<int StoreMode, typename PacketType>
-EIGEN_STRONG_INLINE
-void writePacket(Index row, Index col, const PacketType &x) {
+        template<int StoreMode, typename PacketType>
+        EIGEN_STRONG_INLINE
+        void writePacket(Index row, Index col, const PacketType &x) {
     if (IsRowMajor)
         return pstoret<Scalar, PacketType, StoreMode>
-                (const_cast<Scalar *>(m_d.data) + row * m_d.outerStride() + col, x);
+                (const_cast<Scalar *>(m_data) + row * m_outerStride.value() + col, x);
     else
         return pstoret<Scalar, PacketType, StoreMode>
-                (const_cast<Scalar *>(m_d.data) + row + col * m_d.outerStride(), x);
-}
+                (const_cast<Scalar *>(m_data) + row + col * m_outerStride.value(), x);
+        }
 
-template<int StoreMode, typename PacketType>
-EIGEN_STRONG_INLINE
-void writePacket(Index index, const PacketType &x) {
-    return pstoret<Scalar, PacketType, StoreMode>(const_cast<Scalar *>(m_d.data) + index, x);
-}
+        template<int StoreMode, typename PacketType>
+        EIGEN_STRONG_INLINE
+        void writePacket(Index index, const PacketType &x) {
+            return pstoret<Scalar, PacketType, StoreMode>(const_cast<Scalar *>(m_data) + index, x);
+        }
 
 protected:
+        const Scalar *m_data;
 
-plainobjectbase_evaluator_data <Scalar, OuterStrideAtCompileTime> m_d;
+        // We do not need to know the outer stride for vectors
+        variable_if_dynamic<Index, IsVectorAtCompileTime ? 0
+                                                         : int(IsRowMajor) ? ColsAtCompileTime
+                                                                           : RowsAtCompileTime> m_outerStride;
 };
 
 template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
 struct evaluator<Matrix < Scalar, Rows, Cols, Options, MaxRows, MaxCols> >
-: evaluator<PlainObjectBase < Matrix < Scalar, Rows, Cols, Options, MaxRows, MaxCols> > >
+    : evaluator<PlainObjectBase < Matrix < Scalar, Rows, Cols, Options, MaxRows, MaxCols> > >
 {
-typedef Matrix <Scalar, Rows, Cols, Options, MaxRows, MaxCols> XprType;
+    typedef Matrix <Scalar, Rows, Cols, Options, MaxRows, MaxCols> XprType;
 
-EIGEN_DEVICE_FUNC evaluator() {}
+    EIGEN_DEVICE_FUNC evaluator() {}
 
-EIGEN_DEVICE_FUNC explicit evaluator(const XprType &m)
-        :
+    EIGEN_DEVICE_FUNC explicit evaluator(const XprType &m)
+            : evaluator<PlainObjectBase < XprType>
 
-evaluator<PlainObjectBase < XprType> >(m)
-{
+    >(m) {
 }
 };
 
@@ -350,9 +256,9 @@ typedef Array <Scalar, Rows, Cols, Options, MaxRows, MaxCols> XprType;
 EIGEN_DEVICE_FUNC evaluator() {}
 
 EIGEN_DEVICE_FUNC explicit evaluator(const XprType &m)
-        :
+        : evaluator<PlainObjectBase < XprType>
 
-evaluator<PlainObjectBase < XprType> >(m)
+>(m)
 {
 }
 };
@@ -371,79 +277,41 @@ enum {
     Alignment = evaluator < ArgType > ::Alignment
 };
 
-EIGEN_DEVICE_FUNC explicit unary_evaluator(const XprType &t) :
-
-m_argImpl(t
-.
-
-nestedExpression()
-
-) {
-}
+EIGEN_DEVICE_FUNC explicit unary_evaluator(const XprType &t) : m_argImpl(t.nestedExpression()) {}
 
 typedef typename XprType::Scalar Scalar;
 typedef typename XprType::CoeffReturnType CoeffReturnType;
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-row,
-Index col
-) const
-{
-return m_argImpl.
-coeff(col, row
-);
+CoeffReturnType coeff(Index row, Index col) const {
+    return m_argImpl.coeff(col, row);
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-index) const
-{
-return m_argImpl.
-coeff(index);
+CoeffReturnType coeff(Index index) const {
+    return m_argImpl.coeff(index);
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-Scalar &coeffRef(Index
-row,
-Index col
-)
-{
-return m_argImpl.
-coeffRef(col, row
-);
+Scalar &coeffRef(Index row, Index col) {
+    return m_argImpl.coeffRef(col, row);
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-        typename
-XprType::Scalar &coeffRef(Index
-index)
-{
-return m_argImpl.
-coeffRef(index);
+typename XprType::Scalar &coeffRef(Index index) {
+    return m_argImpl.coeffRef(index);
 }
 
 template<int LoadMode, typename PacketType>
 EIGEN_STRONG_INLINE
-        PacketType
-packet(Index
-row,
-Index col
-) const
-{
-return m_argImpl.
-template packet<LoadMode, PacketType>(col, row
-);
+PacketType packet(Index row, Index col) const {
+    return m_argImpl.template packet<LoadMode, PacketType>(col, row);
 }
 
 template<int LoadMode, typename PacketType>
 EIGEN_STRONG_INLINE
-        PacketType
-packet(Index
-index) const
-{
-return m_argImpl.
-template packet<LoadMode, PacketType>(index);
+PacketType packet(Index index) const {
+    return m_argImpl.template packet<LoadMode, PacketType>(index);
 }
 
 template<int StoreMode, typename PacketType>
@@ -472,46 +340,41 @@ template<typename Scalar, typename NullaryOp,
         bool has_binary = has_binary_operator<NullaryOp>::value>
 struct nullary_wrapper {
     template<typename IndexType>
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-    Scalar operator()(const NullaryOp &op, IndexType i, IndexType j) const { return op(i, j); }
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Scalar
+    operator()(const NullaryOp &op, IndexType i, IndexType j) const { return op(i, j); }
 
     template<typename IndexType>
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Scalar operator()(const NullaryOp &op, IndexType i) const { return op(i); }
 
-    Scalar operator()(const NullaryOp &op, IndexType i) const { return op(i); }
+    template<typename T, typename IndexType>
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE T
+    packetOp(const NullaryOp &op, IndexType i, IndexType j) const { return op.template packetOp<T>(i, j); }
 
-    template<typename T, typename IndexType> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-    T packetOp(const NullaryOp &op, IndexType i, IndexType j) const { return op.template packetOp<T>(i, j); }
-
-    template<typename T, typename IndexType> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-    T packetOp(const NullaryOp &op, IndexType i) const { return op.template packetOp<T>(i); }
+    template<typename T, typename IndexType>
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE T
+    packetOp(const NullaryOp &op, IndexType i) const { return op.template packetOp<T>(i); }
 };
 
 template<typename Scalar, typename NullaryOp>
 struct nullary_wrapper<Scalar, NullaryOp, true, false, false> {
     template<typename IndexType>
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Scalar
+    operator()(const NullaryOp &op, IndexType= 0, IndexType= 0) const { return op(); }
 
-    Scalar operator()(const NullaryOp &op, IndexType= 0, IndexType= 0) const { return op(); }
-
-    template<typename T, typename IndexType> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-    T packetOp(const NullaryOp &op, IndexType= 0, IndexType= 0) const { return op.template packetOp<T>(); }
+    template<typename T, typename IndexType>
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE T
+    packetOp(const NullaryOp &op, IndexType= 0, IndexType= 0) const { return op.template packetOp<T>(); }
 };
 
 template<typename Scalar, typename NullaryOp>
 struct nullary_wrapper<Scalar, NullaryOp, false, false, true> {
     template<typename IndexType>
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Scalar
+    operator()(const NullaryOp &op, IndexType i, IndexType j = 0) const { return op(i, j); }
 
-    Scalar operator()(const NullaryOp &op, IndexType i, IndexType j = 0) const { return op(i, j); }
-
-    template<typename T, typename IndexType> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-    T packetOp(const NullaryOp &op, IndexType i, IndexType j = 0) const { return op.template packetOp<T>(i, j); }
+    template<typename T, typename IndexType>
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE T
+    packetOp(const NullaryOp &op, IndexType i, IndexType j = 0) const { return op.template packetOp<T>(i, j); }
 };
 
 // We need the following specialization for vector-only functors assigned to a runtime vector,
@@ -520,29 +383,23 @@ struct nullary_wrapper<Scalar, NullaryOp, false, false, true> {
 template<typename Scalar, typename NullaryOp>
 struct nullary_wrapper<Scalar, NullaryOp, false, true, false> {
     template<typename IndexType>
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-    Scalar operator()(const NullaryOp &op, IndexType i, IndexType j) const {
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Scalar operator()(const NullaryOp &op, IndexType i, IndexType j) const {
         eigen_assert(i == 0 || j == 0);
         return op(i + j);
     }
 
-    template<typename T, typename IndexType> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-    T packetOp(const NullaryOp &op, IndexType i, IndexType j) const {
+    template<typename T, typename IndexType>
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE T packetOp(const NullaryOp &op, IndexType i, IndexType j) const {
         eigen_assert(i == 0 || j == 0);
         return op.template packetOp<T>(i + j);
     }
 
     template<typename IndexType>
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-    Scalar operator()(const NullaryOp &op, IndexType i) const { return op(i); }
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Scalar operator()(const NullaryOp &op, IndexType i) const { return op(i); }
 
     template<typename T, typename IndexType>
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-    T packetOp(const NullaryOp &op, IndexType i) const { return op.template packetOp<T>(i); }
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE T
+    packetOp(const NullaryOp &op, IndexType i) const { return op.template packetOp<T>(i); }
 };
 
 template<typename Scalar, typename NullaryOp>
@@ -626,16 +483,7 @@ enum {
 };
 
 EIGEN_DEVICE_FUNC explicit evaluator(const XprType &n)
-        :
-
-m_functor(n
-.
-
-functor()
-
-),
-
-m_wrapper() {
+        : m_functor(n.functor()), m_wrapper() {
     EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
 }
 
@@ -643,40 +491,26 @@ typedef typename XprType::CoeffReturnType CoeffReturnType;
 
 template<typename IndexType>
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
 CoeffReturnType coeff(IndexType row, IndexType col) const {
     return m_wrapper(m_functor, row, col);
 }
 
 template<typename IndexType>
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
 CoeffReturnType coeff(IndexType index) const {
     return m_wrapper(m_functor, index);
 }
 
 template<int LoadMode, typename PacketType, typename IndexType>
 EIGEN_STRONG_INLINE
-        PacketType
-packet(IndexType
-row,
-IndexType col
-) const
-{
-return m_wrapper.
-template packetOp<PacketType>(m_functor, row, col
-);
+PacketType packet(IndexType row, IndexType col) const {
+    return m_wrapper.template packetOp<PacketType>(m_functor, row, col);
 }
 
 template<int LoadMode, typename PacketType, typename IndexType>
 EIGEN_STRONG_INLINE
-        PacketType
-packet(IndexType
-index) const
-{
-return m_wrapper.
-template packetOp<PacketType>(m_functor, index
-);
+PacketType packet(IndexType index) const {
+    return m_wrapper.template packetOp<PacketType>(m_functor, index);
 }
 
 protected:
@@ -701,8 +535,9 @@ enum {
 };
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-explicit unary_evaluator(const XprType &op) : m_d(op) {
+explicit unary_evaluator(const XprType &op)
+        : m_functor(op.functor()),
+          m_argImpl(op.nestedExpression()) {
     EIGEN_INTERNAL_CHECK_COST_VALUE(functor_traits<UnaryOp>::Cost);
     EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
 }
@@ -710,81 +545,30 @@ explicit unary_evaluator(const XprType &op) : m_d(op) {
 typedef typename XprType::CoeffReturnType CoeffReturnType;
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-row,
-Index col
-) const
-{
-return m_d.
-
-func()(m_d.argImpl.coeff(row, col));
-
+CoeffReturnType coeff(Index row, Index col) const {
+    return m_functor(m_argImpl.coeff(row, col));
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-index) const
-{
-return m_d.
-
-func()(m_d.argImpl.coeff(index));
-
+CoeffReturnType coeff(Index index) const {
+    return m_functor(m_argImpl.coeff(index));
 }
 
 template<int LoadMode, typename PacketType>
 EIGEN_STRONG_INLINE
-        PacketType
-packet(Index
-row,
-Index col
-) const
-{
-return m_d.
-
-func()
-
-.
-packetOp(m_d
-.argImpl.
-template packet<LoadMode, PacketType>(row, col
-));
+PacketType packet(Index row, Index col) const {
+    return m_functor.packetOp(m_argImpl.template packet<LoadMode, PacketType>(row, col));
 }
 
 template<int LoadMode, typename PacketType>
 EIGEN_STRONG_INLINE
-        PacketType
-packet(Index
-index) const
-{
-return m_d.
-
-func()
-
-.
-packetOp(m_d
-.argImpl.
-template packet<LoadMode, PacketType>(index)
-);
+PacketType packet(Index index) const {
+    return m_functor.packetOp(m_argImpl.template packet<LoadMode, PacketType>(index));
 }
 
 protected:
-
-// this helper permits to completely eliminate the functor if it is empty
-class Data : private UnaryOp {
-public:
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-    Data(const XprType &xpr) : UnaryOp(xpr.functor()), argImpl(xpr.nestedExpression()) {}
-
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-            const
-
-    UnaryOp &func() const { return static_cast<const UnaryOp &>(*this); }
-
-    evaluator<ArgType> argImpl;
-};
-
-Data m_d;
+const UnaryOp m_functor;
+evaluator<ArgType> m_argImpl;
 };
 
 // -------------------- CwiseTernaryOp --------------------
@@ -797,9 +581,7 @@ struct evaluator<CwiseTernaryOp < TernaryOp, Arg1, Arg2, Arg3> >
 typedef CwiseTernaryOp <TernaryOp, Arg1, Arg2, Arg3> XprType;
 typedef ternary_evaluator <CwiseTernaryOp<TernaryOp, Arg1, Arg2, Arg3>> Base;
 
-EIGEN_DEVICE_FUNC explicit evaluator(const XprType &xpr) :
-
-Base(xpr) {}
+EIGEN_DEVICE_FUNC explicit evaluator(const XprType &xpr) : Base(xpr) {}
 };
 
 template<typename TernaryOp, typename Arg1, typename Arg2, typename Arg3>
@@ -833,106 +615,48 @@ enum {
             evaluator < Arg3 > ::Alignment)
 };
 
-EIGEN_DEVICE_FUNC explicit ternary_evaluator(const XprType &xpr) :
-
-m_d(xpr)
-        {
-                EIGEN_INTERNAL_CHECK_COST_VALUE(functor_traits<TernaryOp>::Cost);
-        EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
-        }
+EIGEN_DEVICE_FUNC explicit ternary_evaluator(const XprType &xpr)
+        : m_functor(xpr.functor()),
+          m_arg1Impl(xpr.arg1()),
+          m_arg2Impl(xpr.arg2()),
+          m_arg3Impl(xpr.arg3()) {
+    EIGEN_INTERNAL_CHECK_COST_VALUE(functor_traits<TernaryOp>::Cost);
+    EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
+}
 
 typedef typename XprType::CoeffReturnType CoeffReturnType;
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-row,
-Index col
-) const
-{
-return m_d.
-
-func()(m_d.arg1Impl.coeff(row, col), m_d.arg2Impl.coeff(row, col), m_d.arg3Impl.coeff(row, col));
-
+CoeffReturnType coeff(Index row, Index col) const {
+    return m_functor(m_arg1Impl.coeff(row, col), m_arg2Impl.coeff(row, col), m_arg3Impl.coeff(row, col));
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-index) const
-{
-return m_d.
-
-func()(m_d.arg1Impl.coeff(index), m_d.arg2Impl.coeff(index), m_d.arg3Impl.coeff(index));
-
+CoeffReturnType coeff(Index index) const {
+    return m_functor(m_arg1Impl.coeff(index), m_arg2Impl.coeff(index), m_arg3Impl.coeff(index));
 }
 
 template<int LoadMode, typename PacketType>
 EIGEN_STRONG_INLINE
-        PacketType
-packet(Index
-row,
-Index col
-) const
-{
-return m_d.
-
-func()
-
-.
-packetOp(m_d
-.arg1Impl.
-template packet<LoadMode, PacketType>(row, col
-),
-m_d.arg2Impl.
-template packet<LoadMode, PacketType>(row, col
-),
-m_d.arg3Impl.
-template packet<LoadMode, PacketType>(row, col
-));
+PacketType packet(Index row, Index col) const {
+    return m_functor.packetOp(m_arg1Impl.template packet<LoadMode, PacketType>(row, col),
+                              m_arg2Impl.template packet<LoadMode, PacketType>(row, col),
+                              m_arg3Impl.template packet<LoadMode, PacketType>(row, col));
 }
 
 template<int LoadMode, typename PacketType>
 EIGEN_STRONG_INLINE
-        PacketType
-packet(Index
-index) const
-{
-return m_d.
-
-func()
-
-.
-packetOp(m_d
-.arg1Impl.
-template packet<LoadMode, PacketType>(index),
-        m_d
-.arg2Impl.
-template packet<LoadMode, PacketType>(index),
-        m_d
-.arg3Impl.
-template packet<LoadMode, PacketType>(index)
-);
+PacketType packet(Index index) const {
+    return m_functor.packetOp(m_arg1Impl.template packet<LoadMode, PacketType>(index),
+                              m_arg2Impl.template packet<LoadMode, PacketType>(index),
+                              m_arg3Impl.template packet<LoadMode, PacketType>(index));
 }
 
 protected:
-
-// this helper permits to completely eliminate the functor if it is empty
-struct Data : private TernaryOp {
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-    Data(const XprType &xpr) : TernaryOp(xpr.functor()), arg1Impl(xpr.arg1()), arg2Impl(xpr.arg2()),
-                               arg3Impl(xpr.arg3()) {}
-
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-            const
-
-    TernaryOp &func() const { return static_cast<const TernaryOp &>(*this); }
-
-    evaluator<Arg1> arg1Impl;
-    evaluator<Arg2> arg2Impl;
-    evaluator<Arg3> arg3Impl;
-};
-
-Data m_d;
+const TernaryOp m_functor;
+evaluator<Arg1> m_arg1Impl;
+evaluator<Arg2> m_arg2Impl;
+evaluator<Arg3> m_arg3Impl;
 };
 
 // -------------------- CwiseBinaryOp --------------------
@@ -945,9 +669,7 @@ struct evaluator<CwiseBinaryOp < BinaryOp, Lhs, Rhs> >
 typedef CwiseBinaryOp <BinaryOp, Lhs, Rhs> XprType;
 typedef binary_evaluator <CwiseBinaryOp<BinaryOp, Lhs, Rhs>> Base;
 
-EIGEN_DEVICE_FUNC explicit evaluator(const XprType &xpr) :
-
-Base(xpr) {}
+EIGEN_DEVICE_FUNC explicit evaluator(const XprType &xpr) : Base(xpr) {}
 };
 
 template<typename BinaryOp, typename Lhs, typename Rhs>
@@ -976,98 +698,44 @@ enum {
     Alignment = EIGEN_PLAIN_ENUM_MIN(evaluator < Lhs > ::Alignment, evaluator < Rhs > ::Alignment)
 };
 
-EIGEN_DEVICE_FUNC explicit binary_evaluator(const XprType &xpr) :
-
-m_d(xpr)
-        {
-                EIGEN_INTERNAL_CHECK_COST_VALUE(functor_traits<BinaryOp>::Cost);
-        EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
-        }
+EIGEN_DEVICE_FUNC explicit binary_evaluator(const XprType &xpr)
+        : m_functor(xpr.functor()),
+          m_lhsImpl(xpr.lhs()),
+          m_rhsImpl(xpr.rhs()) {
+    EIGEN_INTERNAL_CHECK_COST_VALUE(functor_traits<BinaryOp>::Cost);
+    EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
+}
 
 typedef typename XprType::CoeffReturnType CoeffReturnType;
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-row,
-Index col
-) const
-{
-return m_d.
-
-func()(m_d.lhsImpl.coeff(row, col), m_d.rhsImpl.coeff(row, col));
-
+CoeffReturnType coeff(Index row, Index col) const {
+    return m_functor(m_lhsImpl.coeff(row, col), m_rhsImpl.coeff(row, col));
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-index) const
-{
-return m_d.
-
-func()(m_d.lhsImpl.coeff(index), m_d.rhsImpl.coeff(index));
-
+CoeffReturnType coeff(Index index) const {
+    return m_functor(m_lhsImpl.coeff(index), m_rhsImpl.coeff(index));
 }
 
 template<int LoadMode, typename PacketType>
 EIGEN_STRONG_INLINE
-        PacketType
-packet(Index
-row,
-Index col
-) const
-{
-return m_d.
-
-func()
-
-.
-packetOp(m_d
-.lhsImpl.
-template packet<LoadMode, PacketType>(row, col
-),
-m_d.rhsImpl.
-template packet<LoadMode, PacketType>(row, col
-));
+PacketType packet(Index row, Index col) const {
+    return m_functor.packetOp(m_lhsImpl.template packet<LoadMode, PacketType>(row, col),
+                              m_rhsImpl.template packet<LoadMode, PacketType>(row, col));
 }
 
 template<int LoadMode, typename PacketType>
 EIGEN_STRONG_INLINE
-        PacketType
-packet(Index
-index) const
-{
-return m_d.
-
-func()
-
-.
-packetOp(m_d
-.lhsImpl.
-template packet<LoadMode, PacketType>(index),
-        m_d
-.rhsImpl.
-template packet<LoadMode, PacketType>(index)
-);
+PacketType packet(Index index) const {
+    return m_functor.packetOp(m_lhsImpl.template packet<LoadMode, PacketType>(index),
+                              m_rhsImpl.template packet<LoadMode, PacketType>(index));
 }
 
 protected:
-
-// this helper permits to completely eliminate the functor if it is empty
-struct Data : private BinaryOp {
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-    Data(const XprType &xpr) : BinaryOp(xpr.functor()), lhsImpl(xpr.lhs()), rhsImpl(xpr.rhs()) {}
-
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-            const
-
-    BinaryOp &func() const { return static_cast<const BinaryOp &>(*this); }
-
-    evaluator<Lhs> lhsImpl;
-    evaluator<Rhs> rhsImpl;
-};
-
-Data m_d;
+const BinaryOp m_functor;
+evaluator<Lhs> m_lhsImpl;
+evaluator<Rhs> m_rhsImpl;
 };
 
 // -------------------- CwiseUnaryView --------------------
@@ -1082,82 +750,43 @@ enum {
     CoeffReadCost = evaluator < ArgType > ::CoeffReadCost + functor_traits<UnaryOp>::Cost,
 
     Flags = (evaluator < ArgType > ::Flags & (HereditaryBits | LinearAccessBit | DirectAccessBit)),
-
+    
     Alignment = 0 // FIXME it is not very clear why alignment is necessarily lost...
 };
 
-EIGEN_DEVICE_FUNC explicit unary_evaluator(const XprType &op) :
-
-m_d(op)
-        {
-                EIGEN_INTERNAL_CHECK_COST_VALUE(functor_traits<UnaryOp>::Cost);
-        EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
-        }
+EIGEN_DEVICE_FUNC explicit unary_evaluator(const XprType &op)
+        : m_unaryOp(op.functor()),
+          m_argImpl(op.nestedExpression()) {
+    EIGEN_INTERNAL_CHECK_COST_VALUE(functor_traits<UnaryOp>::Cost);
+    EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
+}
 
 typedef typename XprType::Scalar Scalar;
 typedef typename XprType::CoeffReturnType CoeffReturnType;
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-row,
-Index col
-) const
-{
-return m_d.
-
-func()(m_d.argImpl.coeff(row, col));
-
+CoeffReturnType coeff(Index row, Index col) const {
+    return m_unaryOp(m_argImpl.coeff(row, col));
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-index) const
-{
-return m_d.
-
-func()(m_d.argImpl.coeff(index));
-
+CoeffReturnType coeff(Index index) const {
+    return m_unaryOp(m_argImpl.coeff(index));
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-Scalar &coeffRef(Index
-row,
-Index col
-)
-{
-return m_d.
-
-func()(m_d.argImpl.coeffRef(row, col));
-
+Scalar &coeffRef(Index row, Index col) {
+    return m_unaryOp(m_argImpl.coeffRef(row, col));
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-Scalar &coeffRef(Index
-index)
-{
-return m_d.
-
-func()(m_d.argImpl.coeffRef(index));
-
+Scalar &coeffRef(Index index) {
+    return m_unaryOp(m_argImpl.coeffRef(index));
 }
 
 protected:
-
-// this helper permits to completely eliminate the functor if it is empty
-struct Data : private UnaryOp {
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-    Data(const XprType &xpr) : UnaryOp(xpr.functor()), argImpl(xpr.nestedExpression()) {}
-
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-            const
-
-    UnaryOp &func() const { return static_cast<const UnaryOp &>(*this); }
-
-    evaluator<ArgType> argImpl;
-};
-
-Data m_d;
+const UnaryOp m_unaryOp;
+evaluator<ArgType> m_argImpl;
 };
 
 // -------------------- Map --------------------
@@ -1191,47 +820,35 @@ struct mapbase_evaluator : evaluator_base<Derived> {
     }
 
     EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
     CoeffReturnType coeff(Index row, Index col) const {
         return m_data[col * colStride() + row * rowStride()];
     }
 
     EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
     CoeffReturnType coeff(Index index) const {
         return m_data[index * m_innerStride.value()];
     }
 
     EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
     Scalar &coeffRef(Index row, Index col) {
         return m_data[col * colStride() + row * rowStride()];
     }
 
     EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
     Scalar &coeffRef(Index index) {
         return m_data[index * m_innerStride.value()];
     }
 
     template<int LoadMode, typename PacketType>
     EIGEN_STRONG_INLINE
-            PacketType
-    packet(Index
-    row,
-    Index col
-    ) const
-    {
+    PacketType packet(Index row, Index col) const {
         PointerType ptr = m_data + row * rowStride() + col * colStride();
         return internal::ploadt<PacketType, LoadMode>(ptr);
     }
 
     template<int LoadMode, typename PacketType>
     EIGEN_STRONG_INLINE
-            PacketType
-    packet(Index
-    index) const
-    {
+    PacketType packet(Index index) const {
         return internal::ploadt<PacketType, LoadMode>(m_data + index * m_innerStride.value());
     }
 
@@ -1247,17 +864,12 @@ struct mapbase_evaluator : evaluator_base<Derived> {
     void writePacket(Index index, const PacketType &x) {
         internal::pstoret<Scalar, PacketType, StoreMode>(m_data + index * m_innerStride.value(), x);
     }
-
 protected:
     EIGEN_DEVICE_FUNC
-    inline Index
-
-    rowStride() const { return XprType::IsRowMajor ? m_outerStride.value() : m_innerStride.value(); }
+    inline Index rowStride() const { return XprType::IsRowMajor ? m_outerStride.value() : m_innerStride.value(); }
 
     EIGEN_DEVICE_FUNC
-    inline Index
-
-    colStride() const { return XprType::IsRowMajor ? m_innerStride.value() : m_outerStride.value(); }
+    inline Index colStride() const { return XprType::IsRowMajor ? m_innerStride.value() : m_outerStride.value(); }
 
     PointerType m_data;
     const internal::variable_if_dynamic <Index, XprType::InnerStrideAtCompileTime> m_innerStride;
@@ -1284,7 +896,7 @@ enum {
     HasNoOuterStride = StrideType::OuterStrideAtCompileTime == 0,
     HasNoStride = HasNoInnerStride && HasNoOuterStride,
     IsDynamicSize = PlainObjectType::SizeAtCompileTime == Dynamic,
-
+    
     PacketAccessMask = bool(HasNoInnerStride) ? ~int(0) : ~int(PacketAccessBit),
     LinearAccessMask =
     bool(HasNoStride) || bool(PlainObjectType::IsVectorAtCompileTime) ? ~int(0) : ~int(LinearAccessBit),
@@ -1294,10 +906,7 @@ enum {
 };
 
 EIGEN_DEVICE_FUNC explicit evaluator(const XprType &map)
-        :
-
-mapbase_evaluator<XprType, PlainObjectType>(map)
-        {}
+        : mapbase_evaluator<XprType, PlainObjectType>(map) {}
 };
 
 // -------------------- Ref --------------------
@@ -1314,10 +923,7 @@ enum {
 };
 
 EIGEN_DEVICE_FUNC explicit evaluator(const XprType &ref)
-        :
-
-mapbase_evaluator<XprType, PlainObjectType>(ref)
-        {}
+        : mapbase_evaluator<XprType, PlainObjectType>(ref) {}
 };
 
 // -------------------- Block --------------------
@@ -1337,7 +943,7 @@ typedef typename packet_traits<Scalar>::type PacketScalar;
 
 enum {
     CoeffReadCost = evaluator < ArgType > ::CoeffReadCost,
-
+    
     RowsAtCompileTime = traits<XprType>::RowsAtCompileTime,
     ColsAtCompileTime = traits<XprType>::ColsAtCompileTime,
     MaxRowsAtCompileTime = traits<XprType>::MaxRowsAtCompileTime,
@@ -1373,13 +979,9 @@ enum {
     Alignment = EIGEN_PLAIN_ENUM_MIN(evaluator < ArgType > ::Alignment, Alignment0)
 };
 typedef block_evaluator<ArgType, BlockRows, BlockCols, InnerPanel> block_evaluator_type;
-
-EIGEN_DEVICE_FUNC explicit evaluator(const XprType &block) :
-
-block_evaluator_type(block)
-        {
-                EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
-        }
+EIGEN_DEVICE_FUNC explicit evaluator(const XprType &block) : block_evaluator_type(block) {
+    EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
+}
 };
 
 // no direct-access => dispatch to a unary evaluator
@@ -1390,10 +992,7 @@ struct block_evaluator<ArgType, BlockRows, BlockCols, InnerPanel, /*HasDirectAcc
 typedef Block <ArgType, BlockRows, BlockCols, InnerPanel> XprType;
 
 EIGEN_DEVICE_FUNC explicit block_evaluator(const XprType &block)
-        :
-
-unary_evaluator<XprType>(block)
-        {}
+        : unary_evaluator<XprType>(block) {}
 };
 
 template<typename ArgType, int BlockRows, int BlockCols, bool InnerPanel>
@@ -1403,28 +1002,9 @@ struct unary_evaluator<Block < ArgType, BlockRows, BlockCols, InnerPanel>, Index
 typedef Block <ArgType, BlockRows, BlockCols, InnerPanel> XprType;
 
 EIGEN_DEVICE_FUNC explicit unary_evaluator(const XprType &block)
-        :
-
-m_argImpl(block
-.
-
-nestedExpression()
-
-),
-m_startRow(block
-.
-
-startRow()
-
-),
-m_startCol(block
-.
-
-startCol()
-
-)
-{
-}
+        : m_argImpl(block.nestedExpression()),
+          m_startRow(block.startRow()),
+          m_startCol(block.startCol()) {}
 
 typedef typename XprType::Scalar Scalar;
 typedef typename XprType::CoeffReturnType CoeffReturnType;
@@ -1434,98 +1014,36 @@ enum {
 };
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-row,
-Index col
-) const
-{
-return m_argImpl.
-coeff(m_startRow
-.
-
-value()
-
-+ row, m_startCol.
-
-value()
-
-+ col);
+CoeffReturnType coeff(Index row, Index col) const {
+    return m_argImpl.coeff(m_startRow.value() + row, m_startCol.value() + col);
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-index) const
-{
-return
-coeff(RowsAtCompileTime
-== 1 ? 0 : index, RowsAtCompileTime == 1 ?
-index :
-0);
+CoeffReturnType coeff(Index index) const {
+    return coeff(RowsAtCompileTime == 1 ? 0 : index, RowsAtCompileTime == 1 ? index : 0);
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-Scalar &coeffRef(Index
-row,
-Index col
-)
-{
-return m_argImpl.
-coeffRef(m_startRow
-.
-
-value()
-
-+ row, m_startCol.
-
-value()
-
-+ col);
+Scalar &coeffRef(Index row, Index col) {
+    return m_argImpl.coeffRef(m_startRow.value() + row, m_startCol.value() + col);
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-Scalar &coeffRef(Index
-index)
-{
-return
-coeffRef(RowsAtCompileTime
-== 1 ? 0 : index, RowsAtCompileTime == 1 ?
-index :
-0);
+Scalar &coeffRef(Index index) {
+    return coeffRef(RowsAtCompileTime == 1 ? 0 : index, RowsAtCompileTime == 1 ? index : 0);
 }
 
 template<int LoadMode, typename PacketType>
 EIGEN_STRONG_INLINE
-        PacketType
-packet(Index
-row,
-Index col
-) const
-{
-return m_argImpl.
-template packet<LoadMode, PacketType>(m_startRow
-.
-
-value()
-
-+ row, m_startCol.
-
-value()
-
-+ col);
+PacketType packet(Index row, Index col) const {
+    return m_argImpl.template packet<LoadMode, PacketType>(m_startRow.value() + row, m_startCol.value() + col);
 }
 
 template<int LoadMode, typename PacketType>
 EIGEN_STRONG_INLINE
-        PacketType
-packet(Index
-index) const
-{
-return
-packet<LoadMode, PacketType>(RowsAtCompileTime
-== 1 ? 0 : index,
-RowsAtCompileTime == 1 ?
-index :
-0);
+PacketType packet(Index index) const {
+    return packet<LoadMode, PacketType>(RowsAtCompileTime == 1 ? 0 : index,
+                                        RowsAtCompileTime == 1 ? index : 0);
 }
 
 template<int StoreMode, typename PacketType>
@@ -1541,7 +1059,7 @@ void writePacket(Index index, const PacketType &x) {
                                               RowsAtCompileTime == 1 ? index : 0,
                                               x);
 }
-
+ 
 protected:
 evaluator<ArgType> m_argImpl;
 const variable_if_dynamic<Index, (ArgType::RowsAtCompileTime == 1 && BlockRows == 1) ? 0 : Dynamic> m_startRow;
@@ -1551,7 +1069,7 @@ const variable_if_dynamic<Index, (ArgType::ColsAtCompileTime == 1 && BlockCols =
 // TODO: This evaluator does not actually use the child evaluator; 
 // all action is via the data() as returned by the Block expression.
 
-template<typename ArgType, int BlockRows, int BlockCols, bool InnerPanel>
+template<typename ArgType, int BlockRows, int BlockCols, bool InnerPanel> 
 struct block_evaluator<ArgType, BlockRows, BlockCols, InnerPanel, /* HasDirectAccess */ true>
         : mapbase_evaluator<Block < ArgType, BlockRows, BlockCols, InnerPanel>,
           typename Block<ArgType, BlockRows, BlockCols, InnerPanel>::PlainObject>
@@ -1560,15 +1078,12 @@ typedef Block <ArgType, BlockRows, BlockCols, InnerPanel> XprType;
 typedef typename XprType::Scalar Scalar;
 
 EIGEN_DEVICE_FUNC explicit block_evaluator(const XprType &block)
-        :
-
-mapbase_evaluator<XprType, typename XprType::PlainObject>(block)
-        {
-                // TODO: for the 3.3 release, this should be turned to an internal assertion, but let's keep it as is for the beta lifetime
-                eigen_assert(((internal::UIntPtr(block.data()) %
-                               EIGEN_PLAIN_ENUM_MAX(1, evaluator < XprType > ::Alignment)) == 0) &&
-                             "data is not aligned");
-        }
+        : mapbase_evaluator<XprType, typename XprType::PlainObject>(block) {
+    // TODO: for the 3.3 release, this should be turned to an internal assertion, but let's keep it as is for the beta lifetime
+    eigen_assert(
+            ((internal::UIntPtr(block.data()) % EIGEN_PLAIN_ENUM_MAX(1, evaluator < XprType > ::Alignment)) == 0) &&
+            "data is not aligned");
+}
 };
 
 
@@ -1594,64 +1109,30 @@ enum {
 };
 
 EIGEN_DEVICE_FUNC explicit evaluator(const XprType &select)
-        :
-
-m_conditionImpl(select
-.
-
-conditionMatrix()
-
-),
-m_thenImpl(select
-.
-
-thenMatrix()
-
-),
-m_elseImpl(select
-.
-
-elseMatrix()
-
-)
-{
-EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
+        : m_conditionImpl(select.conditionMatrix()),
+          m_thenImpl(select.thenMatrix()),
+          m_elseImpl(select.elseMatrix()) {
+    EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
 }
 
 typedef typename XprType::CoeffReturnType CoeffReturnType;
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-row,
-Index col
-) const
-{
-if (m_conditionImpl.
-coeff(row, col
-))
-return m_thenImpl.
-coeff(row, col
-);
-else
-return m_elseImpl.
-coeff(row, col
-);
+CoeffReturnType coeff(Index row, Index col) const {
+    if (m_conditionImpl.coeff(row, col))
+        return m_thenImpl.coeff(row, col);
+    else
+        return m_elseImpl.coeff(row, col);
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-index) const
-{
-if (m_conditionImpl.
-coeff(index)
-)
-return m_thenImpl.
-coeff(index);
-else
-return m_elseImpl.
-coeff(index);
+CoeffReturnType coeff(Index index) const {
+    if (m_conditionImpl.coeff(index))
+        return m_thenImpl.coeff(index);
+    else
+        return m_elseImpl.coeff(index);
 }
-
+ 
 protected:
 evaluator<ConditionMatrixType> m_conditionImpl;
 evaluator<ThenMatrixType> m_thenImpl;
@@ -1683,85 +1164,57 @@ enum {
 };
 
 EIGEN_DEVICE_FUNC explicit unary_evaluator(const XprType &replicate)
-        :
-
-m_arg(replicate
-.
-
-nestedExpression()
-
-),
-
-m_argImpl (m_arg),
-m_rows(replicate.nestedExpression().rows()),
-m_cols(replicate.nestedExpression().cols()) {}
+        : m_arg(replicate.nestedExpression()),
+          m_argImpl(m_arg),
+          m_rows(replicate.nestedExpression().rows()),
+          m_cols(replicate.nestedExpression().cols()) {}
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-row,
-Index col
-) const
-{
-// try to avoid using modulo; this is a pure optimization strategy
-const Index actual_row = internal::traits<XprType>::RowsAtCompileTime == 1 ? 0
-                                                                           : RowFactor == 1 ? row
-                                                                                            : row % m_rows.value();
-const Index actual_col = internal::traits<XprType>::ColsAtCompileTime == 1 ? 0
-                                                                           : ColFactor == 1 ? col
-                                                                                            : col % m_cols.value();
+CoeffReturnType coeff(Index row, Index col) const {
+    // try to avoid using modulo; this is a pure optimization strategy
+    const Index actual_row = internal::traits<XprType>::RowsAtCompileTime == 1 ? 0
+                                                                               : RowFactor == 1 ? row
+                                                                                                : row % m_rows.value();
+    const Index actual_col = internal::traits<XprType>::ColsAtCompileTime == 1 ? 0
+                                                                               : ColFactor == 1 ? col
+                                                                                                : col % m_cols.value();
 
-return m_argImpl.
-coeff(actual_row, actual_col
-);
+    return m_argImpl.coeff(actual_row, actual_col);
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-index) const
-{
-// try to avoid using modulo; this is a pure optimization strategy
-const Index actual_index = internal::traits<XprType>::RowsAtCompileTime == 1
-                           ? (ColFactor == 1 ? index : index % m_cols.value())
-                           : (RowFactor == 1 ? index : index % m_rows.value());
+CoeffReturnType coeff(Index index) const {
+    // try to avoid using modulo; this is a pure optimization strategy
+    const Index actual_index = internal::traits<XprType>::RowsAtCompileTime == 1
+                               ? (ColFactor == 1 ? index : index % m_cols.value())
+                               : (RowFactor == 1 ? index : index % m_rows.value());
 
-return m_argImpl.
-coeff(actual_index);
+    return m_argImpl.coeff(actual_index);
 }
 
 template<int LoadMode, typename PacketType>
 EIGEN_STRONG_INLINE
-        PacketType
-packet(Index
-row,
-Index col
-) const
-{
-const Index actual_row = internal::traits<XprType>::RowsAtCompileTime == 1 ? 0
-                                                                           : RowFactor == 1 ? row
-                                                                                            : row % m_rows.value();
-const Index actual_col = internal::traits<XprType>::ColsAtCompileTime == 1 ? 0
-                                                                           : ColFactor == 1 ? col
-                                                                                            : col % m_cols.value();
+PacketType packet(Index row, Index col) const {
+    const Index actual_row = internal::traits<XprType>::RowsAtCompileTime == 1 ? 0
+                                                                               : RowFactor == 1 ? row
+                                                                                                : row % m_rows.value();
+    const Index actual_col = internal::traits<XprType>::ColsAtCompileTime == 1 ? 0
+                                                                               : ColFactor == 1 ? col
+                                                                                                : col % m_cols.value();
 
-return m_argImpl.
-template packet<LoadMode, PacketType>(actual_row, actual_col
-);
+    return m_argImpl.template packet<LoadMode, PacketType>(actual_row, actual_col);
 }
 
 template<int LoadMode, typename PacketType>
 EIGEN_STRONG_INLINE
-        PacketType
-packet(Index
-index) const
-{
-const Index actual_index = internal::traits<XprType>::RowsAtCompileTime == 1
-                           ? (ColFactor == 1 ? index : index % m_cols.value())
-                           : (RowFactor == 1 ? index : index % m_rows.value());
+PacketType packet(Index index) const {
+    const Index actual_index = internal::traits<XprType>::RowsAtCompileTime == 1
+                               ? (ColFactor == 1 ? index : index % m_cols.value())
+                               : (RowFactor == 1 ? index : index % m_rows.value());
 
-return m_argImpl.
-template packet<LoadMode, PacketType>(actual_index);
+    return m_argImpl.template packet<LoadMode, PacketType>(actual_index);
 }
-
+ 
 protected:
 const ArgTypeNested m_arg;
 evaluator<ArgTypeNestedCleaned> m_argImpl;
@@ -1793,74 +1246,32 @@ enum {
     Flags =
     (traits<XprType>::Flags & RowMajorBit) | (evaluator < ArgType > ::Flags & (HereditaryBits & (~RowMajorBit))) |
     LinearAccessBit,
-
+    
     Alignment = 0 // FIXME this will need to be improved once PartialReduxExpr is vectorized
 };
 
 EIGEN_DEVICE_FUNC explicit evaluator(const XprType xpr)
-        :
-
-m_arg(xpr
-.
-
-nestedExpression()
-
-),
-m_functor(xpr
-.
-
-functor()
-
-)
-{
-EIGEN_INTERNAL_CHECK_COST_VALUE(TraversalSize
-==Dynamic ?
-HugeCost :
-int(CostOpType::value)
-);
-EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
+        : m_arg(xpr.nestedExpression()), m_functor(xpr.functor()) {
+    EIGEN_INTERNAL_CHECK_COST_VALUE(TraversalSize == Dynamic ? HugeCost : int(CostOpType::value));
+    EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
 }
 
 typedef typename XprType::CoeffReturnType CoeffReturnType;
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-        const
-Scalar coeff(Index
-i,
-Index j
-) const
-{
-if (Direction==Vertical)
-return
-m_functor(m_arg
-.
-col(j)
-);
-else
-return
-m_functor(m_arg
-.
-row(i)
-);
+const Scalar coeff(Index i, Index j) const {
+    if (Direction == Vertical)
+        return m_functor(m_arg.col(j));
+    else
+        return m_functor(m_arg.row(i));
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-        const
-Scalar coeff(Index
-index) const
-{
-if (Direction==Vertical)
-return
-m_functor(m_arg
-.
-col(index)
-);
-else
-return
-m_functor(m_arg
-.
-row(index)
-);
+const Scalar coeff(Index index) const {
+    if (Direction == Vertical)
+        return m_functor(m_arg.col(index));
+    else
+        return m_functor(m_arg.row(index));
 }
 
 protected:
@@ -1890,46 +1301,34 @@ struct evaluator_wrapper_base
     typedef typename ArgType::CoeffReturnType CoeffReturnType;
 
     EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
     CoeffReturnType coeff(Index row, Index col) const {
         return m_argImpl.coeff(row, col);
     }
 
     EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
     CoeffReturnType coeff(Index index) const {
         return m_argImpl.coeff(index);
     }
 
     EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
     Scalar &coeffRef(Index row, Index col) {
         return m_argImpl.coeffRef(row, col);
     }
 
     EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
     Scalar &coeffRef(Index index) {
         return m_argImpl.coeffRef(index);
     }
 
     template<int LoadMode, typename PacketType>
     EIGEN_STRONG_INLINE
-            PacketType
-    packet(Index
-    row,
-    Index col
-    ) const
-    {
+    PacketType packet(Index row, Index col) const {
         return m_argImpl.template packet<LoadMode, PacketType>(row, col);
     }
 
     template<int LoadMode, typename PacketType>
     EIGEN_STRONG_INLINE
-            PacketType
-    packet(Index
-    index) const
-    {
+    PacketType packet(Index index) const {
         return m_argImpl.template packet<LoadMode, PacketType>(index);
     }
 
@@ -1956,9 +1355,9 @@ struct unary_evaluator<MatrixWrapper < TArgType> >
 typedef MatrixWrapper <TArgType> XprType;
 
 EIGEN_DEVICE_FUNC explicit unary_evaluator(const XprType &wrapper)
-        :
+        : evaluator_wrapper_base<MatrixWrapper < TArgType>
 
-evaluator_wrapper_base<MatrixWrapper < TArgType> >(wrapper.
+>(wrapper.
 
 nestedExpression()
 
@@ -1974,9 +1373,9 @@ struct unary_evaluator<ArrayWrapper < TArgType> >
 typedef ArrayWrapper <TArgType> XprType;
 
 EIGEN_DEVICE_FUNC explicit unary_evaluator(const XprType &wrapper)
-        :
+        : evaluator_wrapper_base<ArrayWrapper < TArgType>
 
-evaluator_wrapper_base<ArrayWrapper < TArgType> >(wrapper.
+>(wrapper.
 
 nestedExpression()
 
@@ -2010,7 +1409,7 @@ enum {
                     || ((Direction == Horizontal) && IsRowMajor),
 
     CoeffReadCost = evaluator < ArgType > ::CoeffReadCost,
-
+    
     // let's enable LinearAccess only with vectorization because of the product overhead
     // FIXME enable DirectAccess with negative strides?
             Flags0 = evaluator < ArgType > ::Flags,
@@ -2025,168 +1424,54 @@ enum {
 };
 
 EIGEN_DEVICE_FUNC explicit unary_evaluator(const XprType &reverse)
-        :
+        : m_argImpl(reverse.nestedExpression()),
+          m_rows(ReverseRow ? reverse.nestedExpression().rows() : 1),
+          m_cols(ReverseCol ? reverse.nestedExpression().cols() : 1) {}
 
-m_argImpl(reverse
-.
-
-nestedExpression()
-
-),
-m_rows(ReverseRow
-? reverse.
-
-nestedExpression()
-
-.
-
-rows() :
-
-1),
-m_cols(ReverseCol
-? reverse.
-
-nestedExpression()
-
-.
-
-cols() :
-
-1)
-{
+EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+CoeffReturnType coeff(Index row, Index col) const {
+    return m_argImpl.coeff(ReverseRow ? m_rows.value() - row - 1 : row,
+                           ReverseCol ? m_cols.value() - col - 1 : col);
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-row,
-Index col
-) const
-{
-return m_argImpl.
-coeff(ReverseRow
-? m_rows.
-
-value()
-
-- row - 1 : row,
-ReverseCol ? m_cols.
-
-value()
-
-- col - 1 : col);
+CoeffReturnType coeff(Index index) const {
+    return m_argImpl.coeff(m_rows.value() * m_cols.value() - index - 1);
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-index) const
-{
-return m_argImpl.
-coeff(m_rows
-.
-
-value()
-
-* m_cols.
-
-value()
-
-- index - 1);
+Scalar &coeffRef(Index row, Index col) {
+    return m_argImpl.coeffRef(ReverseRow ? m_rows.value() - row - 1 : row,
+                              ReverseCol ? m_cols.value() - col - 1 : col);
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-Scalar &coeffRef(Index
-row,
-Index col
-)
-{
-return m_argImpl.
-coeffRef(ReverseRow
-? m_rows.
-
-value()
-
-- row - 1 : row,
-ReverseCol ? m_cols.
-
-value()
-
-- col - 1 : col);
-}
-
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-Scalar &coeffRef(Index
-index)
-{
-return m_argImpl.
-coeffRef(m_rows
-.
-
-value()
-
-* m_cols.
-
-value()
-
-- index - 1);
+Scalar &coeffRef(Index index) {
+    return m_argImpl.coeffRef(m_rows.value() * m_cols.value() - index - 1);
 }
 
 template<int LoadMode, typename PacketType>
 EIGEN_STRONG_INLINE
-        PacketType
-packet(Index
-row,
-Index col
-) const
-{
-enum {
-    PacketSize = unpacket_traits<PacketType>::size,
-    OffsetRow = ReverseRow && IsColMajor ? PacketSize : 1,
-    OffsetCol = ReverseCol && IsRowMajor ? PacketSize : 1
-};
-typedef internal::reverse_packet_cond <PacketType, ReversePacket> reverse_packet;
-return
-reverse_packet::run(m_argImpl
-.
-template packet<LoadMode, PacketType>(
-        ReverseRow
-? m_rows.
-
-value()
-
-- row -
-OffsetRow : row,
-            ReverseCol
-? m_cols.
-
-value()
-
-- col -
-OffsetCol : col
-));
+PacketType packet(Index row, Index col) const {
+    enum {
+        PacketSize = unpacket_traits<PacketType>::size,
+        OffsetRow = ReverseRow && IsColMajor ? PacketSize : 1,
+        OffsetCol = ReverseCol && IsRowMajor ? PacketSize : 1
+    };
+    typedef internal::reverse_packet_cond <PacketType, ReversePacket> reverse_packet;
+    return reverse_packet::run(m_argImpl.template packet<LoadMode, PacketType>(
+            ReverseRow ? m_rows.value() - row - OffsetRow : row,
+            ReverseCol ? m_cols.value() - col - OffsetCol : col));
 }
 
 template<int LoadMode, typename PacketType>
 EIGEN_STRONG_INLINE
-        PacketType
-packet(Index
-index) const
-{
-enum {
-    PacketSize = unpacket_traits<PacketType>::size
-};
-return
-preverse(m_argImpl
-.
-template packet<LoadMode, PacketType>(m_rows
-.
-
-value()
-
-* m_cols.
-
-value()
-
-- index - PacketSize));
+PacketType packet(Index index) const {
+    enum {
+        PacketSize = unpacket_traits<PacketType>::size
+    };
+    return preverse(
+            m_argImpl.template packet<LoadMode, PacketType>(m_rows.value() * m_cols.value() - index - PacketSize));
 }
 
 template<int LoadMode, typename PacketType>
@@ -2214,7 +1499,7 @@ void writePacket(Index index, const PacketType &x) {
     m_argImpl.template writePacket<LoadMode>
             (m_rows.value() * m_cols.value() - index - PacketSize, preverse(x));
 }
-
+ 
 protected:
 evaluator<ArgType> m_argImpl;
 
@@ -2238,97 +1523,35 @@ enum {
 
     Flags = (unsigned int) (evaluator < ArgType > ::Flags & (HereditaryBits | DirectAccessBit) & ~RowMajorBit) |
             LinearAccessBit,
-
+    
     Alignment = 0
 };
 
 EIGEN_DEVICE_FUNC explicit evaluator(const XprType &diagonal)
-        :
-
-m_argImpl(diagonal
-.
-
-nestedExpression()
-
-),
-m_index(diagonal
-.
-
-index()
-
-)
-{
-}
+        : m_argImpl(diagonal.nestedExpression()),
+          m_index(diagonal.index()) {}
 
 typedef typename XprType::Scalar Scalar;
 typedef typename XprType::CoeffReturnType CoeffReturnType;
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-row, Index) const
-{
-return m_argImpl.
-coeff(row
-+
-
-rowOffset(), row
-
-+
-
-colOffset()
-
-);
+CoeffReturnType coeff(Index row, Index) const {
+    return m_argImpl.coeff(row + rowOffset(), row + colOffset());
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-CoeffReturnType coeff(Index
-index) const
-{
-return m_argImpl.
-coeff(index
-+
-
-rowOffset(), index
-
-+
-
-colOffset()
-
-);
+CoeffReturnType coeff(Index index) const {
+    return m_argImpl.coeff(index + rowOffset(), index + colOffset());
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-Scalar &coeffRef(Index
-row, Index)
-{
-return m_argImpl.
-coeffRef(row
-+
-
-rowOffset(), row
-
-+
-
-colOffset()
-
-);
+Scalar &coeffRef(Index row, Index) {
+    return m_argImpl.coeffRef(row + rowOffset(), row + colOffset());
 }
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-Scalar &coeffRef(Index
-index)
-{
-return m_argImpl.
-coeffRef(index
-+
-
-rowOffset(), index
-
-+
-
-colOffset()
-
-);
+Scalar &coeffRef(Index index) {
+    return m_argImpl.coeffRef(index + rowOffset(), index + colOffset());
 }
 
 protected:
@@ -2336,14 +1559,9 @@ evaluator<ArgType> m_argImpl;
 const internal::variable_if_dynamicindex <Index, XprType::DiagIndex> m_index;
 
 private:
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Index rowOffset() const { return m_index.value() > 0 ? 0 : -m_index.value(); }
 
-Index rowOffset() const { return m_index.value() > 0 ? 0 : -m_index.value(); }
-
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-Index colOffset() const { return m_index.value() > 0 ? m_index.value() : 0; }
-
+EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Index colOffset() const { return m_index.value() > 0 ? m_index.value() : 0; }
 };
 
 

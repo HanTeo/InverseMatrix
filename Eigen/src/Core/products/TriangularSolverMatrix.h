@@ -51,12 +51,12 @@ namespace Eigen {
                 level3_blocking <Scalar, Scalar> &blocking) {
             Index cols = otherSize;
 
-            typedef const_blas_data_mapper <Scalar, Index, TriStorageOrder> TriMapper;
-            typedef blas_data_mapper <Scalar, Index, ColMajor> OtherMapper;
+            typedef const_blas_data_mapper<Scalar, Index, TriStorageOrder> TriMapper;
+            typedef blas_data_mapper<Scalar, Index, ColMajor> OtherMapper;
             TriMapper tri(_tri, triStride);
             OtherMapper other(_other, otherStride);
 
-            typedef gebp_traits <Scalar, Scalar> Traits;
+            typedef gebp_traits<Scalar, Scalar> Traits;
 
             enum {
                 SmallPanelWidth = EIGEN_PLAIN_ENUM_MAX(Traits::mr, Traits::nr),
@@ -72,9 +72,9 @@ namespace Eigen {
             ei_declare_aligned_stack_constructed_variable(Scalar, blockA, sizeA, blocking.blockA());
             ei_declare_aligned_stack_constructed_variable(Scalar, blockB, sizeB, blocking.blockB());
 
-            conj_if <Conjugate> conj;
+            conj_if<Conjugate> conj;
             gebp_kernel<Scalar, Scalar, Index, OtherMapper, Traits::mr, Traits::nr, Conjugate, false> gebp_kernel;
-            gemm_pack_lhs <Scalar, Index, TriMapper, Traits::mr, Traits::LhsProgress, TriStorageOrder> pack_lhs;
+            gemm_pack_lhs<Scalar, Index, TriMapper, Traits::mr, Traits::LhsProgress, TriStorageOrder> pack_lhs;
             gemm_pack_rhs<Scalar, Index, OtherMapper, Traits::nr, ColMajor, false, true> pack_rhs;
 
             // the goal here is to subdivise the Rhs panels such that we keep some cache
@@ -194,12 +194,12 @@ namespace Eigen {
             Index rows = otherSize;
             typedef typename NumTraits<Scalar>::Real RealScalar;
 
-            typedef blas_data_mapper <Scalar, Index, ColMajor> LhsMapper;
-            typedef const_blas_data_mapper <Scalar, Index, TriStorageOrder> RhsMapper;
+            typedef blas_data_mapper<Scalar, Index, ColMajor> LhsMapper;
+            typedef const_blas_data_mapper<Scalar, Index, TriStorageOrder> RhsMapper;
             LhsMapper lhs(_other, otherStride);
             RhsMapper rhs(_tri, triStride);
 
-            typedef gebp_traits <Scalar, Scalar> Traits;
+            typedef gebp_traits<Scalar, Scalar> Traits;
             enum {
                 RhsStorageOrder = TriStorageOrder,
                 SmallPanelWidth = EIGEN_PLAIN_ENUM_MAX(Traits::mr, Traits::nr),
@@ -215,9 +215,9 @@ namespace Eigen {
             ei_declare_aligned_stack_constructed_variable(Scalar, blockA, sizeA, blocking.blockA());
             ei_declare_aligned_stack_constructed_variable(Scalar, blockB, sizeB, blocking.blockB());
 
-            conj_if <Conjugate> conj;
+            conj_if<Conjugate> conj;
             gebp_kernel<Scalar, Scalar, Index, LhsMapper, Traits::mr, Traits::nr, false, Conjugate> gebp_kernel;
-            gemm_pack_rhs <Scalar, Index, RhsMapper, Traits::nr, RhsStorageOrder> pack_rhs;
+            gemm_pack_rhs<Scalar, Index, RhsMapper, Traits::nr, RhsStorageOrder> pack_rhs;
             gemm_pack_rhs<Scalar, Index, RhsMapper, Traits::nr, RhsStorageOrder, false, true> pack_rhs_panel;
             gemm_pack_lhs<Scalar, Index, LhsMapper, Traits::mr, Traits::LhsProgress, ColMajor, false, true> pack_lhs_panel;
 

@@ -91,7 +91,7 @@ namespace Eigen {
                 EIGEN_UNUSED_VARIABLE(mask)
                 pstore(&res.x(), _mm_addsub_pd(t1, preverse(t2)));
 #else
-                pstore(&res.x(), padd(t1, pxor(mask, preverse(t2))));
+                pstore(&res.x(), padd(t1, pxor(mask,preverse(t2))));
 #endif
 
                 /*
@@ -105,7 +105,7 @@ namespace Eigen {
                 EIGEN_UNUSED_VARIABLE(mask)
                 pstore(&res.z(), preverse(_mm_addsub_pd(preverse(t1), t2)));
 #else
-                pstore(&res.z(), psub(t1, pxor(mask, preverse(t2))));
+                pstore(&res.z(), psub(t1, pxor(mask,preverse(t2))));
 #endif
 
                 return res;

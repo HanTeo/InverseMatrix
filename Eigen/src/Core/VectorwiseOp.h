@@ -64,25 +64,16 @@ namespace Eigen {
                 : m_matrix(mat), m_functor(func) {}
 
         EIGEN_DEVICE_FUNC
-                Index
-
-        rows() const { return (Direction == Vertical ? 1 : m_matrix.rows()); }
+        Index rows() const { return (Direction == Vertical ? 1 : m_matrix.rows()); }
 
         EIGEN_DEVICE_FUNC
-                Index
-
-        cols() const { return (Direction == Horizontal ? 1 : m_matrix.cols()); }
+        Index cols() const { return (Direction == Horizontal ? 1 : m_matrix.cols()); }
 
         EIGEN_DEVICE_FUNC
-        typename MatrixType::Nested
-
-        nestedExpression() const { return m_matrix; }
+        typename MatrixType::Nested nestedExpression() const { return m_matrix; }
 
         EIGEN_DEVICE_FUNC
-        const MemberOp
-        &
-
-        functor() const { return m_functor; }
+        const MemberOp &functor() const { return m_functor; }
 
     protected:
         typename MatrixType::Nested m_matrix;
@@ -141,12 +132,10 @@ namespace Eigen {
                     value = (Size + 5) * NumTraits<Scalar>::MulCost + (Size - 1) * NumTraits<Scalar>::AddCost
                 };
             };
-
             EIGEN_DEVICE_FUNC member_lpnorm() {}
 
             template<typename XprType>
             EIGEN_DEVICE_FUNC inline ResultType
-
             operator()(const XprType &mat) const { return mat.template lpNorm<p>(); }
         };
 
@@ -161,13 +150,12 @@ namespace Eigen {
                     value = (Size - 1) * functor_traits<BinaryOp>::Cost
                 };
             };
-
             EIGEN_DEVICE_FUNC explicit member_redux(const BinaryOp func) : m_functor(func) {}
 
             template<typename Derived>
-            EIGEN_DEVICE_FUNC inline result_type
-
-            operator()(const DenseBase <Derived> &mat) const { return mat.redux(m_functor); }
+            EIGEN_DEVICE_FUNC inline result_type operator()(const DenseBase <Derived> &mat) const {
+                return mat.redux(m_functor);
+            }
 
             const BinaryOp m_functor;
         };
@@ -230,19 +218,14 @@ namespace Eigen {
         /** \internal
           * \returns the i-th subvector according to the \c Direction */
         EIGEN_DEVICE_FUNC
-                SubVector
-        subVector(Index
-        i)
-        {
+        SubVector subVector(Index i) {
             return SubVector(m_matrix.derived(), i);
         }
 
         /** \internal
           * \returns the number of subvectors in the direction \c Direction */
         EIGEN_DEVICE_FUNC
-                Index
-
-        subVectors() const { return isVertical ? m_matrix.cols() : m_matrix.rows(); }
+        Index subVectors() const { return isVertical ? m_matrix.cols() : m_matrix.rows(); }
 
         template<typename OtherDerived>
         struct ExtendedType {
@@ -256,7 +239,6 @@ namespace Eigen {
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC
         typename ExtendedType<OtherDerived>::Type
-
         extendedTo(const DenseBase <OtherDerived> &other) const {
             EIGEN_STATIC_ASSERT(EIGEN_IMPLIES(isVertical, OtherDerived::MaxColsAtCompileTime == 1),
                                 YOU_PASSED_A_ROW_VECTOR_BUT_A_COLUMN_VECTOR_WAS_EXPECTED)
@@ -280,7 +262,6 @@ namespace Eigen {
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC
         typename OppositeExtendedType<OtherDerived>::Type
-
         extendedToOpposite(const DenseBase <OtherDerived> &other) const {
             EIGEN_STATIC_ASSERT(EIGEN_IMPLIES(isHorizontal, OtherDerived::MaxColsAtCompileTime == 1),
                                 YOU_PASSED_A_ROW_VECTOR_BUT_A_COLUMN_VECTOR_WAS_EXPECTED)
@@ -298,10 +279,7 @@ namespace Eigen {
 
         /** \internal */
         EIGEN_DEVICE_FUNC
-        inline const ExpressionType
-        &
-
-        _expression() const { return m_matrix; }
+        inline const ExpressionType &_expression() const { return m_matrix; }
 
         /** \returns a row or column vector expression of \c *this reduxed by \a func
           *
@@ -313,10 +291,9 @@ namespace Eigen {
         template<typename BinaryOp>
         EIGEN_DEVICE_FUNC
         const typename ReduxReturnType<BinaryOp>::Type
-
-        redux(const BinaryOp &func = BinaryOp()) const { return typename ReduxReturnType<BinaryOp>::Type(_expression(),
-                                                                                                         internal::member_redux<BinaryOp, Scalar>(
-                                                                                                                 func));
+        redux(const BinaryOp &func = BinaryOp()) const {
+            return typename ReduxReturnType<BinaryOp>::Type(_expression(), internal::member_redux<BinaryOp, Scalar>(
+                    func));
         }
 
         typedef typename ReturnType<internal::member_minCoeff>::Type MinCoeffReturnType;
@@ -350,9 +327,7 @@ namespace Eigen {
           *
           * \sa DenseBase::minCoeff() */
         EIGEN_DEVICE_FUNC
-        const MinCoeffReturnType
-
-        minCoeff() const { return MinCoeffReturnType(_expression()); }
+        const MinCoeffReturnType minCoeff() const { return MinCoeffReturnType(_expression()); }
 
         /** \returns a row (or column) vector expression of the largest coefficient
           * of each column (or row) of the referenced expression.
@@ -364,9 +339,7 @@ namespace Eigen {
           *
           * \sa DenseBase::maxCoeff() */
         EIGEN_DEVICE_FUNC
-        const MaxCoeffReturnType
-
-        maxCoeff() const { return MaxCoeffReturnType(_expression()); }
+        const MaxCoeffReturnType maxCoeff() const { return MaxCoeffReturnType(_expression()); }
 
         /** \returns a row (or column) vector expression of the squared norm
           * of each column (or row) of the referenced expression.
@@ -377,9 +350,7 @@ namespace Eigen {
           *
           * \sa DenseBase::squaredNorm() */
         EIGEN_DEVICE_FUNC
-        const SquaredNormReturnType
-
-        squaredNorm() const { return SquaredNormReturnType(_expression()); }
+        const SquaredNormReturnType squaredNorm() const { return SquaredNormReturnType(_expression()); }
 
         /** \returns a row (or column) vector expression of the norm
           * of each column (or row) of the referenced expression.
@@ -390,9 +361,7 @@ namespace Eigen {
           *
           * \sa DenseBase::norm() */
         EIGEN_DEVICE_FUNC
-        const NormReturnType
-
-        norm() const { return NormReturnType(_expression()); }
+        const NormReturnType norm() const { return NormReturnType(_expression()); }
 
         /** \returns a row (or column) vector expression of the norm
           * of each column (or row) of the referenced expression.
@@ -404,9 +373,9 @@ namespace Eigen {
           * \sa DenseBase::norm() */
         template<int p>
         EIGEN_DEVICE_FUNC
-        const typename LpNormReturnType<p>::Type
-
-        lpNorm() const { return typename LpNormReturnType<p>::Type(_expression()); }
+        const typename LpNormReturnType<p>::Type lpNorm() const {
+            return typename LpNormReturnType<p>::Type(_expression());
+        }
 
 
         /** \returns a row (or column) vector expression of the norm
@@ -416,9 +385,7 @@ namespace Eigen {
           *
           * \sa DenseBase::blueNorm() */
         EIGEN_DEVICE_FUNC
-        const BlueNormReturnType
-
-        blueNorm() const { return BlueNormReturnType(_expression()); }
+        const BlueNormReturnType blueNorm() const { return BlueNormReturnType(_expression()); }
 
 
         /** \returns a row (or column) vector expression of the norm
@@ -428,9 +395,7 @@ namespace Eigen {
           *
           * \sa DenseBase::stableNorm() */
         EIGEN_DEVICE_FUNC
-        const StableNormReturnType
-
-        stableNorm() const { return StableNormReturnType(_expression()); }
+        const StableNormReturnType stableNorm() const { return StableNormReturnType(_expression()); }
 
 
         /** \returns a row (or column) vector expression of the norm
@@ -440,9 +405,7 @@ namespace Eigen {
           *
           * \sa DenseBase::hypotNorm() */
         EIGEN_DEVICE_FUNC
-        const HypotNormReturnType
-
-        hypotNorm() const { return HypotNormReturnType(_expression()); }
+        const HypotNormReturnType hypotNorm() const { return HypotNormReturnType(_expression()); }
 
         /** \returns a row (or column) vector expression of the sum
           * of each column (or row) of the referenced expression.
@@ -452,18 +415,14 @@ namespace Eigen {
           *
           * \sa DenseBase::sum() */
         EIGEN_DEVICE_FUNC
-        const SumReturnType
-
-        sum() const { return SumReturnType(_expression()); }
+        const SumReturnType sum() const { return SumReturnType(_expression()); }
 
         /** \returns a row (or column) vector expression of the mean
         * of each column (or row) of the referenced expression.
         *
         * \sa DenseBase::mean() */
         EIGEN_DEVICE_FUNC
-        const MeanReturnType
-
-        mean() const { return MeanReturnType(_expression()); }
+        const MeanReturnType mean() const { return MeanReturnType(_expression()); }
 
         /** \returns a row (or column) vector expression representing
           * whether \b all coefficients of each respective column (or row) are \c true.
@@ -471,9 +430,7 @@ namespace Eigen {
           *
           * \sa DenseBase::all() */
         EIGEN_DEVICE_FUNC
-        const AllReturnType
-
-        all() const { return AllReturnType(_expression()); }
+        const AllReturnType all() const { return AllReturnType(_expression()); }
 
         /** \returns a row (or column) vector expression representing
           * whether \b at \b least one coefficient of each respective column (or row) is \c true.
@@ -481,9 +438,7 @@ namespace Eigen {
           *
           * \sa DenseBase::any() */
         EIGEN_DEVICE_FUNC
-        const AnyReturnType
-
-        any() const { return AnyReturnType(_expression()); }
+        const AnyReturnType any() const { return AnyReturnType(_expression()); }
 
         /** \returns a row (or column) vector expression representing
           * the number of \c true coefficients of each respective column (or row).
@@ -495,9 +450,7 @@ namespace Eigen {
           *
           * \sa DenseBase::count() */
         EIGEN_DEVICE_FUNC
-        const CountReturnType
-
-        count() const { return CountReturnType(_expression()); }
+        const CountReturnType count() const { return CountReturnType(_expression()); }
 
         /** \returns a row (or column) vector expression of the product
           * of each column (or row) of the referenced expression.
@@ -507,9 +460,7 @@ namespace Eigen {
           *
           * \sa DenseBase::prod() */
         EIGEN_DEVICE_FUNC
-        const ProdReturnType
-
-        prod() const { return ProdReturnType(_expression()); }
+        const ProdReturnType prod() const { return ProdReturnType(_expression()); }
 
 
         /** \returns a matrix expression
@@ -520,24 +471,18 @@ namespace Eigen {
           *
           * \sa DenseBase::reverse() */
         EIGEN_DEVICE_FUNC
-        const ConstReverseReturnType
-
-        reverse() const { return ConstReverseReturnType(_expression()); }
+        const ConstReverseReturnType reverse() const { return ConstReverseReturnType(_expression()); }
 
         /** \returns a writable matrix expression
           * where each column (or row) are reversed.
           *
           * \sa reverse() const */
         EIGEN_DEVICE_FUNC
-                ReverseReturnType
-
-        reverse() { return ReverseReturnType(_expression()); }
+        ReverseReturnType reverse() { return ReverseReturnType(_expression()); }
 
         typedef Replicate<ExpressionType, (isVertical ? Dynamic : 1), (isHorizontal ? Dynamic : 1)> ReplicateReturnType;
         EIGEN_DEVICE_FUNC
-        const ReplicateReturnType
-        replicate(Index
-        factor) const;
+        const ReplicateReturnType replicate(Index factor) const;
 
         /**
           * \return an expression of the replication of each column (or row) of \c *this
@@ -549,13 +494,10 @@ namespace Eigen {
           */
         // NOTE implemented here because of sunstudio's compilation errors
         // isVertical*Factor+isHorizontal instead of (isVertical?Factor:1) to handle CUDA bug with ternary operator
-        template<int Factor> const Replicate<ExpressionType,
-                isVertical * Factor + isHorizontal, isHorizontal * Factor + isVertical>
-                EIGEN_DEVICE_FUNC
-        replicate(Index
-        factor = Factor
-        ) const
-        {
+        template<int Factor>
+        const Replicate<ExpressionType, isVertical * Factor + isHorizontal, isHorizontal * Factor + isVertical>
+        EIGEN_DEVICE_FUNC
+        replicate(Index factor = Factor) const {
             return Replicate<ExpressionType, (isVertical ? Factor : 1), (isHorizontal ? Factor : 1)>
                     (_expression(), isVertical ? factor : 1, isHorizontal ? factor : 1);
         }
@@ -565,10 +507,7 @@ namespace Eigen {
         /** Copies the vector \a other to each subvector of \c *this */
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC
-                ExpressionType
-        &
-
-        operator=(const DenseBase <OtherDerived> &other) {
+        ExpressionType &operator=(const DenseBase <OtherDerived> &other) {
             EIGEN_STATIC_ASSERT_VECTOR_ONLY(OtherDerived)
             EIGEN_STATIC_ASSERT_SAME_XPR_KIND(ExpressionType, OtherDerived)
             //eigen_assert((m_matrix.isNull()) == (other.isNull())); FIXME
@@ -578,10 +517,7 @@ namespace Eigen {
         /** Adds the vector \a other to each subvector of \c *this */
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC
-                ExpressionType
-        &
-
-        operator+=(const DenseBase <OtherDerived> &other) {
+        ExpressionType &operator+=(const DenseBase <OtherDerived> &other) {
             EIGEN_STATIC_ASSERT_VECTOR_ONLY(OtherDerived)
             EIGEN_STATIC_ASSERT_SAME_XPR_KIND(ExpressionType, OtherDerived)
             return const_cast<ExpressionType &>(m_matrix += extendedTo(other.derived()));
@@ -590,10 +526,7 @@ namespace Eigen {
         /** Substracts the vector \a other to each subvector of \c *this */
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC
-                ExpressionType
-        &
-
-        operator-=(const DenseBase <OtherDerived> &other) {
+        ExpressionType &operator-=(const DenseBase <OtherDerived> &other) {
             EIGEN_STATIC_ASSERT_VECTOR_ONLY(OtherDerived)
             EIGEN_STATIC_ASSERT_SAME_XPR_KIND(ExpressionType, OtherDerived)
             return const_cast<ExpressionType &>(m_matrix -= extendedTo(other.derived()));
@@ -602,10 +535,7 @@ namespace Eigen {
         /** Multiples each subvector of \c *this by the vector \a other */
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC
-                ExpressionType
-        &
-
-        operator*=(const DenseBase <OtherDerived> &other) {
+        ExpressionType &operator*=(const DenseBase <OtherDerived> &other) {
             EIGEN_STATIC_ASSERT_VECTOR_ONLY(OtherDerived)
             EIGEN_STATIC_ASSERT_ARRAYXPR(ExpressionType)
             EIGEN_STATIC_ASSERT_SAME_XPR_KIND(ExpressionType, OtherDerived)
@@ -616,10 +546,7 @@ namespace Eigen {
         /** Divides each subvector of \c *this by the vector \a other */
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC
-                ExpressionType
-        &
-
-        operator/=(const DenseBase <OtherDerived> &other) {
+        ExpressionType &operator/=(const DenseBase <OtherDerived> &other) {
             EIGEN_STATIC_ASSERT_VECTOR_ONLY(OtherDerived)
             EIGEN_STATIC_ASSERT_ARRAYXPR(ExpressionType)
             EIGEN_STATIC_ASSERT_SAME_XPR_KIND(ExpressionType, OtherDerived)
@@ -628,8 +555,8 @@ namespace Eigen {
         }
 
         /** Returns the expression of the sum of the vector \a other to each subvector of \c *this */
-        template<typename OtherDerived> EIGEN_STRONG_INLINE EIGEN_DEVICE_FUNC
-
+        template<typename OtherDerived>
+        EIGEN_STRONG_INLINE EIGEN_DEVICE_FUNC
         CwiseBinaryOp<internal::scalar_sum_op<Scalar, typename OtherDerived::Scalar>,
                 const ExpressionTypeNestedCleaned,
                 const typename ExtendedType<OtherDerived>::Type>
@@ -642,10 +569,9 @@ namespace Eigen {
         /** Returns the expression of the difference between each subvector of \c *this and the vector \a other */
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC
-                CwiseBinaryOp<internal::scalar_difference_op<Scalar, typename OtherDerived::Scalar>,
+        CwiseBinaryOp<internal::scalar_difference_op<Scalar, typename OtherDerived::Scalar>,
                 const ExpressionTypeNestedCleaned,
                 const typename ExtendedType<OtherDerived>::Type>
-
         operator-(const DenseBase <OtherDerived> &other) const {
             EIGEN_STATIC_ASSERT_VECTOR_ONLY(OtherDerived)
             EIGEN_STATIC_ASSERT_SAME_XPR_KIND(ExpressionType, OtherDerived)
@@ -654,12 +580,12 @@ namespace Eigen {
 
         /** Returns the expression where each subvector is the product of the vector \a other
           * by the corresponding subvector of \c *this */
-        template<typename OtherDerived> EIGEN_STRONG_INLINE EIGEN_DEVICE_FUNC
+        template<typename OtherDerived>
+        EIGEN_STRONG_INLINE EIGEN_DEVICE_FUNC
         CwiseBinaryOp<internal::scalar_product_op<Scalar>,
                 const ExpressionTypeNestedCleaned,
                 const typename ExtendedType<OtherDerived>::Type>
-                EIGEN_DEVICE_FUNC
-
+        EIGEN_DEVICE_FUNC
         operator*(const DenseBase <OtherDerived> &other) const {
             EIGEN_STATIC_ASSERT_VECTOR_ONLY(OtherDerived)
             EIGEN_STATIC_ASSERT_ARRAYXPR(ExpressionType)
@@ -671,10 +597,9 @@ namespace Eigen {
           * subvector of \c *this by the vector \a other */
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC
-                CwiseBinaryOp<internal::scalar_quotient_op<Scalar>,
+        CwiseBinaryOp<internal::scalar_quotient_op<Scalar>,
                 const ExpressionTypeNestedCleaned,
                 const typename ExtendedType<OtherDerived>::Type>
-
         operator/(const DenseBase <OtherDerived> &other) const {
             EIGEN_STATIC_ASSERT_VECTOR_ONLY(OtherDerived)
             EIGEN_STATIC_ASSERT_ARRAYXPR(ExpressionType)
@@ -687,10 +612,9 @@ namespace Eigen {
           * \sa MatrixBase::normalized(), normalize()
           */
         EIGEN_DEVICE_FUNC
-                CwiseBinaryOp<internal::scalar_quotient_op<Scalar>,
+        CwiseBinaryOp<internal::scalar_quotient_op<Scalar>,
                 const ExpressionTypeNestedCleaned,
                 const typename OppositeExtendedType<typename ReturnType<internal::member_norm, RealScalar>::Type>::Type>
-
         normalized() const { return m_matrix.cwiseQuotient(extendedToOpposite(this->norm())); }
 
 
@@ -707,16 +631,13 @@ namespace Eigen {
 
         typedef Homogeneous <ExpressionType, Direction> HomogeneousReturnType;
         EIGEN_DEVICE_FUNC
-                HomogeneousReturnType
-
-        homogeneous() const;
+        HomogeneousReturnType homogeneous() const;
 
         typedef typename ExpressionType::PlainObject CrossReturnType;
+
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC
-        const CrossReturnType
-
-        cross(const MatrixBase <OtherDerived> &other) const;
+        const CrossReturnType cross(const MatrixBase <OtherDerived> &other) const;
 
         enum {
             HNormalized_Size = Direction == Vertical ? internal::traits<ExpressionType>::RowsAtCompileTime
@@ -745,9 +666,7 @@ namespace Eigen {
                                    HNormalizedReturnType;
 
         EIGEN_DEVICE_FUNC
-        const HNormalizedReturnType
-
-        hnormalized() const;
+        const HNormalizedReturnType hnormalized() const;
 
     protected:
         ExpressionTypeNested m_matrix;
@@ -761,8 +680,7 @@ namespace Eigen {
   * \sa rowwise(), class VectorwiseOp, \ref TutorialReductionsVisitorsBroadcasting
   */
     template<typename Derived>
-    EIGEN_DEVICE_FUNC inline typename DenseBase<Derived>::ColwiseReturnType
-
+    inline typename DenseBase<Derived>::ColwiseReturnType
     DenseBase<Derived>::colwise() {
         return ColwiseReturnType(derived());
     }
@@ -775,8 +693,7 @@ namespace Eigen {
   * \sa colwise(), class VectorwiseOp, \ref TutorialReductionsVisitorsBroadcasting
   */
     template<typename Derived>
-    EIGEN_DEVICE_FUNC inline typename DenseBase<Derived>::RowwiseReturnType
-
+    inline typename DenseBase<Derived>::RowwiseReturnType
     DenseBase<Derived>::rowwise() {
         return RowwiseReturnType(derived());
     }

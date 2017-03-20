@@ -44,7 +44,6 @@ EIGEN_DOC_UNARY_ADDONS( operator-, opposite
 ///
 EIGEN_DEVICE_FUNC
 inline const NegativeReturnType
-
 operator-() const { return NegativeReturnType(derived()); }
 
 
@@ -93,7 +92,6 @@ part function
 /// \sa imag()
 EIGEN_DEVICE_FUNC
 inline RealReturnType
-
 real() const { return RealReturnType(derived()); }
 
 /// \returns an read-only expression of the imaginary part of \c *this.
@@ -105,7 +103,6 @@ part function
 /// \sa real()
 EIGEN_DEVICE_FUNC
 inline const ImagReturnType
-
 imag() const { return ImagReturnType(derived()); }
 
 /// \brief Apply a unary operator coefficient-wise
@@ -169,7 +166,6 @@ part function
 /// \sa imag()
 EIGEN_DEVICE_FUNC
 inline NonConstRealReturnType
-
 real() { return NonConstRealReturnType(derived()); }
 
 /// \returns a non const expression of the imaginary part of \c *this.
@@ -181,5 +177,4 @@ part function
 /// \sa real()
 EIGEN_DEVICE_FUNC
 inline NonConstImagReturnType
-
 imag() { return NonConstImagReturnType(derived()); }

@@ -82,7 +82,7 @@ class CwiseBinaryOp :
                         BinaryOp>::ret>,
         internal::no_assignment_operator {
 public:
-
+    
     typedef typename internal::remove_all<BinaryOp>::type Functor;
     typedef typename internal::remove_all<LhsType>::type Lhs;
     typedef typename internal::remove_all<RhsType>::type Rhs;
@@ -100,9 +100,7 @@ public:
     typedef typename internal::remove_reference<RhsNested>::type _RhsNested;
 
     EIGEN_DEVICE_FUNC
-            EIGEN_STRONG_INLINE
-
-    CwiseBinaryOp(const Lhs &aLhs, const Rhs &aRhs, const BinaryOp &func = BinaryOp())
+    EIGEN_STRONG_INLINE CwiseBinaryOp(const Lhs &aLhs, const Rhs &aRhs, const BinaryOp &func = BinaryOp())
             : m_lhs(aLhs), m_rhs(aRhs), m_functor(func) {
         EIGEN_CHECK_BINARY_COMPATIBILIY(BinaryOp, typename Lhs::Scalar, typename Rhs::Scalar);
         // require the sizes to match
@@ -111,20 +109,15 @@ public:
     }
 
     EIGEN_DEVICE_FUNC
-            EIGEN_STRONG_INLINE
-
-    Index rows() const {
+    EIGEN_STRONG_INLINE Index rows() const {
         // return the fixed size type if available to enable compile time optimizations
         if (internal::traits<typename internal::remove_all<LhsNested>::type>::RowsAtCompileTime == Dynamic)
             return m_rhs.rows();
         else
             return m_lhs.rows();
     }
-
     EIGEN_DEVICE_FUNC
-            EIGEN_STRONG_INLINE
-
-    Index cols() const {
+    EIGEN_STRONG_INLINE Index cols() const {
         // return the fixed size type if available to enable compile time optimizations
         if (internal::traits<typename internal::remove_all<LhsNested>::type>::ColsAtCompileTime == Dynamic)
             return m_rhs.cols();
@@ -134,24 +127,13 @@ public:
 
     /** \returns the left hand side nested expression */
     EIGEN_DEVICE_FUNC
-    const _LhsNested
-    &
-
-    lhs() const { return m_lhs; }
-
+    const _LhsNested &lhs() const { return m_lhs; }
     /** \returns the right hand side nested expression */
     EIGEN_DEVICE_FUNC
-    const _RhsNested
-    &
-
-    rhs() const { return m_rhs; }
-
+    const _RhsNested &rhs() const { return m_rhs; }
     /** \returns the functor representing the binary operation */
     EIGEN_DEVICE_FUNC
-    const BinaryOp
-    &
-
-    functor() const { return m_functor; }
+    const BinaryOp &functor() const { return m_functor; }
 
 protected:
     LhsNested m_lhs;
@@ -173,9 +155,7 @@ public:
   */
 template<typename Derived>
 template<typename OtherDerived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-Derived &
+EIGEN_STRONG_INLINE Derived &
 MatrixBase<Derived>::operator-=(const MatrixBase <OtherDerived> &other) {
     call_assignment(derived(), other.derived(), internal::sub_assign_op<Scalar, typename OtherDerived::Scalar>());
     return derived();
@@ -187,9 +167,7 @@ MatrixBase<Derived>::operator-=(const MatrixBase <OtherDerived> &other) {
   */
 template<typename Derived>
 template<typename OtherDerived>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-Derived &
+EIGEN_STRONG_INLINE Derived &
 MatrixBase<Derived>::operator+=(const MatrixBase <OtherDerived> &other) {
     call_assignment(derived(), other.derived(), internal::add_assign_op<Scalar, typename OtherDerived::Scalar>());
     return derived();
@@ -198,3 +176,4 @@ MatrixBase<Derived>::operator+=(const MatrixBase <OtherDerived> &other) {
 } // end namespace Eigen
 
 #endif // EIGEN_CWISE_BINARY_OP_H
+

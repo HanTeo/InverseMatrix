@@ -25,13 +25,13 @@ namespace Eigen {
         }
 
 #if EIGEN_ARCH_i386_OR_x86_64
-                                                                                                                                const std::ptrdiff_t defaultL1CacheSize = 32*1024;
+        const std::ptrdiff_t defaultL1CacheSize = 32 * 1024;
 const std::ptrdiff_t defaultL2CacheSize = 256*1024;
 const std::ptrdiff_t defaultL3CacheSize = 2*1024*1024;
 #else
-        const std::ptrdiff_t defaultL1CacheSize = 16 * 1024;
-        const std::ptrdiff_t defaultL2CacheSize = 512 * 1024;
-        const std::ptrdiff_t defaultL3CacheSize = 512 * 1024;
+                                                                                                                                const std::ptrdiff_t defaultL1CacheSize = 16*1024;
+const std::ptrdiff_t defaultL2CacheSize = 512*1024;
+const std::ptrdiff_t defaultL3CacheSize = 512*1024;
 #endif
 
 /** \internal */
@@ -107,7 +107,7 @@ const std::ptrdiff_t defaultL3CacheSize = 2*1024*1024;
                 // registers. However once the latency is hidden there is no point in
                 // increasing the value of k, so we'll cap it at 320 (value determined
                 // experimentally).
-                const Index k_cache = (numext::mini < Index > )((l1 - ksub) / kdiv, 320);
+                const Index k_cache = (numext::mini<Index>)((l1 - ksub) / kdiv, 320);
                 if (k_cache < k) {
                     k = k_cache - (k_cache % kr);
                     eigen_internal_assert(k > 0);
@@ -121,7 +121,7 @@ const std::ptrdiff_t defaultL3CacheSize = 2*1024*1024;
                     n = n_cache - (n_cache % nr);
                     eigen_internal_assert(n > 0);
                 } else {
-                    n = (numext::mini < Index > )(n, (n_per_thread + nr - 1) - ((n_per_thread + nr - 1) % nr));
+                    n = (numext::mini<Index>)(n, (n_per_thread + nr - 1) - ((n_per_thread + nr - 1) % nr));
                 }
 
                 if (l3 > l2) {
@@ -132,7 +132,7 @@ const std::ptrdiff_t defaultL3CacheSize = 2*1024*1024;
                         m = m_cache - (m_cache % mr);
                         eigen_internal_assert(m > 0);
                     } else {
-                        m = (numext::mini < Index > )(m, (m_per_thread + mr - 1) - ((m_per_thread + mr - 1) % mr));
+                        m = (numext::mini<Index>)(m, (m_per_thread + mr - 1) - ((m_per_thread + mr - 1) % mr));
                     }
                 }
             } else {
@@ -231,9 +231,9 @@ const std::ptrdiff_t defaultL3CacheSize = 2*1024*1024;
                         // we have both L2 and L3, and problem is small enough to be kept in L2
                         // Let's choose m such that lhs's block fit in 1/3 of L2
                         actual_lm = l2;
-                        max_mc = (numext::mini < Index > )(576, max_mc);
+                        max_mc = (numext::mini<Index>)(576, max_mc);
                     }
-                    Index mc = (numext::mini < Index > )(actual_lm / (3 * k * sizeof(LhsScalar)), max_mc);
+                    Index mc = (numext::mini<Index>)(actual_lm / (3 * k * sizeof(LhsScalar)), max_mc);
                     if (mc > Traits::mr) mc -= mc % Traits::mr;
                     else if (mc == 0) return;
                     m = (m % mc) == 0 ? mc
@@ -409,7 +409,7 @@ const std::ptrdiff_t defaultL3CacheSize = 2*1024*1024;
             template<typename LhsPacketType, typename RhsPacketType, typename AccPacketType>
             EIGEN_STRONG_INLINE void
             madd(const LhsPacketType &a, const RhsPacketType &b, AccPacketType &c, AccPacketType &tmp) const {
-                conj_helper <LhsPacketType, RhsPacketType, ConjLhs, ConjRhs> cj;
+                conj_helper<LhsPacketType, RhsPacketType, ConjLhs, ConjRhs> cj;
                 // It would be a lot cleaner to call pmadd all the time. Unfortunately if we
                 // let gcc allocate the register in which to store the result of the pmul
                 // (in the case where there is no FMA) gcc fails to figure out how to avoid
@@ -436,127 +436,126 @@ const std::ptrdiff_t defaultL3CacheSize = 2*1024*1024;
         };
 
         template<typename RealScalar, bool _ConjLhs>
-        class gebp_traits<std::complex < RealScalar>
-
-        , RealScalar, _ConjLhs, false> {
+        class gebp_traits<std::complex<RealScalar>, RealScalar, _ConjLhs, false> {
         public:
-        typedef std::complex <RealScalar> LhsScalar;
-        typedef RealScalar RhsScalar;
-        typedef typename ScalarBinaryOpTraits<LhsScalar, RhsScalar>::ReturnType ResScalar;
+            typedef std::complex<RealScalar> LhsScalar;
+            typedef RealScalar RhsScalar;
+            typedef typename ScalarBinaryOpTraits<LhsScalar, RhsScalar>::ReturnType ResScalar;
 
-        enum {
-            ConjLhs = _ConjLhs,
-            ConjRhs = false,
-            Vectorizable = packet_traits<LhsScalar>::Vectorizable && packet_traits<RhsScalar>::Vectorizable,
-            LhsPacketSize = Vectorizable ? packet_traits<LhsScalar>::size : 1,
-            RhsPacketSize = Vectorizable ? packet_traits<RhsScalar>::size : 1,
-            ResPacketSize = Vectorizable ? packet_traits<ResScalar>::size : 1,
+            enum {
+                ConjLhs = _ConjLhs,
+                ConjRhs = false,
+                Vectorizable = packet_traits<LhsScalar>::Vectorizable && packet_traits<RhsScalar>::Vectorizable,
+                LhsPacketSize = Vectorizable ? packet_traits<LhsScalar>::size : 1,
+                RhsPacketSize = Vectorizable ? packet_traits<RhsScalar>::size : 1,
+                ResPacketSize = Vectorizable ? packet_traits<ResScalar>::size : 1,
 
-            NumberOfRegisters = EIGEN_ARCH_DEFAULT_NUMBER_OF_REGISTERS,
-            nr = 4,
+                NumberOfRegisters = EIGEN_ARCH_DEFAULT_NUMBER_OF_REGISTERS,
+                nr = 4,
 #if defined(EIGEN_HAS_SINGLE_INSTRUCTION_MADD) && !defined(EIGEN_VECTORIZE_ALTIVEC) && !defined(EIGEN_VECTORIZE_VSX)
-                                                                                                                                    // we assume 16 registers
+                                                                                                                                        // we assume 16 registers
     mr = 3*LhsPacketSize,
 #else
-            mr = (EIGEN_PLAIN_ENUM_MIN(16, NumberOfRegisters) / 2 / nr) * LhsPacketSize,
+                mr = (EIGEN_PLAIN_ENUM_MIN(16, NumberOfRegisters) / 2 / nr) * LhsPacketSize,
 #endif
 
-            LhsProgress = LhsPacketSize,
-            RhsProgress = 1
-        };
+                LhsProgress = LhsPacketSize,
+                RhsProgress = 1
+            };
 
-        typedef typename packet_traits<LhsScalar>::type _LhsPacket;
-        typedef typename packet_traits<RhsScalar>::type _RhsPacket;
-        typedef typename packet_traits<ResScalar>::type _ResPacket;
+            typedef typename packet_traits<LhsScalar>::type _LhsPacket;
+            typedef typename packet_traits<RhsScalar>::type _RhsPacket;
+            typedef typename packet_traits<ResScalar>::type _ResPacket;
 
-        typedef typename conditional<Vectorizable, _LhsPacket, LhsScalar>::type LhsPacket;
-        typedef typename conditional<Vectorizable, _RhsPacket, RhsScalar>::type RhsPacket;
-        typedef typename conditional<Vectorizable, _ResPacket, ResScalar>::type ResPacket;
+            typedef typename conditional<Vectorizable, _LhsPacket, LhsScalar>::type LhsPacket;
+            typedef typename conditional<Vectorizable, _RhsPacket, RhsScalar>::type RhsPacket;
+            typedef typename conditional<Vectorizable, _ResPacket, ResScalar>::type ResPacket;
 
-        typedef ResPacket AccPacket;
+            typedef ResPacket AccPacket;
 
-        EIGEN_STRONG_INLINE void initAcc(AccPacket &p) {
-            p = pset1<ResPacket>(ResScalar(0));
-        }
+            EIGEN_STRONG_INLINE void initAcc(AccPacket &p) {
+                p = pset1<ResPacket>(ResScalar(0));
+            }
 
-        EIGEN_STRONG_INLINE void loadRhs(const RhsScalar *b, RhsPacket &dest) const {
-            dest = pset1<RhsPacket>(*b);
-        }
+            EIGEN_STRONG_INLINE void loadRhs(const RhsScalar *b, RhsPacket &dest) const {
+                dest = pset1<RhsPacket>(*b);
+            }
 
-        EIGEN_STRONG_INLINE void loadRhsQuad(const RhsScalar *b, RhsPacket &dest) const {
-            dest = pset1<RhsPacket>(*b);
-        }
+            EIGEN_STRONG_INLINE void loadRhsQuad(const RhsScalar *b, RhsPacket &dest) const {
+                dest = pset1<RhsPacket>(*b);
+            }
 
-        EIGEN_STRONG_INLINE void loadLhs(const LhsScalar *a, LhsPacket &dest) const {
-            dest = pload<LhsPacket>(a);
-        }
+            EIGEN_STRONG_INLINE void loadLhs(const LhsScalar *a, LhsPacket &dest) const {
+                dest = pload<LhsPacket>(a);
+            }
 
-        EIGEN_STRONG_INLINE void loadLhsUnaligned(const LhsScalar *a, LhsPacket &dest) const {
-            dest = ploadu<LhsPacket>(a);
-        }
+            EIGEN_STRONG_INLINE void loadLhsUnaligned(const LhsScalar *a, LhsPacket &dest) const {
+                dest = ploadu<LhsPacket>(a);
+            }
 
-        EIGEN_STRONG_INLINE void
-        broadcastRhs(const RhsScalar *b, RhsPacket &b0, RhsPacket &b1, RhsPacket &b2, RhsPacket &b3) {
-            pbroadcast4(b, b0, b1, b2, b3);
-        }
+            EIGEN_STRONG_INLINE void
+            broadcastRhs(const RhsScalar *b, RhsPacket &b0, RhsPacket &b1, RhsPacket &b2, RhsPacket &b3) {
+                pbroadcast4(b, b0, b1, b2, b3);
+            }
 
 //   EIGEN_STRONG_INLINE void broadcastRhs(const RhsScalar* b, RhsPacket& b0, RhsPacket& b1)
 //   {
 //     pbroadcast2(b, b0, b1);
 //   }
 
-        EIGEN_STRONG_INLINE void madd(const LhsPacket &a, const RhsPacket &b, AccPacket &c, RhsPacket &tmp) const {
-            madd_impl(a, b, c, tmp, typename conditional<Vectorizable, true_type, false_type>::type());
-        }
+            EIGEN_STRONG_INLINE void madd(const LhsPacket &a, const RhsPacket &b, AccPacket &c, RhsPacket &tmp) const {
+                madd_impl(a, b, c, tmp, typename conditional<Vectorizable, true_type, false_type>::type());
+            }
 
-        EIGEN_STRONG_INLINE void
-        madd_impl(const LhsPacket &a, const RhsPacket &b, AccPacket &c, RhsPacket &tmp, const true_type &) const {
+            EIGEN_STRONG_INLINE void
+            madd_impl(const LhsPacket &a, const RhsPacket &b, AccPacket &c, RhsPacket &tmp, const true_type &) const {
 #ifdef EIGEN_HAS_SINGLE_INSTRUCTION_MADD
-                                                                                                                                    EIGEN_UNUSED_VARIABLE(tmp);
+                                                                                                                                        EIGEN_UNUSED_VARIABLE(tmp);
     c.v = pmadd(a.v,b,c.v);
 #else
-            tmp = b;
-            tmp = pmul(a.v, tmp);
-            c.v = padd(c.v, tmp);
+                tmp = b;
+                tmp = pmul(a.v, tmp);
+                c.v = padd(c.v, tmp);
 #endif
-        }
+            }
 
-        EIGEN_STRONG_INLINE void
-        madd_impl(const LhsScalar &a, const RhsScalar &b, ResScalar &c, RhsScalar & /*tmp*/, const false_type &) const {
-            c += a * b;
-        }
+            EIGEN_STRONG_INLINE void
+            madd_impl(const LhsScalar &a, const RhsScalar &b, ResScalar &c, RhsScalar & /*tmp*/,
+                      const false_type &) const {
+                c += a * b;
+            }
 
-        EIGEN_STRONG_INLINE void acc(const AccPacket &c, const ResPacket &alpha, ResPacket &r) const {
-            r = cj.pmadd(c, alpha, r);
-        }
+            EIGEN_STRONG_INLINE void acc(const AccPacket &c, const ResPacket &alpha, ResPacket &r) const {
+                r = cj.pmadd(c, alpha, r);
+            }
 
         protected:
-        conj_helper<ResPacket, ResPacket, ConjLhs, false> cj;
-    };
+            conj_helper<ResPacket, ResPacket, ConjLhs, false> cj;
+        };
 
-    template<typename Packet>
-    struct DoublePacket {
-        Packet first;
-        Packet second;
-    };
+        template<typename Packet>
+        struct DoublePacket {
+            Packet first;
+            Packet second;
+        };
 
-    template<typename Packet>
-    DoublePacket<Packet> padd(const DoublePacket<Packet> &a, const DoublePacket<Packet> &b) {
-        DoublePacket <Packet> res;
-        res.first = padd(a.first, b.first);
-        res.second = padd(a.second, b.second);
-        return res;
-    }
+        template<typename Packet>
+        DoublePacket<Packet> padd(const DoublePacket<Packet> &a, const DoublePacket<Packet> &b) {
+            DoublePacket <Packet> res;
+            res.first = padd(a.first, b.first);
+            res.second = padd(a.second, b.second);
+            return res;
+        }
 
-    template<typename Packet>
-    const DoublePacket<Packet> &predux_downto4(const DoublePacket<Packet> &a) {
-        return a;
-    }
+        template<typename Packet>
+        const DoublePacket<Packet> &predux_downto4(const DoublePacket<Packet> &a) {
+            return a;
+        }
 
-    template<typename Packet>
-    struct unpacket_traits<DoublePacket<Packet> > {
-        typedef DoublePacket<Packet> half;
-    };
+        template<typename Packet>
+        struct unpacket_traits<DoublePacket<Packet> > {
+            typedef DoublePacket<Packet> half;
+        };
 // template<typename Packet>
 // DoublePacket<Packet> pmadd(const DoublePacket<Packet> &a, const DoublePacket<Packet> &b)
 // {
@@ -566,150 +565,147 @@ const std::ptrdiff_t defaultL3CacheSize = 2*1024*1024;
 //   return res;
 // }
 
-    template<typename RealScalar, bool _ConjLhs, bool _ConjRhs>
-    class gebp_traits<std::complex < RealScalar>
+        template<typename RealScalar, bool _ConjLhs, bool _ConjRhs>
+        class gebp_traits<std::complex<RealScalar>, std::complex<RealScalar>, _ConjLhs, _ConjRhs> {
+        public:
+            typedef std::complex<RealScalar> Scalar;
+            typedef std::complex<RealScalar> LhsScalar;
+            typedef std::complex<RealScalar> RhsScalar;
+            typedef std::complex<RealScalar> ResScalar;
 
-    , std::complex <RealScalar>, _ConjLhs, _ConjRhs > {
-    public:
-    typedef std::complex <RealScalar> Scalar;
-    typedef std::complex <RealScalar> LhsScalar;
-    typedef std::complex <RealScalar> RhsScalar;
-    typedef std::complex <RealScalar> ResScalar;
+            enum {
+                ConjLhs = _ConjLhs,
+                ConjRhs = _ConjRhs,
+                Vectorizable = packet_traits<RealScalar>::Vectorizable
+                               && packet_traits<Scalar>::Vectorizable,
+                RealPacketSize = Vectorizable ? packet_traits<RealScalar>::size : 1,
+                ResPacketSize = Vectorizable ? packet_traits<ResScalar>::size : 1,
+                LhsPacketSize = Vectorizable ? packet_traits<LhsScalar>::size : 1,
+                RhsPacketSize = Vectorizable ? packet_traits<RhsScalar>::size : 1,
 
-    enum {
-        ConjLhs = _ConjLhs,
-        ConjRhs = _ConjRhs,
-        Vectorizable = packet_traits<RealScalar>::Vectorizable
-                       && packet_traits<Scalar>::Vectorizable,
-        RealPacketSize = Vectorizable ? packet_traits<RealScalar>::size : 1,
-        ResPacketSize = Vectorizable ? packet_traits<ResScalar>::size : 1,
-        LhsPacketSize = Vectorizable ? packet_traits<LhsScalar>::size : 1,
-        RhsPacketSize = Vectorizable ? packet_traits<RhsScalar>::size : 1,
+                // FIXME: should depend on NumberOfRegisters
+                        nr = 4,
+                mr = ResPacketSize,
 
-        // FIXME: should depend on NumberOfRegisters
-                nr = 4,
-        mr = ResPacketSize,
+                LhsProgress = ResPacketSize,
+                RhsProgress = 1
+            };
 
-        LhsProgress = ResPacketSize,
-        RhsProgress = 1
-    };
+            typedef typename packet_traits<RealScalar>::type RealPacket;
+            typedef typename packet_traits<Scalar>::type ScalarPacket;
+            typedef DoublePacket<RealPacket> DoublePacketType;
 
-    typedef typename packet_traits<RealScalar>::type RealPacket;
-    typedef typename packet_traits<Scalar>::type ScalarPacket;
-    typedef DoublePacket<RealPacket> DoublePacketType;
+            typedef typename conditional<Vectorizable, RealPacket, Scalar>::type LhsPacket;
+            typedef typename conditional<Vectorizable, DoublePacketType, Scalar>::type RhsPacket;
+            typedef typename conditional<Vectorizable, ScalarPacket, Scalar>::type ResPacket;
+            typedef typename conditional<Vectorizable, DoublePacketType, Scalar>::type AccPacket;
 
-    typedef typename conditional<Vectorizable, RealPacket, Scalar>::type LhsPacket;
-    typedef typename conditional<Vectorizable, DoublePacketType, Scalar>::type RhsPacket;
-    typedef typename conditional<Vectorizable, ScalarPacket, Scalar>::type ResPacket;
-    typedef typename conditional<Vectorizable, DoublePacketType, Scalar>::type AccPacket;
+            EIGEN_STRONG_INLINE void initAcc(Scalar &p) { p = Scalar(0); }
 
-    EIGEN_STRONG_INLINE void initAcc(Scalar &p) { p = Scalar(0); }
+            EIGEN_STRONG_INLINE void initAcc(DoublePacketType &p) {
+                p.first = pset1<RealPacket>(RealScalar(0));
+                p.second = pset1<RealPacket>(RealScalar(0));
+            }
 
-    EIGEN_STRONG_INLINE void initAcc(DoublePacketType &p) {
-        p.first = pset1<RealPacket>(RealScalar(0));
-        p.second = pset1<RealPacket>(RealScalar(0));
-    }
+            // Scalar path
+            EIGEN_STRONG_INLINE void loadRhs(const RhsScalar *b, ResPacket &dest) const {
+                dest = pset1<ResPacket>(*b);
+            }
 
-    // Scalar path
-    EIGEN_STRONG_INLINE void loadRhs(const RhsScalar *b, ResPacket &dest) const {
-        dest = pset1<ResPacket>(*b);
-    }
+            // Vectorized path
+            EIGEN_STRONG_INLINE void loadRhs(const RhsScalar *b, DoublePacketType &dest) const {
+                dest.first = pset1<RealPacket>(real(*b));
+                dest.second = pset1<RealPacket>(imag(*b));
+            }
 
-    // Vectorized path
-    EIGEN_STRONG_INLINE void loadRhs(const RhsScalar *b, DoublePacketType &dest) const {
-        dest.first = pset1<RealPacket>(real(*b));
-        dest.second = pset1<RealPacket>(imag(*b));
-    }
+            EIGEN_STRONG_INLINE void loadRhsQuad(const RhsScalar *b, ResPacket &dest) const {
+                loadRhs(b, dest);
+            }
 
-    EIGEN_STRONG_INLINE void loadRhsQuad(const RhsScalar *b, ResPacket &dest) const {
-        loadRhs(b, dest);
-    }
+            EIGEN_STRONG_INLINE void loadRhsQuad(const RhsScalar *b, DoublePacketType &dest) const {
+                eigen_internal_assert(unpacket_traits<ScalarPacket>::size <= 4);
+                loadRhs(b, dest);
+            }
 
-    EIGEN_STRONG_INLINE void loadRhsQuad(const RhsScalar *b, DoublePacketType &dest) const {
-        eigen_internal_assert(unpacket_traits<ScalarPacket>::size <= 4);
-        loadRhs(b, dest);
-    }
+            EIGEN_STRONG_INLINE void
+            broadcastRhs(const RhsScalar *b, RhsPacket &b0, RhsPacket &b1, RhsPacket &b2, RhsPacket &b3) {
+                // FIXME not sure that's the best way to implement it!
+                loadRhs(b + 0, b0);
+                loadRhs(b + 1, b1);
+                loadRhs(b + 2, b2);
+                loadRhs(b + 3, b3);
+            }
 
-    EIGEN_STRONG_INLINE void
-    broadcastRhs(const RhsScalar *b, RhsPacket &b0, RhsPacket &b1, RhsPacket &b2, RhsPacket &b3) {
-        // FIXME not sure that's the best way to implement it!
-        loadRhs(b + 0, b0);
-        loadRhs(b + 1, b1);
-        loadRhs(b + 2, b2);
-        loadRhs(b + 3, b3);
-    }
+            // Vectorized path
+            EIGEN_STRONG_INLINE void broadcastRhs(const RhsScalar *b, DoublePacketType &b0, DoublePacketType &b1) {
+                // FIXME not sure that's the best way to implement it!
+                loadRhs(b + 0, b0);
+                loadRhs(b + 1, b1);
+            }
 
-    // Vectorized path
-    EIGEN_STRONG_INLINE void broadcastRhs(const RhsScalar *b, DoublePacketType &b0, DoublePacketType &b1) {
-        // FIXME not sure that's the best way to implement it!
-        loadRhs(b + 0, b0);
-        loadRhs(b + 1, b1);
-    }
+            // Scalar path
+            EIGEN_STRONG_INLINE void broadcastRhs(const RhsScalar *b, RhsScalar &b0, RhsScalar &b1) {
+                // FIXME not sure that's the best way to implement it!
+                loadRhs(b + 0, b0);
+                loadRhs(b + 1, b1);
+            }
 
-    // Scalar path
-    EIGEN_STRONG_INLINE void broadcastRhs(const RhsScalar *b, RhsScalar &b0, RhsScalar &b1) {
-        // FIXME not sure that's the best way to implement it!
-        loadRhs(b + 0, b0);
-        loadRhs(b + 1, b1);
-    }
+            // nothing special here
+            EIGEN_STRONG_INLINE void loadLhs(const LhsScalar *a, LhsPacket &dest) const {
+                dest = pload<LhsPacket>((const typename unpacket_traits<LhsPacket>::type *) (a));
+            }
 
-    // nothing special here
-    EIGEN_STRONG_INLINE void loadLhs(const LhsScalar *a, LhsPacket &dest) const {
-        dest = pload<LhsPacket>((const typename unpacket_traits<LhsPacket>::type *) (a));
-    }
+            EIGEN_STRONG_INLINE void loadLhsUnaligned(const LhsScalar *a, LhsPacket &dest) const {
+                dest = ploadu<LhsPacket>((const typename unpacket_traits<LhsPacket>::type *) (a));
+            }
 
-    EIGEN_STRONG_INLINE void loadLhsUnaligned(const LhsScalar *a, LhsPacket &dest) const {
-        dest = ploadu<LhsPacket>((const typename unpacket_traits<LhsPacket>::type *) (a));
-    }
+            EIGEN_STRONG_INLINE void
+            madd(const LhsPacket &a, const RhsPacket &b, DoublePacketType &c, RhsPacket & /*tmp*/) const {
+                c.first = padd(pmul(a, b.first), c.first);
+                c.second = padd(pmul(a, b.second), c.second);
+            }
 
-    EIGEN_STRONG_INLINE void
-    madd(const LhsPacket &a, const RhsPacket &b, DoublePacketType &c, RhsPacket & /*tmp*/) const {
-        c.first = padd(pmul(a, b.first), c.first);
-        c.second = padd(pmul(a, b.second), c.second);
-    }
+            EIGEN_STRONG_INLINE void
+            madd(const LhsPacket &a, const RhsPacket &b, ResPacket &c, RhsPacket & /*tmp*/) const {
+                c = cj.pmadd(a, b, c);
+            }
 
-    EIGEN_STRONG_INLINE void madd(const LhsPacket &a, const RhsPacket &b, ResPacket &c, RhsPacket & /*tmp*/) const {
-        c = cj.pmadd(a, b, c);
-    }
+            EIGEN_STRONG_INLINE void acc(const Scalar &c, const Scalar &alpha, Scalar &r) const { r += alpha * c; }
 
-    EIGEN_STRONG_INLINE void acc(const Scalar &c, const Scalar &alpha, Scalar &r) const { r += alpha * c; }
+            EIGEN_STRONG_INLINE void acc(const DoublePacketType &c, const ResPacket &alpha, ResPacket &r) const {
+                // assemble c
+                ResPacket tmp;
+                if ((!ConjLhs) && (!ConjRhs)) {
+                    tmp = pcplxflip(pconj(ResPacket(c.second)));
+                    tmp = padd(ResPacket(c.first), tmp);
+                } else if ((!ConjLhs) && (ConjRhs)) {
+                    tmp = pconj(pcplxflip(ResPacket(c.second)));
+                    tmp = padd(ResPacket(c.first), tmp);
+                } else if ((ConjLhs) && (!ConjRhs)) {
+                    tmp = pcplxflip(ResPacket(c.second));
+                    tmp = padd(pconj(ResPacket(c.first)), tmp);
+                } else if ((ConjLhs) && (ConjRhs)) {
+                    tmp = pcplxflip(ResPacket(c.second));
+                    tmp = psub(pconj(ResPacket(c.first)), tmp);
+                }
 
-    EIGEN_STRONG_INLINE void acc(const DoublePacketType &c, const ResPacket &alpha, ResPacket &r) const {
-        // assemble c
-        ResPacket tmp;
-        if ((!ConjLhs) && (!ConjRhs)) {
-            tmp = pcplxflip(pconj(ResPacket(c.second)));
-            tmp = padd(ResPacket(c.first), tmp);
-        } else if ((!ConjLhs) && (ConjRhs)) {
-            tmp = pconj(pcplxflip(ResPacket(c.second)));
-            tmp = padd(ResPacket(c.first), tmp);
-        } else if ((ConjLhs) && (!ConjRhs)) {
-            tmp = pcplxflip(ResPacket(c.second));
-            tmp = padd(pconj(ResPacket(c.first)), tmp);
-        } else if ((ConjLhs) && (ConjRhs)) {
-            tmp = pcplxflip(ResPacket(c.second));
-            tmp = psub(pconj(ResPacket(c.first)), tmp);
-        }
+                r = pmadd(tmp, alpha, r);
+            }
 
-        r = pmadd(tmp, alpha, r);
-    }
-
-    protected:
-    conj_helper <LhsScalar, RhsScalar, ConjLhs, ConjRhs> cj;
+        protected:
+            conj_helper <LhsScalar, RhsScalar, ConjLhs, ConjRhs> cj;
 };
 
 template<typename RealScalar, bool _ConjRhs>
-class gebp_traits<RealScalar, std::complex < RealScalar>
-
-, false, _ConjRhs >
+class gebp_traits<RealScalar, std::complex<RealScalar>, false, _ConjRhs>
 {
 public:
-typedef std::complex <RealScalar> Scalar;
-typedef RealScalar LhsScalar;
-typedef Scalar RhsScalar;
-typedef Scalar ResScalar;
+    typedef std::complex<RealScalar> Scalar;
+    typedef RealScalar LhsScalar;
+    typedef Scalar RhsScalar;
+    typedef Scalar ResScalar;
 
-enum {
+    enum {
     ConjLhs = false,
     ConjRhs = _ConjRhs,
     Vectorizable = packet_traits<RealScalar>::Vectorizable
@@ -718,36 +714,36 @@ enum {
     RhsPacketSize = Vectorizable ? packet_traits<RhsScalar>::size : 1,
     ResPacketSize = Vectorizable ? packet_traits<ResScalar>::size : 1,
 
-    NumberOfRegisters = EIGEN_ARCH_DEFAULT_NUMBER_OF_REGISTERS,
+        NumberOfRegisters = EIGEN_ARCH_DEFAULT_NUMBER_OF_REGISTERS,
     // FIXME: should depend on NumberOfRegisters
             nr = 4,
-    mr = (EIGEN_PLAIN_ENUM_MIN(16, NumberOfRegisters) / 2 / nr) * ResPacketSize,
+        mr = (EIGEN_PLAIN_ENUM_MIN(16, NumberOfRegisters) / 2 / nr) * ResPacketSize,
 
     LhsProgress = ResPacketSize,
     RhsProgress = 1
-};
+    };
 
-typedef typename packet_traits<LhsScalar>::type _LhsPacket;
-typedef typename packet_traits<RhsScalar>::type _RhsPacket;
-typedef typename packet_traits<ResScalar>::type _ResPacket;
+    typedef typename packet_traits<LhsScalar>::type _LhsPacket;
+    typedef typename packet_traits<RhsScalar>::type _RhsPacket;
+    typedef typename packet_traits<ResScalar>::type _ResPacket;
 
-typedef typename conditional<Vectorizable, _LhsPacket, LhsScalar>::type LhsPacket;
-typedef typename conditional<Vectorizable, _RhsPacket, RhsScalar>::type RhsPacket;
-typedef typename conditional<Vectorizable, _ResPacket, ResScalar>::type ResPacket;
+    typedef typename conditional<Vectorizable, _LhsPacket, LhsScalar>::type LhsPacket;
+    typedef typename conditional<Vectorizable, _RhsPacket, RhsScalar>::type RhsPacket;
+    typedef typename conditional<Vectorizable, _ResPacket, ResScalar>::type ResPacket;
 
-typedef ResPacket AccPacket;
+    typedef ResPacket AccPacket;
 
-EIGEN_STRONG_INLINE void initAcc(AccPacket &p) {
+    EIGEN_STRONG_INLINE void initAcc(AccPacket &p) {
     p = pset1<ResPacket>(ResScalar(0));
-}
+    }
 
-EIGEN_STRONG_INLINE void loadRhs(const RhsScalar *b, RhsPacket &dest) const {
+    EIGEN_STRONG_INLINE void loadRhs(const RhsScalar *b, RhsPacket &dest) const {
     dest = pset1<RhsPacket>(*b);
-}
+    }
 
-void broadcastRhs(const RhsScalar *b, RhsPacket &b0, RhsPacket &b1, RhsPacket &b2, RhsPacket &b3) {
+    void broadcastRhs(const RhsScalar *b, RhsPacket &b0, RhsPacket &b1, RhsPacket &b2, RhsPacket &b3) {
     pbroadcast4(b, b0, b1, b2, b3);
-}
+    }
 
 //   EIGEN_STRONG_INLINE void broadcastRhs(const RhsScalar* b, RhsPacket& b0, RhsPacket& b1)
 //   {
@@ -756,47 +752,47 @@ void broadcastRhs(const RhsScalar *b, RhsPacket &b0, RhsPacket &b1, RhsPacket &b
 //     b1 = pload1<RhsPacket>(b+1);
 //   }
 
-EIGEN_STRONG_INLINE void loadLhs(const LhsScalar *a, LhsPacket &dest) const {
+    EIGEN_STRONG_INLINE void loadLhs(const LhsScalar *a, LhsPacket &dest) const {
     dest = ploaddup<LhsPacket>(a);
-}
+    }
 
-EIGEN_STRONG_INLINE void loadRhsQuad(const RhsScalar *b, RhsPacket &dest) const {
-    eigen_internal_assert(unpacket_traits<RhsPacket>::size <= 4);
-    loadRhs(b, dest);
-}
+    EIGEN_STRONG_INLINE void loadRhsQuad(const RhsScalar *b, RhsPacket &dest) const {
+        eigen_internal_assert(unpacket_traits<RhsPacket>::size <= 4);
+        loadRhs(b, dest);
+    }
 
-EIGEN_STRONG_INLINE void loadLhsUnaligned(const LhsScalar *a, LhsPacket &dest) const {
+    EIGEN_STRONG_INLINE void loadLhsUnaligned(const LhsScalar *a, LhsPacket &dest) const {
     dest = ploaddup<LhsPacket>(a);
-}
+    }
 
-EIGEN_STRONG_INLINE void madd(const LhsPacket &a, const RhsPacket &b, AccPacket &c, RhsPacket &tmp) const {
-    madd_impl(a, b, c, tmp, typename conditional<Vectorizable, true_type, false_type>::type());
-}
+    EIGEN_STRONG_INLINE void madd(const LhsPacket &a, const RhsPacket &b, AccPacket &c, RhsPacket &tmp) const {
+        madd_impl(a, b, c, tmp, typename conditional<Vectorizable, true_type, false_type>::type());
+    }
 
-EIGEN_STRONG_INLINE void
-madd_impl(const LhsPacket &a, const RhsPacket &b, AccPacket &c, RhsPacket &tmp, const true_type &) const {
+    EIGEN_STRONG_INLINE void
+    madd_impl(const LhsPacket &a, const RhsPacket &b, AccPacket &c, RhsPacket &tmp, const true_type &) const {
 #ifdef EIGEN_HAS_SINGLE_INSTRUCTION_MADD
-                                                                                                                            EIGEN_UNUSED_VARIABLE(tmp);
+                                                                                                                                EIGEN_UNUSED_VARIABLE(tmp);
     c.v = pmadd(a,b.v,c.v);
 #else
-    tmp = b;
-    tmp.v = pmul(a, tmp.v);
-    c = padd(c, tmp);
+        tmp = b;
+        tmp.v = pmul(a, tmp.v);
+        c = padd(c, tmp);
 #endif
 
-}
+    }
 
-EIGEN_STRONG_INLINE void
-madd_impl(const LhsScalar &a, const RhsScalar &b, ResScalar &c, RhsScalar & /*tmp*/, const false_type &) const {
+    EIGEN_STRONG_INLINE void
+    madd_impl(const LhsScalar &a, const RhsScalar &b, ResScalar &c, RhsScalar & /*tmp*/, const false_type &) const {
     c += a * b;
-}
+    }
 
-EIGEN_STRONG_INLINE void acc(const AccPacket &c, const ResPacket &alpha, ResPacket &r) const {
-    r = cj.pmadd(alpha, c, r);
-}
+    EIGEN_STRONG_INLINE void acc(const AccPacket &c, const ResPacket &alpha, ResPacket &r) const {
+        r = cj.pmadd(alpha, c, r);
+    }
 
 protected:
-conj_helper<ResPacket, ResPacket, false, ConjRhs> cj;
+    conj_helper<ResPacket, ResPacket, false, ConjRhs> cj;
 };
 
 /* optimized GEneral packed Block * packed Panel product kernel
@@ -807,34 +803,34 @@ conj_helper<ResPacket, ResPacket, false, ConjRhs> cj;
  *  |cplx |real | easy vectorization
  */
 template<typename LhsScalar, typename RhsScalar, typename Index, typename DataMapper, int mr, int nr, bool ConjugateLhs, bool ConjugateRhs>
-struct gebp_kernel {
-    typedef gebp_traits<LhsScalar, RhsScalar, ConjugateLhs, ConjugateRhs> Traits;
-    typedef typename Traits::ResScalar ResScalar;
-    typedef typename Traits::LhsPacket LhsPacket;
-    typedef typename Traits::RhsPacket RhsPacket;
-    typedef typename Traits::ResPacket ResPacket;
-    typedef typename Traits::AccPacket AccPacket;
+        struct gebp_kernel {
+            typedef gebp_traits<LhsScalar, RhsScalar, ConjugateLhs, ConjugateRhs> Traits;
+            typedef typename Traits::ResScalar ResScalar;
+            typedef typename Traits::LhsPacket LhsPacket;
+            typedef typename Traits::RhsPacket RhsPacket;
+            typedef typename Traits::ResPacket ResPacket;
+            typedef typename Traits::AccPacket AccPacket;
 
-    typedef gebp_traits<RhsScalar, LhsScalar, ConjugateRhs, ConjugateLhs> SwappedTraits;
-    typedef typename SwappedTraits::ResScalar SResScalar;
-    typedef typename SwappedTraits::LhsPacket SLhsPacket;
-    typedef typename SwappedTraits::RhsPacket SRhsPacket;
-    typedef typename SwappedTraits::ResPacket SResPacket;
-    typedef typename SwappedTraits::AccPacket SAccPacket;
+            typedef gebp_traits<RhsScalar, LhsScalar, ConjugateRhs, ConjugateLhs> SwappedTraits;
+            typedef typename SwappedTraits::ResScalar SResScalar;
+            typedef typename SwappedTraits::LhsPacket SLhsPacket;
+            typedef typename SwappedTraits::RhsPacket SRhsPacket;
+            typedef typename SwappedTraits::ResPacket SResPacket;
+            typedef typename SwappedTraits::AccPacket SAccPacket;
 
-    typedef typename DataMapper::LinearMapper LinearMapper;
+            typedef typename DataMapper::LinearMapper LinearMapper;
 
-    enum {
-        Vectorizable = Traits::Vectorizable,
-        LhsProgress = Traits::LhsProgress,
-        RhsProgress = Traits::RhsProgress,
-        ResPacketSize = Traits::ResPacketSize
-    };
+            enum {
+                Vectorizable = Traits::Vectorizable,
+                LhsProgress = Traits::LhsProgress,
+                RhsProgress = Traits::RhsProgress,
+                ResPacketSize = Traits::ResPacketSize
+            };
 
-    EIGEN_DONT_INLINE
-    void operator()(const DataMapper &res, const LhsScalar *blockA, const RhsScalar *blockB,
-                    Index rows, Index depth, Index cols, ResScalar alpha,
-                    Index strideA = -1, Index strideB = -1, Index offsetA = 0, Index offsetB = 0);
+            EIGEN_DONT_INLINE
+            void operator()(const DataMapper &res, const LhsScalar *blockA, const RhsScalar *blockB,
+                            Index rows, Index depth, Index cols, ResScalar alpha,
+                            Index strideA = -1, Index strideB = -1, Index offsetA = 0, Index offsetB = 0);
 };
 
 template<typename LhsScalar, typename RhsScalar, typename Index, typename DataMapper, int mr, int nr, bool ConjugateLhs, bool ConjugateRhs>
@@ -1619,11 +1615,12 @@ void gebp_kernel<LhsScalar, RhsScalar, Index, DataMapper, mr, nr, ConjugateLhs, 
 //  32 33 34 35 ...
 //  36 36 38 39 ...
 template<typename Scalar, typename Index, typename DataMapper, int Pack1, int Pack2, bool Conjugate, bool PanelMode>
-struct gemm_pack_lhs<Scalar, Index, DataMapper, Pack1, Pack2, ColMajor, Conjugate, PanelMode> {
-    typedef typename DataMapper::LinearMapper LinearMapper;
+        struct gemm_pack_lhs<Scalar, Index, DataMapper, Pack1, Pack2, ColMajor, Conjugate, PanelMode> {
+            typedef typename DataMapper::LinearMapper LinearMapper;
 
-    EIGEN_DONT_INLINE void
-    operator()(Scalar *blockA, const DataMapper &lhs, Index depth, Index rows, Index stride = 0, Index offset = 0);
+            EIGEN_DONT_INLINE void
+            operator()(Scalar *blockA, const DataMapper &lhs, Index depth, Index rows, Index stride = 0,
+                       Index offset = 0);
 };
 
 template<typename Scalar, typename Index, typename DataMapper, int Pack1, int Pack2, bool Conjugate, bool PanelMode>
@@ -1639,7 +1636,7 @@ EIGEN_DONT_INLINE void gemm_pack_lhs<Scalar, Index, DataMapper, Pack1, Pack2, Co
     EIGEN_UNUSED_VARIABLE(offset);
     eigen_assert(((!PanelMode) && stride == 0 && offset == 0) || (PanelMode && stride >= depth && offset <= stride));
     eigen_assert(((Pack1 % PacketSize) == 0 && Pack1 <= 4 * PacketSize) || (Pack1 <= 4));
-    conj_if < NumTraits<Scalar>::IsComplex && Conjugate > cj;
+    conj_if<NumTraits<Scalar>::IsComplex && Conjugate> cj;
     Index count = 0;
 
     const Index peeled_mc3 = Pack1 >= 3 * PacketSize ? (rows / (3 * PacketSize)) * (3 * PacketSize) : 0;
@@ -1742,7 +1739,7 @@ EIGEN_DONT_INLINE void gemm_pack_lhs<Scalar, Index, DataMapper, Pack1, Pack2, Ro
     EIGEN_UNUSED_VARIABLE(stride);
     EIGEN_UNUSED_VARIABLE(offset);
     eigen_assert(((!PanelMode) && stride == 0 && offset == 0) || (PanelMode && stride >= depth && offset <= stride));
-    conj_if < NumTraits<Scalar>::IsComplex && Conjugate > cj;
+    conj_if<NumTraits<Scalar>::IsComplex && Conjugate> cj;
     Index count = 0;
 
 //   const Index peeled_mc3 = Pack1>=3*PacketSize ? (rows/(3*PacketSize))*(3*PacketSize) : 0;
@@ -1762,7 +1759,7 @@ EIGEN_DONT_INLINE void gemm_pack_lhs<Scalar, Index, DataMapper, Pack1, Pack2, Ro
             if (pack >= PacketSize) {
                 for (; k < peeled_k; k += PacketSize) {
                     for (Index m = 0; m < pack; m += PacketSize) {
-                        PacketBlock <Packet> kernel;
+                        PacketBlock<Packet> kernel;
                         for (int p = 0; p < PacketSize; ++p) kernel.packet[p] = lhs.loadPacket(i + p + m, k);
                         ptranspose(kernel);
                         for (int p = 0; p < PacketSize; ++p)
@@ -1812,15 +1809,16 @@ EIGEN_DONT_INLINE void gemm_pack_lhs<Scalar, Index, DataMapper, Pack1, Pack2, Ro
 //  8  9 10 11   20 21 22 23   26 29
 //  .  .  .  .    .  .  .  .    .  .
 template<typename Scalar, typename Index, typename DataMapper, int nr, bool Conjugate, bool PanelMode>
-struct gemm_pack_rhs<Scalar, Index, DataMapper, nr, ColMajor, Conjugate, PanelMode> {
-    typedef typename packet_traits<Scalar>::type Packet;
-    typedef typename DataMapper::LinearMapper LinearMapper;
-    enum {
-        PacketSize = packet_traits<Scalar>::size
-    };
+        struct gemm_pack_rhs<Scalar, Index, DataMapper, nr, ColMajor, Conjugate, PanelMode> {
+            typedef typename packet_traits<Scalar>::type Packet;
+            typedef typename DataMapper::LinearMapper LinearMapper;
+            enum {
+                PacketSize = packet_traits<Scalar>::size
+            };
 
-    EIGEN_DONT_INLINE void
-    operator()(Scalar *blockB, const DataMapper &rhs, Index depth, Index cols, Index stride = 0, Index offset = 0);
+            EIGEN_DONT_INLINE void
+            operator()(Scalar *blockB, const DataMapper &rhs, Index depth, Index cols, Index stride = 0,
+                       Index offset = 0);
 };
 
 template<typename Scalar, typename Index, typename DataMapper, int nr, bool Conjugate, bool PanelMode>
@@ -1830,7 +1828,7 @@ EIGEN_DONT_INLINE void gemm_pack_rhs<Scalar, Index, DataMapper, nr, ColMajor, Co
     EIGEN_UNUSED_VARIABLE(stride);
     EIGEN_UNUSED_VARIABLE(offset);
     eigen_assert(((!PanelMode) && stride == 0 && offset == 0) || (PanelMode && stride >= depth && offset <= stride));
-    conj_if < NumTraits<Scalar>::IsComplex && Conjugate > cj;
+    conj_if<NumTraits<Scalar>::IsComplex && Conjugate> cj;
     Index packet_cols8 = nr >= 8 ? (cols / 8) * 8 : 0;
     Index packet_cols4 = nr >= 4 ? (cols / 4) * 4 : 0;
     Index count = 0;
@@ -1933,15 +1931,16 @@ EIGEN_DONT_INLINE void gemm_pack_rhs<Scalar, Index, DataMapper, nr, ColMajor, Co
 
 // this version is optimized for row major matrices
 template<typename Scalar, typename Index, typename DataMapper, int nr, bool Conjugate, bool PanelMode>
-struct gemm_pack_rhs<Scalar, Index, DataMapper, nr, RowMajor, Conjugate, PanelMode> {
-    typedef typename packet_traits<Scalar>::type Packet;
-    typedef typename DataMapper::LinearMapper LinearMapper;
-    enum {
-        PacketSize = packet_traits<Scalar>::size
-    };
+        struct gemm_pack_rhs<Scalar, Index, DataMapper, nr, RowMajor, Conjugate, PanelMode> {
+            typedef typename packet_traits<Scalar>::type Packet;
+            typedef typename DataMapper::LinearMapper LinearMapper;
+            enum {
+                PacketSize = packet_traits<Scalar>::size
+            };
 
-    EIGEN_DONT_INLINE void
-    operator()(Scalar *blockB, const DataMapper &rhs, Index depth, Index cols, Index stride = 0, Index offset = 0);
+            EIGEN_DONT_INLINE void
+            operator()(Scalar *blockB, const DataMapper &rhs, Index depth, Index cols, Index stride = 0,
+                       Index offset = 0);
 };
 
 template<typename Scalar, typename Index, typename DataMapper, int nr, bool Conjugate, bool PanelMode>
@@ -1951,7 +1950,7 @@ EIGEN_DONT_INLINE void gemm_pack_rhs<Scalar, Index, DataMapper, nr, RowMajor, Co
     EIGEN_UNUSED_VARIABLE(stride);
     EIGEN_UNUSED_VARIABLE(offset);
     eigen_assert(((!PanelMode) && stride == 0 && offset == 0) || (PanelMode && stride >= depth && offset <= stride));
-    conj_if < NumTraits<Scalar>::IsComplex && Conjugate > cj;
+    conj_if<NumTraits<Scalar>::IsComplex && Conjugate> cj;
     Index packet_cols8 = nr >= 8 ? (cols / 8) * 8 : 0;
     Index packet_cols4 = nr >= 4 ? (cols / 4) * 4 : 0;
     Index count = 0;
@@ -2026,27 +2025,27 @@ EIGEN_DONT_INLINE void gemm_pack_rhs<Scalar, Index, DataMapper, nr, RowMajor, Co
 
 /** \returns the currently set level 1 cpu cache size (in bytes) used to estimate the ideal blocking size parameters.
   * \sa setCpuCacheSize */
-inline std::ptrdiff_t l1CacheSize() {
-    std::ptrdiff_t l1, l2, l3;
-    internal::manage_caching_sizes(GetAction, &l1, &l2, &l3);
-    return l1;
+    inline std::ptrdiff_t l1CacheSize() {
+        std::ptrdiff_t l1, l2, l3;
+        internal::manage_caching_sizes(GetAction, &l1, &l2, &l3);
+        return l1;
 }
 
 /** \returns the currently set level 2 cpu cache size (in bytes) used to estimate the ideal blocking size parameters.
   * \sa setCpuCacheSize */
-inline std::ptrdiff_t l2CacheSize() {
-    std::ptrdiff_t l1, l2, l3;
-    internal::manage_caching_sizes(GetAction, &l1, &l2, &l3);
-    return l2;
+    inline std::ptrdiff_t l2CacheSize() {
+        std::ptrdiff_t l1, l2, l3;
+        internal::manage_caching_sizes(GetAction, &l1, &l2, &l3);
+        return l2;
 }
 
 /** \returns the currently set level 3 cpu cache size (in bytes) used to estimate the ideal blocking size paramete\
 rs.
 * \sa setCpuCacheSize */
-inline std::ptrdiff_t l3CacheSize() {
-    std::ptrdiff_t l1, l2, l3;
-    internal::manage_caching_sizes(GetAction, &l1, &l2, &l3);
-    return l3;
+    inline std::ptrdiff_t l3CacheSize() {
+        std::ptrdiff_t l1, l2, l3;
+        internal::manage_caching_sizes(GetAction, &l1, &l2, &l3);
+        return l3;
 }
 
 /** Set the cpu L1 and L2 cache sizes (in bytes).
@@ -2054,8 +2053,8 @@ inline std::ptrdiff_t l3CacheSize() {
   * for the algorithms working per blocks.
   *
   * \sa computeProductBlockingSizes */
-inline void setCpuCacheSizes(std::ptrdiff_t l1, std::ptrdiff_t l2, std::ptrdiff_t l3) {
-    internal::manage_caching_sizes(SetAction, &l1, &l2, &l3);
+    inline void setCpuCacheSizes(std::ptrdiff_t l1, std::ptrdiff_t l2, std::ptrdiff_t l3) {
+        internal::manage_caching_sizes(SetAction, &l1, &l2, &l3);
 }
 
 } // end namespace Eigen

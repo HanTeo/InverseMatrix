@@ -65,26 +65,18 @@ public:
 
     EIGEN_INHERIT_ASSIGNMENT_OPERATORS(Transpose)
 
-    EIGEN_DEVICE_FUNC inline Index
+    EIGEN_DEVICE_FUNC inline Index rows() const { return m_matrix.cols(); }
 
-    rows() const { return m_matrix.cols(); }
-
-    EIGEN_DEVICE_FUNC inline Index
-
-    cols() const { return m_matrix.rows(); }
+    EIGEN_DEVICE_FUNC inline Index cols() const { return m_matrix.rows(); }
 
     /** \returns the nested expression */
     EIGEN_DEVICE_FUNC
-    const typename internal::remove_all<MatrixTypeNested>::type
-    &
-
+    const typename internal::remove_all<MatrixTypeNested>::type &
     nestedExpression() const { return m_matrix; }
 
     /** \returns the nested expression */
     EIGEN_DEVICE_FUNC
-    typename internal::remove_reference<MatrixTypeNested>::type
-    &
-
+    typename internal::remove_reference<MatrixTypeNested>::type &
     nestedExpression() { return m_matrix; }
 
     /** \internal */
@@ -128,13 +120,9 @@ public:
     EIGEN_DENSE_PUBLIC_INTERFACE(Transpose<MatrixType>)
     EIGEN_INHERIT_ASSIGNMENT_OPERATORS(TransposeImpl)
 
-    EIGEN_DEVICE_FUNC inline Index
+    EIGEN_DEVICE_FUNC inline Index innerStride() const { return derived().nestedExpression().innerStride(); }
 
-    innerStride() const { return derived().nestedExpression().innerStride(); }
-
-    EIGEN_DEVICE_FUNC inline Index
-
-    outerStride() const { return derived().nestedExpression().outerStride(); }
+    EIGEN_DEVICE_FUNC inline Index outerStride() const { return derived().nestedExpression().outerStride(); }
 
     typedef typename internal::conditional<
             internal::is_lvalue<MatrixType>::value,
@@ -142,33 +130,19 @@ public:
             const Scalar
     >::type ScalarWithConstIfNotLvalue;
 
-    EIGEN_DEVICE_FUNC inline ScalarWithConstIfNotLvalue
-    *
+    EIGEN_DEVICE_FUNC inline ScalarWithConstIfNotLvalue *data() { return derived().nestedExpression().data(); }
 
-    data() { return derived().nestedExpression().data(); }
-
-    EIGEN_DEVICE_FUNC inline const Scalar
-    *
-
-    data() const { return derived().nestedExpression().data(); }
+    EIGEN_DEVICE_FUNC inline const Scalar *data() const { return derived().nestedExpression().data(); }
 
     // FIXME: shall we keep the const version of coeffRef?
     EIGEN_DEVICE_FUNC
-    inline const Scalar
-    &
-    coeffRef(Index
-    rowId,
-    Index colId
-    ) const
+    inline const Scalar &coeffRef(Index rowId, Index colId) const
     {
         return derived().nestedExpression().coeffRef(colId, rowId);
     }
 
     EIGEN_DEVICE_FUNC
-    inline const Scalar
-    &
-    coeffRef(Index
-    index) const
+    inline const Scalar &coeffRef(Index index) const
     {
         return derived().nestedExpression().coeffRef(index);
     }
@@ -194,8 +168,7 @@ public:
   *
   * \sa transposeInPlace(), adjoint() */
 template<typename Derived>
-EIGEN_DEVICE_FUNC inline Transpose<Derived>
-
+inline Transpose<Derived>
 DenseBase<Derived>::transpose() {
     return TransposeReturnType(derived());
 }
@@ -206,8 +179,7 @@ DenseBase<Derived>::transpose() {
   *
   * \sa transposeInPlace(), adjoint() */
 template<typename Derived>
-EIGEN_DEVICE_FUNC inline typename DenseBase<Derived>::ConstTransposeReturnType
-
+inline typename DenseBase<Derived>::ConstTransposeReturnType
 DenseBase<Derived>::transpose() const {
     return ConstTransposeReturnType(derived());
 }
@@ -232,8 +204,7 @@ DenseBase<Derived>::transpose() const {
   *
   * \sa adjointInPlace(), transpose(), conjugate(), class Transpose, class internal::scalar_conjugate_op */
 template<typename Derived>
-EIGEN_DEVICE_FUNC inline const typename MatrixBase<Derived>::AdjointReturnType
-
+inline const typename MatrixBase<Derived>::AdjointReturnType
 MatrixBase<Derived>::adjoint() const {
     return AdjointReturnType(this->transpose());
 }
@@ -309,7 +280,7 @@ namespace internal {
   *
   * \sa transpose(), adjoint(), adjointInPlace() */
 template<typename Derived>
-EIGEN_DEVICE_FUNC inline void DenseBase<Derived>::transposeInPlace() {
+inline void DenseBase<Derived>::transposeInPlace() {
     eigen_assert((rows() == cols() || (RowsAtCompileTime == Dynamic && ColsAtCompileTime == Dynamic))
                  && "transposeInPlace() called on a non-square non-resizable matrix");
     internal::inplace_transpose_selector<Derived>::run(derived());
@@ -339,7 +310,7 @@ EIGEN_DEVICE_FUNC inline void DenseBase<Derived>::transposeInPlace() {
   *
   * \sa transpose(), adjoint(), transposeInPlace() */
 template<typename Derived>
-EIGEN_DEVICE_FUNC inline void MatrixBase<Derived>::adjointInPlace() {
+inline void MatrixBase<Derived>::adjointInPlace() {
     derived() = adjoint().eval();
 }
 
@@ -382,7 +353,6 @@ static bool run(const Scalar *dest, const CwiseBinaryOp <BinOp, DerivedA, Derive
            || ((blas_traits<DerivedB>::IsTransposed != DestIsTransposed) &&
                (dest != 0 && dest == (const Scalar *) extract_data(src.rhs())));
 }
-
 };
 
 // the following selector, checkTransposeAliasing_impl, based on MightHaveTransposeAliasing,

@@ -270,10 +270,7 @@ namespace Eigen {
 
         template<typename Scalar, int Size, int MaxSize>
         struct gemv_static_vector_if<Scalar, Size, MaxSize, false> {
-            EIGEN_STRONG_INLINE Scalar
-            *
-
-            data() {
+            EIGEN_STRONG_INLINE Scalar *data() {
                 eigen_internal_assert(false && "should never be called");
                 return 0;
             }
@@ -281,10 +278,7 @@ namespace Eigen {
 
         template<typename Scalar, int Size>
         struct gemv_static_vector_if<Scalar, Size, Dynamic, true> {
-            EIGEN_STRONG_INLINE Scalar
-            *
-
-            data() { return 0; }
+            EIGEN_STRONG_INLINE Scalar *data() { return 0; }
         };
 
         template<typename Scalar, int Size, int MaxSize>
@@ -294,24 +288,20 @@ namespace Eigen {
                 PacketSize = internal::packet_traits<Scalar>::size
             };
 #if EIGEN_MAX_STATIC_ALIGN_BYTES != 0
-            internal::plain_array<Scalar,EIGEN_SIZE_MIN_PREFER_FIXED(Size,MaxSize),0,EIGEN_PLAIN_ENUM_MIN(AlignedMax,PacketSize)> m_data;
-            EIGEN_STRONG_INLINE Scalar* data() { return m_data.array; }
+            internal::plain_array<Scalar, EIGEN_SIZE_MIN_PREFER_FIXED(Size, MaxSize), 0, EIGEN_PLAIN_ENUM_MIN(
+                    AlignedMax, PacketSize)> m_data;
+
+            EIGEN_STRONG_INLINE Scalar *data() { return m_data.array; }
+
 #else
             // Some architectures cannot align on the stack,
             // => let's manually enforce alignment by allocating more data and return the address of the first aligned element.
-            internal::plain_array<Scalar, EIGEN_SIZE_MIN_PREFER_FIXED(Size, MaxSize) +
-                                          (ForceAlignment ? EIGEN_MAX_ALIGN_BYTES : 0), 0> m_data;
-            EIGEN_STRONG_INLINE Scalar
-            *
-
-            data() {
-                return ForceAlignment
-                       ? reinterpret_cast<Scalar *>(
-                               (internal::UIntPtr(m_data.array) & ~(std::size_t(EIGEN_MAX_ALIGN_BYTES - 1))) +
-                               EIGEN_MAX_ALIGN_BYTES)
-                       : m_data.array;
+            internal::plain_array<Scalar,EIGEN_SIZE_MIN_PREFER_FIXED(Size,MaxSize)+(ForceAlignment?EIGEN_MAX_ALIGN_BYTES:0),0> m_data;
+            EIGEN_STRONG_INLINE Scalar* data() {
+              return ForceAlignment
+                      ? reinterpret_cast<Scalar*>((internal::UIntPtr(m_data.array) & ~(std::size_t(EIGEN_MAX_ALIGN_BYTES-1))) + EIGEN_MAX_ALIGN_BYTES)
+                      : m_data.array;
             }
-
 #endif
         };
 
@@ -320,7 +310,7 @@ namespace Eigen {
         struct gemv_dense_selector<OnTheLeft, StorageOrder, BlasCompatible> {
             template<typename Lhs, typename Rhs, typename Dest>
             static void run(const Lhs &lhs, const Rhs &rhs, Dest &dest, const typename Dest::Scalar &alpha) {
-                Transpose <Dest> destT(dest);
+                Transpose<Dest> destT(dest);
                 enum {
                     OtherStorageOrder = StorageOrder == RowMajor ? ColMajor : RowMajor
                 };
@@ -343,8 +333,8 @@ namespace Eigen {
                 typedef internal::blas_traits<Rhs> RhsBlasTraits;
                 typedef typename RhsBlasTraits::DirectLinearAccessType ActualRhsType;
 
-                typedef Map<Matrix < ResScalar, Dynamic, 1>,
-                EIGEN_PLAIN_ENUM_MIN(AlignedMax, internal::packet_traits<ResScalar>::size) > MappedDest;
+                typedef Map<Matrix<ResScalar, Dynamic, 1>, EIGEN_PLAIN_ENUM_MIN(AlignedMax,
+                                                                                internal::packet_traits<ResScalar>::size)> MappedDest;
 
                 ActualLhsType actualLhs = LhsBlasTraits::extract(lhs);
                 ActualRhsType actualRhs = RhsBlasTraits::extract(rhs);
@@ -363,8 +353,8 @@ namespace Eigen {
                     MightCannotUseDest = (!EvalToDestAtCompileTime) || ComplexByReal
                 };
 
-                typedef const_blas_data_mapper <LhsScalar, Index, ColMajor> LhsMapper;
-                typedef const_blas_data_mapper <RhsScalar, Index, RowMajor> RhsMapper;
+                typedef const_blas_data_mapper<LhsScalar, Index, ColMajor> LhsMapper;
+                typedef const_blas_data_mapper<RhsScalar, Index, RowMajor> RhsMapper;
                 RhsScalar compatibleAlpha = get_factor<ResScalar, RhsScalar>::run(actualAlpha);
 
                 if (!MightCannotUseDest) {
@@ -456,8 +446,8 @@ namespace Eigen {
                     Map<typename ActualRhsTypeCleaned::PlainObject>(actualRhsPtr, actualRhs.size()) = actualRhs;
                 }
 
-                typedef const_blas_data_mapper <LhsScalar, Index, RowMajor> LhsMapper;
-                typedef const_blas_data_mapper <RhsScalar, Index, ColMajor> RhsMapper;
+                typedef const_blas_data_mapper<LhsScalar, Index, RowMajor> LhsMapper;
+                typedef const_blas_data_mapper<RhsScalar, Index, ColMajor> RhsMapper;
                 general_matrix_vector_product
                         <Index, LhsScalar, LhsMapper, RowMajor, LhsBlasTraits::NeedToConjugate, RhsScalar, RhsMapper, RhsBlasTraits::NeedToConjugate>::run(
                         actualLhs.rows(), actualLhs.cols(),
@@ -556,8 +546,6 @@ namespace Eigen {
     template<typename Derived>
     template<typename OtherDerived>
     const Product <Derived, OtherDerived, LazyProduct>
-            EIGEN_DEVICE_FUNC
-
     MatrixBase<Derived>::lazyProduct(const MatrixBase <OtherDerived> &other) const {
         enum {
             ProductIsValid = Derived::ColsAtCompileTime == Dynamic

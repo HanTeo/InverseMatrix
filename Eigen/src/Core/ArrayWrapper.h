@@ -10,7 +10,7 @@
 #ifndef EIGEN_ARRAYWRAPPER_H
 #define EIGEN_ARRAYWRAPPER_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \class ArrayWrapper
   * \ingroup Core_Module
@@ -55,58 +55,30 @@ public:
     using Base::coeffRef;
 
     EIGEN_DEVICE_FUNC
-    explicit EIGEN_STRONG_INLINE
-
-    ArrayWrapper(ExpressionType &matrix) : m_expression(matrix) {}
+    explicit EIGEN_STRONG_INLINE ArrayWrapper(ExpressionType &matrix) : m_expression(matrix) {}
 
     EIGEN_DEVICE_FUNC
-    inline Index
-
-    rows() const { return m_expression.rows(); }
+    inline Index rows() const { return m_expression.rows(); }
+    EIGEN_DEVICE_FUNC
+    inline Index cols() const { return m_expression.cols(); }
+    EIGEN_DEVICE_FUNC
+    inline Index outerStride() const { return m_expression.outerStride(); }
+    EIGEN_DEVICE_FUNC
+    inline Index innerStride() const { return m_expression.innerStride(); }
 
     EIGEN_DEVICE_FUNC
-    inline Index
-
-    cols() const { return m_expression.cols(); }
+    inline ScalarWithConstIfNotLvalue *data() { return m_expression.data(); }
+    EIGEN_DEVICE_FUNC
+    inline const Scalar *data() const { return m_expression.data(); }
 
     EIGEN_DEVICE_FUNC
-    inline Index
-
-    outerStride() const { return m_expression.outerStride(); }
-
-    EIGEN_DEVICE_FUNC
-    inline Index
-
-    innerStride() const { return m_expression.innerStride(); }
-
-    EIGEN_DEVICE_FUNC
-    inline ScalarWithConstIfNotLvalue
-    *
-
-    data() { return m_expression.data(); }
-
-    EIGEN_DEVICE_FUNC
-    inline const Scalar
-    *
-
-    data() const { return m_expression.data(); }
-
-    EIGEN_DEVICE_FUNC
-    inline const Scalar
-    &
-    coeffRef(Index
-    rowId,
-    Index colId
-    ) const
+    inline const Scalar &coeffRef(Index rowId, Index colId) const
     {
         return m_expression.coeffRef(rowId, colId);
     }
 
     EIGEN_DEVICE_FUNC
-    inline const Scalar
-    &
-    coeffRef(Index
-    index) const
+    inline const Scalar &coeffRef(Index index) const
     {
         return m_expression.coeffRef(index);
     }
@@ -116,8 +88,7 @@ public:
     inline void evalTo(Dest &dst) const { dst = m_expression; }
 
     const typename internal::remove_all<NestedExpressionType>::type &
-            EIGEN_DEVICE_FUNC
-
+    EIGEN_DEVICE_FUNC
     nestedExpression() const {
         return m_expression;
     }
@@ -126,7 +97,6 @@ public:
       * \sa DenseBase::resize(Index)  */
     EIGEN_DEVICE_FUNC
     void resize(Index newSize) { m_expression.resize(newSize); }
-
     /** Forwards the resizing request to the nested expression
       * \sa DenseBase::resize(Index,Index)*/
     EIGEN_DEVICE_FUNC
@@ -182,61 +152,33 @@ public:
     explicit inline MatrixWrapper(ExpressionType &matrix) : m_expression(matrix) {}
 
     EIGEN_DEVICE_FUNC
-    inline Index
-
-    rows() const { return m_expression.rows(); }
+    inline Index rows() const { return m_expression.rows(); }
+    EIGEN_DEVICE_FUNC
+    inline Index cols() const { return m_expression.cols(); }
+    EIGEN_DEVICE_FUNC
+    inline Index outerStride() const { return m_expression.outerStride(); }
+    EIGEN_DEVICE_FUNC
+    inline Index innerStride() const { return m_expression.innerStride(); }
 
     EIGEN_DEVICE_FUNC
-    inline Index
-
-    cols() const { return m_expression.cols(); }
+    inline ScalarWithConstIfNotLvalue *data() { return m_expression.data(); }
+    EIGEN_DEVICE_FUNC
+    inline const Scalar *data() const { return m_expression.data(); }
 
     EIGEN_DEVICE_FUNC
-    inline Index
-
-    outerStride() const { return m_expression.outerStride(); }
-
-    EIGEN_DEVICE_FUNC
-    inline Index
-
-    innerStride() const { return m_expression.innerStride(); }
-
-    EIGEN_DEVICE_FUNC
-    inline ScalarWithConstIfNotLvalue
-    *
-
-    data() { return m_expression.data(); }
-
-    EIGEN_DEVICE_FUNC
-    inline const Scalar
-    *
-
-    data() const { return m_expression.data(); }
-
-    EIGEN_DEVICE_FUNC
-    inline const Scalar
-    &
-    coeffRef(Index
-    rowId,
-    Index colId
-    ) const
+    inline const Scalar &coeffRef(Index rowId, Index colId) const
     {
         return m_expression.derived().coeffRef(rowId, colId);
     }
 
     EIGEN_DEVICE_FUNC
-    inline const Scalar
-    &
-    coeffRef(Index
-    index) const
+    inline const Scalar &coeffRef(Index index) const
     {
         return m_expression.coeffRef(index);
     }
 
     EIGEN_DEVICE_FUNC
-    const typename internal::remove_all<NestedExpressionType>::type
-    &
-
+    const typename internal::remove_all<NestedExpressionType>::type &
     nestedExpression() const {
         return m_expression;
     }
@@ -245,7 +187,6 @@ public:
       * \sa DenseBase::resize(Index)  */
     EIGEN_DEVICE_FUNC
     void resize(Index newSize) { m_expression.resize(newSize); }
-
     /** Forwards the resizing request to the nested expression
       * \sa DenseBase::resize(Index,Index)*/
     EIGEN_DEVICE_FUNC

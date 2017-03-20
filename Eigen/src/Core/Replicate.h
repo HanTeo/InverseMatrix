@@ -91,20 +91,12 @@ public:
     }
 
     EIGEN_DEVICE_FUNC
-    inline Index
-
-    rows() const { return m_matrix.rows() * m_rowFactor.value(); }
+    inline Index rows() const { return m_matrix.rows() * m_rowFactor.value(); }
+    EIGEN_DEVICE_FUNC
+    inline Index cols() const { return m_matrix.cols() * m_colFactor.value(); }
 
     EIGEN_DEVICE_FUNC
-    inline Index
-
-    cols() const { return m_matrix.cols() * m_colFactor.value(); }
-
-    EIGEN_DEVICE_FUNC
-    const _MatrixTypeNested
-    &
-
-    nestedExpression() const {
+    const _MatrixTypeNested &nestedExpression() const {
         return m_matrix;
     }
 
@@ -124,10 +116,9 @@ protected:
   */
 template<typename Derived>
 template<int RowFactor, int ColFactor>
-EIGEN_DEVICE_FUNC const Replicate<Derived, RowFactor, ColFactor>
-
+const Replicate<Derived, RowFactor, ColFactor>
 DenseBase<Derived>::replicate() const {
-    return Replicate < Derived, RowFactor, ColFactor > (derived());
+    return Replicate<Derived, RowFactor, ColFactor>(derived());
 }
 
 /**
@@ -139,20 +130,11 @@ DenseBase<Derived>::replicate() const {
   * \sa VectorwiseOp::replicate(), DenseBase::replicate(), class Replicate
   */
 template<typename ExpressionType, int Direction>
-EIGEN_DEVICE_FUNC const typename VectorwiseOp<ExpressionType, Direction>::ReplicateReturnType
-VectorwiseOp<ExpressionType, Direction>::replicate(Index
-factor) const
+const typename VectorwiseOp<ExpressionType, Direction>::ReplicateReturnType
+VectorwiseOp<ExpressionType, Direction>::replicate(Index factor) const
 {
-return
-
-typename VectorwiseOp<ExpressionType, Direction>::ReplicateReturnType
-(_expression(), Direction
-
-==Vertical?
-factor:
-1,Direction==Horizontal?
-factor:
-1);
+    return typename VectorwiseOp<ExpressionType, Direction>::ReplicateReturnType
+            (_expression(), Direction == Vertical ? factor : 1, Direction == Horizontal ? factor : 1);
 }
 
 } // end namespace Eigen

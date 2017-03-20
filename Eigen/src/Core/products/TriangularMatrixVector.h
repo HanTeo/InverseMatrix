@@ -26,9 +26,9 @@ namespace Eigen {
                 HasZeroDiag = (Mode & ZeroDiag) == ZeroDiag
             };
 
-            static EIGEN_DONT_INLINE void run(Index _rows, Index _cols, const LhsScalar *_lhs, Index lhsStride,
-                                              const RhsScalar *_rhs, Index rhsIncr, ResScalar *_res, Index resIncr,
-                                              const RhsScalar &alpha);
+            static EIGEN_DONT_INLINE  void run(Index _rows, Index _cols, const LhsScalar *_lhs, Index lhsStride,
+                                               const RhsScalar *_rhs, Index rhsIncr, ResScalar *_res, Index resIncr,
+                                               const RhsScalar &alpha);
         };
 
         template<typename Index, int Mode, typename LhsScalar, bool ConjLhs, typename RhsScalar, bool ConjRhs, int Version>
@@ -41,7 +41,7 @@ namespace Eigen {
             Index rows = IsLower ? _rows : (std::min)(_rows, _cols);
             Index cols = IsLower ? (std::min)(_rows, _cols) : _cols;
 
-            typedef Map<const Matrix <LhsScalar, Dynamic, Dynamic, ColMajor>, 0, OuterStride<> > LhsMap;
+            typedef Map<const Matrix<LhsScalar, Dynamic, Dynamic, ColMajor>, 0, OuterStride<> > LhsMap;
             const LhsMap lhs(_lhs, rows, cols, OuterStride<>(lhsStride));
             typename conj_expr_if<ConjLhs, LhsMap>::type cjLhs(lhs);
 
@@ -49,11 +49,11 @@ namespace Eigen {
             const RhsMap rhs(_rhs, cols, InnerStride<>(rhsIncr));
             typename conj_expr_if<ConjRhs, RhsMap>::type cjRhs(rhs);
 
-            typedef Map <Matrix<ResScalar, Dynamic, 1>> ResMap;
+            typedef Map<Matrix<ResScalar, Dynamic, 1> > ResMap;
             ResMap res(_res, rows);
 
-            typedef const_blas_data_mapper <LhsScalar, Index, ColMajor> LhsMapper;
-            typedef const_blas_data_mapper <RhsScalar, Index, RowMajor> RhsMapper;
+            typedef const_blas_data_mapper<LhsScalar, Index, ColMajor> LhsMapper;
+            typedef const_blas_data_mapper<RhsScalar, Index, RowMajor> RhsMapper;
 
             for (Index pi = 0; pi < size; pi += PanelWidth) {
                 Index actualPanelWidth = (std::min)(PanelWidth, size - pi);
@@ -109,7 +109,7 @@ namespace Eigen {
             Index rows = IsLower ? _rows : diagSize;
             Index cols = IsLower ? diagSize : _cols;
 
-            typedef Map<const Matrix <LhsScalar, Dynamic, Dynamic, RowMajor>, 0, OuterStride<> > LhsMap;
+            typedef Map<const Matrix<LhsScalar, Dynamic, Dynamic, RowMajor>, 0, OuterStride<> > LhsMap;
             const LhsMap lhs(_lhs, rows, cols, OuterStride<>(lhsStride));
             typename conj_expr_if<ConjLhs, LhsMap>::type cjLhs(lhs);
 
@@ -120,8 +120,8 @@ namespace Eigen {
             typedef Map<Matrix<ResScalar, Dynamic, 1>, 0, InnerStride<> > ResMap;
             ResMap res(_res, rows, InnerStride<>(resIncr));
 
-            typedef const_blas_data_mapper <LhsScalar, Index, RowMajor> LhsMapper;
-            typedef const_blas_data_mapper <RhsScalar, Index, RowMajor> RhsMapper;
+            typedef const_blas_data_mapper<LhsScalar, Index, RowMajor> LhsMapper;
+            typedef const_blas_data_mapper<RhsScalar, Index, RowMajor> RhsMapper;
 
             for (Index pi = 0; pi < diagSize; pi += PanelWidth) {
                 Index actualPanelWidth = (std::min)(PanelWidth, diagSize - pi);
@@ -185,7 +185,7 @@ namespace Eigen {
             static void run(Dest &dst, const Lhs &lhs, const Rhs &rhs, const typename Dest::Scalar &alpha) {
                 eigen_assert(dst.rows() == lhs.rows() && dst.cols() == rhs.cols());
 
-                Transpose <Dest> dstT(dst);
+                Transpose<Dest> dstT(dst);
                 internal::trmv_selector<(Mode & (UnitDiag | ZeroDiag)) | ((Mode & Lower) ? Upper : Lower),
                         (int(internal::traits<Rhs>::Flags) & RowMajorBit) ? ColMajor : RowMajor>
                 ::run(rhs.transpose(), lhs.transpose(), dstT, alpha);
@@ -212,8 +212,8 @@ namespace Eigen {
                 typedef internal::blas_traits<Rhs> RhsBlasTraits;
                 typedef typename RhsBlasTraits::DirectLinearAccessType ActualRhsType;
 
-                typedef Map<Matrix < ResScalar, Dynamic, 1>,
-                EIGEN_PLAIN_ENUM_MIN(AlignedMax, internal::packet_traits<ResScalar>::size) > MappedDest;
+                typedef Map<Matrix<ResScalar, Dynamic, 1>, EIGEN_PLAIN_ENUM_MIN(AlignedMax,
+                                                                                internal::packet_traits<ResScalar>::size)> MappedDest;
 
                 typename internal::add_const_on_value_type<ActualLhsType>::type actualLhs = LhsBlasTraits::extract(lhs);
                 typename internal::add_const_on_value_type<ActualRhsType>::type actualRhs = RhsBlasTraits::extract(rhs);
@@ -229,7 +229,7 @@ namespace Eigen {
                     MightCannotUseDest = (Dest::InnerStrideAtCompileTime != 1) || ComplexByReal
                 };
 
-                gemv_static_vector_if <ResScalar, Dest::SizeAtCompileTime, Dest::MaxSizeAtCompileTime, MightCannotUseDest> static_dest;
+                gemv_static_vector_if<ResScalar, Dest::SizeAtCompileTime, Dest::MaxSizeAtCompileTime, MightCannotUseDest> static_dest;
 
                 bool alphaIsCompatible = (!ComplexByReal) || (numext::imag(actualAlpha) == RealScalar(0));
                 bool evalToDest = EvalToDestAtCompileTime && alphaIsCompatible;

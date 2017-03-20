@@ -53,18 +53,11 @@ public:
     explicit EIGEN_DEVICE_FUNC Inverse(const XprType &xpr)
             : m_xpr(xpr) {}
 
-    EIGEN_DEVICE_FUNC Index
+    EIGEN_DEVICE_FUNC Index rows() const { return m_xpr.rows(); }
 
-    rows() const { return m_xpr.rows(); }
+    EIGEN_DEVICE_FUNC Index cols() const { return m_xpr.cols(); }
 
-    EIGEN_DEVICE_FUNC Index
-
-    cols() const { return m_xpr.cols(); }
-
-    EIGEN_DEVICE_FUNC const XprTypeNestedCleaned
-    &
-
-    nestedExpression() const { return m_xpr; }
+    EIGEN_DEVICE_FUNC const XprTypeNestedCleaned &nestedExpression() const { return m_xpr; }
 
 protected:
     XprTypeNested m_xpr;
@@ -109,14 +102,14 @@ namespace internal {
 
         unary_evaluator(const InverseType &inv_xpr)
                 : m_result(inv_xpr.rows(), inv_xpr.cols()) {
-            ::new(static_cast<Base *>(this)) Base(m_result);
-            internal::call_assignment_no_alias(m_result, inv_xpr);
+          ::new(static_cast<Base *>(this)) Base(m_result);
+          internal::call_assignment_no_alias(m_result, inv_xpr);
         }
 
     protected:
         PlainObject m_result;
     };
-
+  
 } // end namespace internal
 
 } // end namespace Eigen

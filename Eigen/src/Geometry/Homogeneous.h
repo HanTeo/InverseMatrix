@@ -10,7 +10,7 @@
 #ifndef EIGEN_HOMOGENEOUS_H
 #define EIGEN_HOMOGENEOUS_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \geometry_module \ingroup Geometry_Module
   *
@@ -74,48 +74,35 @@ public:
     EIGEN_DEVICE_FUNC explicit inline Homogeneous(const MatrixType &matrix)
             : m_matrix(matrix) {}
 
-    EIGEN_DEVICE_FUNC inline Index
+    EIGEN_DEVICE_FUNC inline Index rows() const { return m_matrix.rows() + (int(Direction) == Vertical ? 1 : 0); }
 
-    rows() const { return m_matrix.rows() + (int(Direction) == Vertical ? 1 : 0); }
+    EIGEN_DEVICE_FUNC inline Index cols() const { return m_matrix.cols() + (int(Direction) == Horizontal ? 1 : 0); }
 
-    EIGEN_DEVICE_FUNC inline Index
-
-    cols() const { return m_matrix.cols() + (int(Direction) == Horizontal ? 1 : 0); }
-
-    EIGEN_DEVICE_FUNC const NestedExpression
-    &
-
-    nestedExpression() const { return m_matrix; }
+    EIGEN_DEVICE_FUNC const NestedExpression &nestedExpression() const { return m_matrix; }
 
     template<typename Rhs>
-    EIGEN_DEVICE_FUNC inline const Product<Homogeneous, Rhs>
-
+    EIGEN_DEVICE_FUNC inline const Product <Homogeneous, Rhs>
     operator*(const MatrixBase <Rhs> &rhs) const {
-        eigen_assert(int(Direction) == Horizontal);
+        eigen_assert(int(Direction)==Horizontal);
         return Product<Homogeneous, Rhs>(*this, rhs.derived());
     }
 
     template<typename Lhs> friend
-    EIGEN_DEVICE_FUNC inline const Product<Lhs, Homogeneous>
-
+    EIGEN_DEVICE_FUNC inline const Product <Lhs, Homogeneous>
     operator*(const MatrixBase <Lhs> &lhs, const Homogeneous &rhs) {
-        eigen_assert(int(Direction) == Vertical);
+        eigen_assert(int(Direction)==Vertical);
         return Product<Lhs, Homogeneous>(lhs.derived(), rhs);
     }
 
     template<typename Scalar, int Dim, int Mode, int Options> friend
-    EIGEN_DEVICE_FUNC inline const Product<Transform < Scalar, Dim, Mode, Options>, Homogeneous
-    >
-
+    EIGEN_DEVICE_FUNC inline const Product <Transform<Scalar, Dim, Mode, Options>, Homogeneous>
     operator*(const Transform <Scalar, Dim, Mode, Options> &lhs, const Homogeneous &rhs) {
-        eigen_assert(int(Direction) == Vertical);
-        return Product<Transform < Scalar, Dim, Mode, Options>, Homogeneous > (lhs, rhs);
+        eigen_assert(int(Direction)==Vertical);
+        return Product < Transform < Scalar, Dim, Mode, Options >, Homogeneous > (lhs, rhs);
     }
 
     template<typename Func>
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE typename
-
-    internal::result_of<Func(Scalar, Scalar)>::type
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE typename internal::result_of<Func(Scalar, Scalar)>::type
     redux(const Func &func) const {
         return func(m_matrix.redux(func), Scalar(1));
     }
@@ -139,7 +126,6 @@ protected:
   */
 template<typename Derived>
 EIGEN_DEVICE_FUNC inline typename MatrixBase<Derived>::HomogeneousReturnType
-
 MatrixBase<Derived>::homogeneous() const {
     EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived);
     return HomogeneousReturnType(derived());
@@ -157,7 +143,6 @@ MatrixBase<Derived>::homogeneous() const {
   * \sa MatrixBase::homogeneous(), class Homogeneous */
 template<typename ExpressionType, int Direction>
 EIGEN_DEVICE_FUNC inline Homogeneous<ExpressionType, Direction>
-
 VectorwiseOp<ExpressionType, Direction>::homogeneous() const {
     return HomogeneousReturnType(_expression());
 }
@@ -181,7 +166,6 @@ VectorwiseOp<ExpressionType, Direction>::homogeneous() const {
   * \sa VectorwiseOp::hnormalized() */
 template<typename Derived>
 EIGEN_DEVICE_FUNC inline const typename MatrixBase<Derived>::HNormalizedReturnType
-
 MatrixBase<Derived>::hnormalized() const {
     EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived);
     return ConstStartMinusOne(derived(), 0, 0,
@@ -205,7 +189,6 @@ MatrixBase<Derived>::hnormalized() const {
   * \sa MatrixBase::hnormalized() */
 template<typename ExpressionType, int Direction>
 EIGEN_DEVICE_FUNC inline const typename VectorwiseOp<ExpressionType, Direction>::HNormalizedReturnType
-
 VectorwiseOp<ExpressionType, Direction>::hnormalized() const {
     return HNormalized_Block(_expression(), 0, 0,
                              Direction == Vertical ? _expression().rows() - 1 : _expression().rows(),
@@ -227,19 +210,14 @@ namespace internal {
     template<typename MatrixOrTransformType>
     struct take_matrix_for_product {
         typedef MatrixOrTransformType type;
-        EIGEN_DEVICE_FUNC static const type
-        &
-
-        run(const type &x) { return x; }
+        EIGEN_DEVICE_FUNC static const type &run(const type &x) { return x; }
     };
 
     template<typename Scalar, int Dim, int Mode, int Options>
     struct take_matrix_for_product<Transform < Scalar, Dim, Mode, Options> > {
     typedef Transform <Scalar, Dim, Mode, Options> TransformType;
     typedef typename internal::add_const<typename TransformType::ConstAffinePart>::type type;
-    EIGEN_DEVICE_FUNC static type
-
-    run(const TransformType &x) { return x.affine(); }
+    EIGEN_DEVICE_FUNC static type run(const TransformType &x) { return x.affine(); }
 };
 
 template<typename Scalar, int Dim, int Options>
@@ -247,15 +225,11 @@ struct take_matrix_for_product<Transform < Scalar, Dim, Projective, Options> >
 {
 typedef Transform <Scalar, Dim, Projective, Options> TransformType;
 typedef typename TransformType::MatrixType type;
-EIGEN_DEVICE_FUNC static const type
-&
-
-run(const TransformType &x) { return x.matrix(); }
-
+EIGEN_DEVICE_FUNC static const type &run(const TransformType &x) { return x.matrix(); }
 };
 
 template<typename MatrixType, typename Lhs>
-struct traits<homogeneous_left_product_impl < Homogeneous < MatrixType, Vertical>,Lhs> >
+struct traits<homogeneous_left_product_impl < Homogeneous<MatrixType, Vertical>, Lhs> >
 {
 typedef typename take_matrix_for_product<Lhs>::type LhsMatrixType;
 typedef typename remove_all<MatrixType>::type MatrixTypeCleaned;
@@ -275,18 +249,13 @@ struct homogeneous_left_product_impl<Homogeneous<MatrixType, Vertical>, Lhs>
     typedef typename traits<homogeneous_left_product_impl>::LhsMatrixType LhsMatrixType;
     typedef typename remove_all<LhsMatrixType>::type LhsMatrixTypeCleaned;
     typedef typename remove_all<typename LhsMatrixTypeCleaned::Nested>::type LhsMatrixTypeNested;
-
     EIGEN_DEVICE_FUNC homogeneous_left_product_impl(const Lhs &lhs, const MatrixType &rhs)
             : m_lhs(take_matrix_for_product<Lhs>::run(lhs)),
               m_rhs(rhs) {}
 
-    EIGEN_DEVICE_FUNC inline Index
+    EIGEN_DEVICE_FUNC inline Index rows() const { return m_lhs.rows(); }
 
-    rows() const { return m_lhs.rows(); }
-
-    EIGEN_DEVICE_FUNC inline Index
-
-    cols() const { return m_rhs.cols(); }
+    EIGEN_DEVICE_FUNC inline Index cols() const { return m_rhs.cols(); }
 
     template<typename Dest>
     EIGEN_DEVICE_FUNC void evalTo(Dest &dst) const {
@@ -305,7 +274,7 @@ struct homogeneous_left_product_impl<Homogeneous<MatrixType, Vertical>, Lhs>
 };
 
 template<typename MatrixType, typename Rhs>
-struct traits<homogeneous_right_product_impl < Homogeneous < MatrixType, Horizontal>,Rhs> >
+struct traits<homogeneous_right_product_impl < Homogeneous<MatrixType, Horizontal>, Rhs> >
 {
 typedef typename make_proper_matrix_type<typename traits<MatrixType>::Scalar,
         MatrixType::RowsAtCompileTime,
@@ -319,17 +288,12 @@ template<typename MatrixType, typename Rhs>
 struct homogeneous_right_product_impl<Homogeneous<MatrixType, Horizontal>, Rhs>
         : public ReturnByValue<homogeneous_right_product_impl<Homogeneous<MatrixType, Horizontal>, Rhs> > {
     typedef typename remove_all<typename Rhs::Nested>::type RhsNested;
-
     EIGEN_DEVICE_FUNC homogeneous_right_product_impl(const MatrixType &lhs, const Rhs &rhs)
             : m_lhs(lhs), m_rhs(rhs) {}
 
-    EIGEN_DEVICE_FUNC inline Index
+    EIGEN_DEVICE_FUNC inline Index rows() const { return m_lhs.rows(); }
 
-    rows() const { return m_lhs.rows(); }
-
-    EIGEN_DEVICE_FUNC inline Index
-
-    cols() const { return m_rhs.cols(); }
+    EIGEN_DEVICE_FUNC inline Index cols() const { return m_rhs.cols(); }
 
     template<typename Dest>
     EIGEN_DEVICE_FUNC void evalTo(Dest &dst) const {
@@ -378,7 +342,6 @@ protected:
 template<typename DstXprType, typename ArgType, typename Scalar>
 struct Assignment<DstXprType, Homogeneous<ArgType, Vertical>, internal::assign_op<Scalar, typename ArgType::Scalar>, Dense2Dense> {
     typedef Homogeneous<ArgType, Vertical> SrcXprType;
-
     EIGEN_DEVICE_FUNC static void
     run(DstXprType &dst, const SrcXprType &src, const internal::assign_op<Scalar, typename ArgType::Scalar> &) {
         Index dstRows = src.rows();
@@ -395,7 +358,6 @@ struct Assignment<DstXprType, Homogeneous<ArgType, Vertical>, internal::assign_o
 template<typename DstXprType, typename ArgType, typename Scalar>
 struct Assignment<DstXprType, Homogeneous<ArgType, Horizontal>, internal::assign_op<Scalar, typename ArgType::Scalar>, Dense2Dense> {
     typedef Homogeneous<ArgType, Horizontal> SrcXprType;
-
     EIGEN_DEVICE_FUNC static void
     run(DstXprType &dst, const SrcXprType &src, const internal::assign_op<Scalar, typename ArgType::Scalar> &) {
         Index dstRows = src.rows();
@@ -441,65 +403,9 @@ typedef typename helper::Xpr RefactoredXpr;
 typedef evaluator <RefactoredXpr> Base;
 
 EIGEN_DEVICE_FUNC explicit product_evaluator(const XprType &xpr)
-        :
-
-Base(  xpr
-.
-
-lhs()
-
-.
-
-nestedExpression()
-
-.
-lazyProduct(  xpr
-.
-
-rhs()
-
-.
-template topRows<helper::Dim>(xpr
-.
-
-lhs()
-
-.
-
-nestedExpression()
-
-.
-
-cols()
-
-))
-+
-ConstantBlock(xpr
-.
-
-rhs()
-
-.
-row(xpr
-.
-
-rhs()
-
-.
-
-rows()
-
--1),xpr.
-
-lhs()
-
-.
-
-rows(),
-
-1))
-{
-}
+        : Base(xpr.lhs().nestedExpression().lazyProduct(
+        xpr.rhs().template topRows<helper::Dim>(xpr.lhs().nestedExpression().cols()))
+               + ConstantBlock(xpr.rhs().row(xpr.rhs().rows() - 1), xpr.lhs().rows(), 1)) {}
 };
 
 template<typename Lhs, typename RhsArg, int ProductTag>
@@ -545,65 +451,9 @@ typedef typename helper::Xpr RefactoredXpr;
 typedef evaluator <RefactoredXpr> Base;
 
 EIGEN_DEVICE_FUNC explicit product_evaluator(const XprType &xpr)
-        :
-
-Base(   xpr
-.
-
-lhs()
-
-.
-template leftCols<helper::Dim>(xpr
-.
-
-rhs()
-
-.
-
-nestedExpression()
-
-.
-
-rows()
-
-) .
-lazyProduct( xpr
-.
-
-rhs()
-
-.
-
-nestedExpression()
-
-)
-+
-ConstantBlock(xpr
-.
-
-lhs()
-
-.
-col(xpr
-.
-
-lhs()
-
-.
-
-cols()
-
--1),1,xpr.
-
-rhs()
-
-.
-
-cols()
-
-))
-{
-}
+        : Base(xpr.lhs().template leftCols<helper::Dim>(xpr.rhs().nestedExpression().rows()).lazyProduct(
+        xpr.rhs().nestedExpression())
+               + ConstantBlock(xpr.lhs().col(xpr.lhs().cols() - 1), 1, xpr.rhs().cols())) {}
 };
 
 template<typename Scalar, int Dim, int Mode, int Options, typename RhsArg, int ProductTag>
@@ -617,7 +467,6 @@ EIGEN_DEVICE_FUNC static void evalTo(Dest &dst, const TransformType &lhs, const 
     homogeneous_left_product_impl<Homogeneous<RhsArg, Vertical>, TransformType>(lhs, rhs.nestedExpression()).evalTo(
             dst);
 }
-
 };
 
 template<typename ExpressionType, int Side, bool Transposed>

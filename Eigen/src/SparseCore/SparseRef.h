@@ -97,7 +97,7 @@ public:
     SparseRefBase()
             : Base(RowsAtCompileTime == Dynamic ? 0 : RowsAtCompileTime,
                    ColsAtCompileTime == Dynamic ? 0 : ColsAtCompileTime, 0, 0, 0, 0, 0) {}
-
+  
 protected:
 
     template<typename Expression>
@@ -125,7 +125,6 @@ protected:
   * \sa class Ref
   */
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
 template<typename MatScalar, int MatOptions, typename MatIndex, int Options, typename StrideType>
 class Ref<SparseMatrix < MatScalar, MatOptions, MatIndex>
 
@@ -212,7 +211,6 @@ inline Ref(SparseCompressedBase<Derived>& expr)
     eigen_assert(((Options & int(StandardCompressedFormat)) == 0) || (expr.isCompressed()));
     Base::construct(expr.const_cast_derived());
 }
-
 };
 
 // this is the const ref version
@@ -286,7 +284,6 @@ protected:
   * \sa class Ref
   */
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
 template<typename MatScalar, int MatOptions, typename MatIndex, int Options, typename StrideType>
 class Ref<SparseVector < MatScalar, MatOptions, MatIndex>
 
@@ -337,7 +334,6 @@ inline Ref(SparseCompressedBase<Derived>& expr)
     EIGEN_STATIC_ASSERT(bool(Traits::template match<Derived>::MatchAtCompileTime), STORAGE_LAYOUT_DOES_NOT_MATCH);
     Base::construct(expr.const_cast_derived());
 }
-
 };
 
 // this is the const ref version
@@ -432,7 +428,6 @@ typedef Ref<SparseVector<MatScalar, MatOptions, MatIndex>, Options, StrideType> 
 evaluator() : Base() {}
 
 explicit evaluator(const XprType &mat) : Base(mat) {}
-
 };
 
 template<typename MatScalar, int MatOptions, typename MatIndex, int Options, typename StrideType>

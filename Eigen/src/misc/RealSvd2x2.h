@@ -24,7 +24,7 @@ namespace Eigen {
             Matrix<RealScalar, 2, 2> m;
             m << numext::real(matrix.coeff(p, p)), numext::real(matrix.coeff(p, q)),
                     numext::real(matrix.coeff(q, p)), numext::real(matrix.coeff(q, q));
-            JacobiRotation <RealScalar> rot1;
+            JacobiRotation<RealScalar> rot1;
             RealScalar t = m.coeff(0, 0) + m.coeff(1, 1);
             RealScalar d = m.coeff(1, 0) - m.coeff(0, 1);
 

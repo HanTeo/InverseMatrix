@@ -35,11 +35,12 @@ namespace Eigen {
         typedef typename Base::DstXprType DstXprType;
         typedef swap_assign_op <Scalar> Functor;
 
-        EIGEN_DEVICE_FUNC
-        generic_dense_assignment_kernel(DstEvaluatorTypeT &dst, const SrcEvaluatorTypeT &src, const Functor &func,
-                                        DstXprType &dstExpr)
-                :
-
+        EIGEN_DEVICE_FUNC generic_dense_assignment_kernel(DstEvaluatorTypeT
+        &dst,
+        const SrcEvaluatorTypeT &src,
+        const Functor &func, DstXprType
+        & dstExpr)
+        :
         Base(dst, src, func, dstExpr
         ) {
     }

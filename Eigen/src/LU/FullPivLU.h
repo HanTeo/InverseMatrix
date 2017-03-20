@@ -392,15 +392,15 @@ public:
     MatrixType reconstructedMatrix() const;
 
     EIGEN_DEVICE_FUNC inline Index rows() const { return m_lu.rows(); }
-
     EIGEN_DEVICE_FUNC inline Index cols() const { return m_lu.cols(); }
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
     template<typename RhsType, typename DstType>
+    EIGEN_DEVICE_FUNC
     void _solve_impl(const RhsType &rhs, DstType &dst) const;
 
     template<bool Conjugate, typename RhsType, typename DstType>
+    EIGEN_DEVICE_FUNC
     void _solve_impl_transposed(const RhsType &rhs, DstType &dst) const;
 
 #endif
@@ -718,7 +718,6 @@ namespace internal {
 } // end namespace internal
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
 template<typename _MatrixType>
 template<typename RhsType, typename DstType>
 void FullPivLU<_MatrixType>::_solve_impl(const RhsType &rhs, DstType &dst) const {

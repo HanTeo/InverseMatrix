@@ -76,7 +76,6 @@ namespace Eigen {
         using Base::coeffRef;
         using Base::lazyAssign;
         using Base::eval;
-        using Base::operator-;
         using Base::operator+=;
         using Base::operator-=;
         using Base::operator*=;
@@ -89,6 +88,7 @@ namespace Eigen {
 #endif // not EIGEN_PARSED_BY_DOXYGEN
 
 
+
 #ifndef EIGEN_PARSED_BY_DOXYGEN
         /** type of the equivalent square matrix */
         typedef Matrix<Scalar, EIGEN_SIZE_MAX(RowsAtCompileTime, ColsAtCompileTime),
@@ -98,9 +98,7 @@ namespace Eigen {
         /** \returns the size of the main diagonal, which is min(rows(),cols()).
           * \sa rows(), cols(), SizeAtCompileTime. */
         EIGEN_DEVICE_FUNC
-        inline Index
-
-        diagonalSize() const { return (numext::mini)(rows(), cols()); }
+        inline Index diagonalSize() const { return (numext::mini)(rows(), cols()); }
 
         typedef typename Base::PlainObject PlainObject;
 
@@ -124,12 +122,11 @@ namespace Eigen {
 #endif // not EIGEN_PARSED_BY_DOXYGEN
 
 #define EIGEN_CURRENT_STORAGE_BASE_CLASS Eigen::MatrixBase
-#define EIGEN_DOC_UNARY_ADDONS(X, Y)
-
+#define EIGEN_DOC_UNARY_ADDONS(X,Y)
+#   include "../plugins/CommonCwiseUnaryOps.h"
 #   include "../plugins/CommonCwiseBinaryOps.h"
 #   include "../plugins/MatrixCwiseUnaryOps.h"
 #   include "../plugins/MatrixCwiseBinaryOps.h"
-
 #   ifdef EIGEN_MATRIXBASE_PLUGIN
 #     include EIGEN_MATRIXBASE_PLUGIN
 #   endif
@@ -140,7 +137,6 @@ namespace Eigen {
           * from generating a default operator= (issue hit with g++ 4.1)
           */
         EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
         Derived &operator=(const MatrixBase &other);
 
         // We cannot inherit here via Base::operator= since it is causing
@@ -148,31 +144,22 @@ namespace Eigen {
 
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
         Derived &operator=(const DenseBase <OtherDerived> &other);
 
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC
-                Derived
-        &
-
-        operator=(const EigenBase <OtherDerived> &other);
+        Derived &operator=(const EigenBase <OtherDerived> &other);
 
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC
-                Derived
-        &
-
-        operator=(const ReturnByValue <OtherDerived> &other);
+        Derived &operator=(const ReturnByValue <OtherDerived> &other);
 
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
         Derived &operator+=(const MatrixBase<OtherDerived> &other);
 
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
         Derived &operator-=(const MatrixBase<OtherDerived> &other);
 
 #ifdef __CUDACC__
@@ -191,8 +178,7 @@ namespace Eigen {
 
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC
-        const Product<Derived, OtherDerived, LazyProduct>
-
+        const Product <Derived, OtherDerived, LazyProduct>
         lazyProduct(const MatrixBase<OtherDerived> &other) const;
 
         template<typename OtherDerived>
@@ -206,23 +192,17 @@ namespace Eigen {
 
         template<typename DiagonalDerived>
         EIGEN_DEVICE_FUNC
-        const Product<Derived, DiagonalDerived, LazyProduct>
-
+        const Product <Derived, DiagonalDerived, LazyProduct>
         operator*(const DiagonalBase <DiagonalDerived> &diagonal) const;
 
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC
         typename ScalarBinaryOpTraits<typename internal::traits<Derived>::Scalar, typename internal::traits<OtherDerived>::Scalar>::ReturnType
-
         dot(const MatrixBase<OtherDerived> &other) const;
 
-        EIGEN_DEVICE_FUNC RealScalar
+        EIGEN_DEVICE_FUNC RealScalar squaredNorm() const;
 
-        squaredNorm() const;
-
-        EIGEN_DEVICE_FUNC RealScalar
-
-        norm() const;
+        EIGEN_DEVICE_FUNC RealScalar norm() const;
 
         RealScalar stableNorm() const;
 
@@ -230,35 +210,25 @@ namespace Eigen {
 
         RealScalar hypotNorm() const;
 
-        EIGEN_DEVICE_FUNC const PlainObject
+        EIGEN_DEVICE_FUNC const PlainObject normalized() const;
 
-        normalized() const;
-
-        EIGEN_DEVICE_FUNC const PlainObject
-
-        stableNormalized() const;
+        EIGEN_DEVICE_FUNC const PlainObject stableNormalized() const;
 
         EIGEN_DEVICE_FUNC void normalize();
 
         EIGEN_DEVICE_FUNC void stableNormalize();
 
-        EIGEN_DEVICE_FUNC const AdjointReturnType
-
-        adjoint() const;
+        EIGEN_DEVICE_FUNC const AdjointReturnType adjoint() const;
 
         EIGEN_DEVICE_FUNC void adjointInPlace();
 
         typedef Diagonal <Derived> DiagonalReturnType;
         EIGEN_DEVICE_FUNC
-                DiagonalReturnType
-
-        diagonal();
+        DiagonalReturnType diagonal();
 
         typedef typename internal::add_const<Diagonal<const Derived> >::type ConstDiagonalReturnType;
         EIGEN_DEVICE_FUNC
-                ConstDiagonalReturnType
-
-        diagonal() const;
+        ConstDiagonalReturnType diagonal() const;
 
         template<int Index>
         struct DiagonalIndexReturnType {
@@ -271,27 +241,20 @@ namespace Eigen {
 
         template<int Index>
         EIGEN_DEVICE_FUNC
-        typename DiagonalIndexReturnType<Index>::Type
-
-        diagonal();
+        typename DiagonalIndexReturnType<Index>::Type diagonal();
 
         template<int Index>
         EIGEN_DEVICE_FUNC
-        typename ConstDiagonalIndexReturnType<Index>::Type
-
-        diagonal() const;
+        typename ConstDiagonalIndexReturnType<Index>::Type diagonal() const;
 
         typedef Diagonal <Derived, DynamicIndex> DiagonalDynamicIndexReturnType;
         typedef typename internal::add_const<Diagonal<const Derived, DynamicIndex> >::type ConstDiagonalDynamicIndexReturnType;
 
         EIGEN_DEVICE_FUNC
-                DiagonalDynamicIndexReturnType
-        diagonal(Index
-        index);
+        DiagonalDynamicIndexReturnType diagonal(Index index);
+
         EIGEN_DEVICE_FUNC
-                ConstDiagonalDynamicIndexReturnType
-        diagonal(Index
-        index) const;
+        ConstDiagonalDynamicIndexReturnType diagonal(Index index) const;
 
         template<unsigned int Mode>
         struct TriangularViewReturnType {
@@ -304,15 +267,11 @@ namespace Eigen {
 
         template<unsigned int Mode>
         EIGEN_DEVICE_FUNC
-        typename TriangularViewReturnType<Mode>::Type
-
-        triangularView();
+        typename TriangularViewReturnType<Mode>::Type triangularView();
 
         template<unsigned int Mode>
         EIGEN_DEVICE_FUNC
-        typename ConstTriangularViewReturnType<Mode>::Type
-
-        triangularView() const;
+        typename ConstTriangularViewReturnType<Mode>::Type triangularView() const;
 
         template<unsigned int UpLo>
         struct SelfAdjointViewReturnType {
@@ -325,72 +284,41 @@ namespace Eigen {
 
         template<unsigned int UpLo>
         EIGEN_DEVICE_FUNC
-        typename SelfAdjointViewReturnType<UpLo>::Type
-
-        selfadjointView();
+        typename SelfAdjointViewReturnType<UpLo>::Type selfadjointView();
 
         template<unsigned int UpLo>
         EIGEN_DEVICE_FUNC
-        typename ConstSelfAdjointViewReturnType<UpLo>::Type
-
-        selfadjointView() const;
+        typename ConstSelfAdjointViewReturnType<UpLo>::Type selfadjointView() const;
 
         const SparseView <Derived> sparseView(const Scalar &m_reference = Scalar(0),
                                               const typename NumTraits<Scalar>::Real &m_epsilon = NumTraits<Scalar>::dummy_precision()) const;
 
-        EIGEN_DEVICE_FUNC static const IdentityReturnType
+        EIGEN_DEVICE_FUNC static const IdentityReturnType Identity();
 
-        Identity();
+        EIGEN_DEVICE_FUNC static const IdentityReturnType Identity(Index rows, Index cols);
 
-        EIGEN_DEVICE_FUNC static const IdentityReturnType
-        Identity(Index
-        rows,
-        Index cols
-        );
-        EIGEN_DEVICE_FUNC static const BasisReturnType
-        Unit(Index
-        size,
-        Index i
-        );
-        EIGEN_DEVICE_FUNC static const BasisReturnType
-        Unit(Index
-        i);
-        EIGEN_DEVICE_FUNC static const BasisReturnType
+        EIGEN_DEVICE_FUNC static const BasisReturnType Unit(Index size, Index i);
 
-        UnitX();
+        EIGEN_DEVICE_FUNC static const BasisReturnType Unit(Index i);
 
-        EIGEN_DEVICE_FUNC static const BasisReturnType
+        EIGEN_DEVICE_FUNC static const BasisReturnType UnitX();
 
-        UnitY();
+        EIGEN_DEVICE_FUNC static const BasisReturnType UnitY();
 
-        EIGEN_DEVICE_FUNC static const BasisReturnType
+        EIGEN_DEVICE_FUNC static const BasisReturnType UnitZ();
 
-        UnitZ();
-
-        EIGEN_DEVICE_FUNC static const BasisReturnType
-
-        UnitW();
+        EIGEN_DEVICE_FUNC static const BasisReturnType UnitW();
 
         EIGEN_DEVICE_FUNC
-        const DiagonalWrapper<const Derived>
-
-        asDiagonal() const;
+        const DiagonalWrapper<const Derived> asDiagonal() const;
 
         const PermutationWrapper<const Derived> asPermutation() const;
 
         EIGEN_DEVICE_FUNC
-                Derived
-        &
-
-        setIdentity();
+        Derived &setIdentity();
 
         EIGEN_DEVICE_FUNC
-                Derived
-        &
-        setIdentity(Index
-        rows,
-        Index cols
-        );
+        Derived &setIdentity(Index rows, Index cols);
 
         bool isIdentity(const RealScalar &prec = NumTraits<Scalar>::dummy_precision()) const;
 
@@ -411,18 +339,14 @@ namespace Eigen {
           *          fuzzy comparison such as isApprox()
           * \sa isApprox(), operator!= */
         template<typename OtherDerived>
-        EIGEN_DEVICE_FUNC inline bool operator==(const MatrixBase<OtherDerived> &other) const {
-            return cwiseEqual(other).all();
-        }
+        inline bool operator==(const MatrixBase<OtherDerived> &other) const { return cwiseEqual(other).all(); }
 
         /** \returns true if at least one pair of coefficients of \c *this and \a other are not exactly equal to each other.
           * \warning When using floating point scalar values you probably should rather use a
           *          fuzzy comparison such as isApprox()
           * \sa isApprox(), operator== */
         template<typename OtherDerived>
-        EIGEN_DEVICE_FUNC inline bool operator!=(const MatrixBase<OtherDerived> &other) const {
-            return cwiseNotEqual(other).any();
-        }
+        inline bool operator!=(const MatrixBase<OtherDerived> &other) const { return cwiseNotEqual(other).any(); }
 
         NoAlias <Derived, Eigen::MatrixBase> noalias();
 
@@ -438,35 +362,24 @@ namespace Eigen {
         template<bool Enable>
         inline Derived &forceAlignedAccessIf() { return derived(); }
 
-        EIGEN_DEVICE_FUNC Scalar
+        EIGEN_DEVICE_FUNC Scalar trace() const;
 
-        trace() const;
+        template<int p>
+        EIGEN_DEVICE_FUNC RealScalar lpNorm() const;
 
-        template<int p> EIGEN_DEVICE_FUNC RealScalar
+        EIGEN_DEVICE_FUNC MatrixBase<Derived> &matrix() { return *this; }
 
-        lpNorm() const;
-
-        EIGEN_DEVICE_FUNC MatrixBase<Derived>
-        &
-
-        matrix() { return *this; }
-
-        EIGEN_DEVICE_FUNC const MatrixBase<Derived>
-        &
-
-        matrix() const { return *this; }
+        EIGEN_DEVICE_FUNC const MatrixBase<Derived> &matrix() const { return *this; }
 
         /** \returns an \link Eigen::ArrayBase Array \endlink expression of this matrix
           * \sa ArrayBase::matrix() */
-        EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-        ArrayWrapper <Derived> array() { return ArrayWrapper<Derived>(derived()); }
-
+        EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE ArrayWrapper <Derived> array() {
+            return ArrayWrapper<Derived>(derived());
+        }
         /** \returns a const \link Eigen::ArrayBase Array \endlink expression of this matrix
           * \sa ArrayBase::matrix() */
-        EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const
-
-        ArrayWrapper<const Derived> array() const { return ArrayWrapper<const Derived>(derived()); }
+        EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const ArrayWrapper<const Derived>
+        array() const { return ArrayWrapper<const Derived>(derived()); }
 
 /////////// LU module ///////////
 
@@ -533,6 +446,7 @@ namespace Eigen {
             typedef Matrix <Scalar, MatrixBase::RowsAtCompileTime, MatrixBase::ColsAtCompileTime> type;
         };
 #endif // EIGEN_PARSED_BY_DOXYGEN
+
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC
 #ifndef EIGEN_PARSED_BY_DOXYGEN
@@ -540,26 +454,17 @@ namespace Eigen {
 #else
         inline PlainObject
 #endif
-
         cross(const MatrixBase<OtherDerived> &other) const;
 
         template<typename OtherDerived>
         EIGEN_DEVICE_FUNC
-        inline PlainObject
-
-        cross3(const MatrixBase<OtherDerived> &other) const;
+        inline PlainObject cross3(const MatrixBase<OtherDerived> &other) const;
 
         EIGEN_DEVICE_FUNC
-        inline PlainObject
-
-        unitOrthogonal(void) const;
+        inline PlainObject unitOrthogonal(void) const;
 
         EIGEN_DEVICE_FUNC
-        inline Matrix<Scalar, 3, 1>
-        eulerAngles(Index
-        a0,
-        Index a1, Index
-        a2) const;
+        inline Matrix<Scalar, 3, 1> eulerAngles(Index a0, Index a1, Index a2) const;
 
         // put this as separate enum value to work around possible GCC 4.3 bug (?)
         enum {
@@ -570,9 +475,7 @@ namespace Eigen {
         };
         typedef Homogeneous <Derived, HomogeneousReturnTypeDirection> HomogeneousReturnType;
         EIGEN_DEVICE_FUNC
-        inline HomogeneousReturnType
-
-        homogeneous() const;
+        inline HomogeneousReturnType homogeneous() const;
 
         enum {
             SizeMinusOne = SizeAtCompileTime == Dynamic ? Dynamic : SizeAtCompileTime - 1
@@ -580,13 +483,9 @@ namespace Eigen {
         typedef Block<const Derived,
                 internal::traits<Derived>::ColsAtCompileTime == 1 ? SizeMinusOne : 1,
                 internal::traits<Derived>::ColsAtCompileTime == 1 ? 1 : SizeMinusOne> ConstStartMinusOne;
-        typedef EIGEN_EXPR_BINARYOP_SCALAR_RETURN_TYPE(ConstStartMinusOne, Scalar, quotient
-        )
-        HNormalizedReturnType;
+        typedef EIGEN_EXPR_BINARYOP_SCALAR_RETURN_TYPE(ConstStartMinusOne, Scalar, quotient) HNormalizedReturnType;
         EIGEN_DEVICE_FUNC
-        inline const HNormalizedReturnType
-
-        hnormalized() const;
+        inline const HNormalizedReturnType hnormalized() const;
 
 ////////// Householder module ///////////
 
@@ -618,7 +517,6 @@ namespace Eigen {
 
         template<typename OtherDerived>
         EIGEN_STRONG_INLINE const typename SparseMatrixBase<OtherDerived>::template CwiseProductDenseReturnType<Derived>::Type
-
         cwiseProduct(const SparseMatrixBase <OtherDerived> &other) const {
             return other.cwiseProduct(derived());
         }
@@ -645,7 +543,7 @@ namespace Eigen {
 
         const MatrixPowerReturnValue <Derived> pow(const RealScalar &p) const;
 
-        const MatrixComplexPowerReturnValue <Derived> pow(const std::complex <RealScalar> &p) const;
+        const MatrixComplexPowerReturnValue <Derived> pow(const std::complex<RealScalar> &p) const;
 
     protected:
         EIGEN_DEVICE_FUNC MatrixBase() : Base() {}

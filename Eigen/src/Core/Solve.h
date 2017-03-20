@@ -14,7 +14,7 @@ namespace Eigen {
 
     template<typename Decomposition, typename RhsType, typename StorageKind>
     class SolveImpl;
-
+  
 /** \class Solve
   * \ingroup Core_Module
   *
@@ -67,23 +67,13 @@ public:
     Solve(const Decomposition &dec, const RhsType &rhs)
             : m_dec(dec), m_rhs(rhs) {}
 
-    EIGEN_DEVICE_FUNC Index
+    EIGEN_DEVICE_FUNC Index rows() const { return m_dec.cols(); }
 
-    rows() const { return m_dec.cols(); }
+    EIGEN_DEVICE_FUNC Index cols() const { return m_rhs.cols(); }
 
-    EIGEN_DEVICE_FUNC Index
+    EIGEN_DEVICE_FUNC const Decomposition &dec() const { return m_dec; }
 
-    cols() const { return m_rhs.cols(); }
-
-    EIGEN_DEVICE_FUNC const Decomposition
-    &
-
-    dec() const { return m_dec; }
-
-    EIGEN_DEVICE_FUNC const RhsType
-    &
-
-    rhs() const { return m_rhs; }
+    EIGEN_DEVICE_FUNC const RhsType &rhs() const { return m_rhs; }
 
 protected:
     const Decomposition &m_dec;
@@ -96,7 +86,7 @@ template<typename Decomposition, typename RhsType>
 class SolveImpl<Decomposition, RhsType, Dense>
         : public MatrixBase<Solve<Decomposition, RhsType> > {
     typedef Solve<Decomposition, RhsType> Derived;
-
+  
 public:
 
     typedef MatrixBase <Solve<Decomposition, RhsType>> Base;

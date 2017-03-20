@@ -14,19 +14,22 @@
 
 #include "src/Core/util/DisableStupidWarnings.h"
 
-void *qMalloc(std::size_t size) {
-    return Eigen::internal::aligned_malloc(size);
+void *qMalloc(std::size_t size)
+{
+  return Eigen::internal::aligned_malloc(size);
 }
 
-void qFree(void *ptr) {
-    Eigen::internal::aligned_free(ptr);
+void qFree(void *ptr)
+{
+  Eigen::internal::aligned_free(ptr);
 }
 
-void *qRealloc(void *ptr, std::size_t size) {
-    void *newPtr = Eigen::internal::aligned_malloc(size);
-    memcpy(newPtr, ptr, size);
-    Eigen::internal::aligned_free(ptr);
-    return newPtr;
+void *qRealloc(void *ptr, std::size_t size)
+{
+  void* newPtr = Eigen::internal::aligned_malloc(size);
+  memcpy(newPtr, ptr, size);
+  Eigen::internal::aligned_free(ptr);
+  return newPtr;
 }
 
 #include "src/Core/util/ReenableStupidWarnings.h"

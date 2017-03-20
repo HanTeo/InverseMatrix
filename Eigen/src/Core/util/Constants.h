@@ -25,10 +25,6 @@ namespace Eigen {
   */
     const int DynamicIndex = 0xffffff;
 
-/** This value means that the increment to go from one value to another in a sequence is not constant for each step.
-  */
-    const int UndefinedIncr = 0xfffffe;
-
 /** This value means +Infinity; it is currently used only as the p parameter to MatrixBase::lpNorm<int>().
   * The value Infinity there means the L-infinity norm.
   */
@@ -93,14 +89,14 @@ namespace Eigen {
     const unsigned int PacketAccessBit = 0x8;
 
 #ifdef EIGEN_VECTORIZE
-    /** \ingroup flags
-      *
-      * If vectorization is enabled (EIGEN_VECTORIZE is defined) this constant
-      * is set to the value \a PacketAccessBit.
-      *
-      * If vectorization is not enabled (EIGEN_VECTORIZE is not defined) this constant
-      * is set to the value 0.
-      */
+/** \ingroup flags
+  *
+  * If vectorization is enabled (EIGEN_VECTORIZE is defined) this constant
+  * is set to the value \a PacketAccessBit.
+  *
+  * If vectorization is not enabled (EIGEN_VECTORIZE is not defined) this constant
+  * is set to the value 0.
+  */
     const unsigned int ActualPacketAccessBit = PacketAccessBit;
 #else
     const unsigned int ActualPacketAccessBit = 0x0;
@@ -247,7 +243,7 @@ namespace Eigen {
         AlignedMax = Aligned16
 #elif EIGEN_MAX_ALIGN_BYTES == 8
         AlignedMax = Aligned8
-#elif EIGEN_MAX_ALIGN_BYTES == 0
+#elif EIGEN_MAX_ALIGN_BYTES==0
         AlignedMax = Unaligned
 #else
 #error Invalid value for EIGEN_MAX_ALIGN_BYTES

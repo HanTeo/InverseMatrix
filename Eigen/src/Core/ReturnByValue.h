@@ -58,13 +58,9 @@ public:
     EIGEN_DEVICE_FUNC
     inline void evalTo(Dest &dst) const { static_cast<const Derived *>(this)->evalTo(dst); }
 
-    EIGEN_DEVICE_FUNC inline Index
+    EIGEN_DEVICE_FUNC inline Index rows() const { return static_cast<const Derived *>(this)->rows(); }
 
-    rows() const { return static_cast<const Derived *>(this)->rows(); }
-
-    EIGEN_DEVICE_FUNC inline Index
-
-    cols() const { return static_cast<const Derived *>(this)->cols(); }
+    EIGEN_DEVICE_FUNC inline Index cols() const { return static_cast<const Derived *>(this)->cols(); }
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
 #define Unusable YOU_ARE_TRYING_TO_ACCESS_A_SINGLE_COEFFICIENT_IN_A_SPECIAL_EXPRESSION_WHERE_THAT_IS_NOT_ALLOWED_BECAUSE_THAT_WOULD_BE_INEFFICIENT
@@ -82,17 +78,13 @@ public:
     Unusable &coeffRef(Index) { return *reinterpret_cast<Unusable *>(this); }
 
     Unusable &coeffRef(Index, Index) { return *reinterpret_cast<Unusable *>(this); }
-
 #undef Unusable
 #endif
 };
 
 template<typename Derived>
 template<typename OtherDerived>
-EIGEN_DEVICE_FUNC Derived
-&
-
-DenseBase<Derived>::operator=(const ReturnByValue<OtherDerived> &other) {
+Derived &DenseBase<Derived>::operator=(const ReturnByValue<OtherDerived> &other) {
     other.evalTo(derived());
     return derived();
 }

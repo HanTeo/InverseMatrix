@@ -10,8 +10,8 @@
 #ifndef EIGEN_SPARSE_SELFADJOINTVIEW_H
 #define EIGEN_SPARSE_SELFADJOINTVIEW_H
 
-namespace Eigen {
-
+namespace Eigen { 
+  
 /** \ingroup SparseCore_Module
   * \class SparseSelfAdjointView
   *
@@ -48,7 +48,7 @@ template<typename MatrixType, unsigned int _Mode>
 class SparseSelfAdjointView
         : public EigenBase<SparseSelfAdjointView<MatrixType, _Mode> > {
 public:
-
+    
     enum {
         Mode = _Mode,
         RowsAtCompileTime = internal::traits<SparseSelfAdjointView>::RowsAtCompileTime,
@@ -67,7 +67,6 @@ public:
     }
 
     inline Index rows() const { return m_matrix.rows(); }
-
     inline Index cols() const { return m_matrix.cols(); }
 
     /** \internal \returns a reference to the nested matrix */
@@ -123,7 +122,7 @@ public:
       */
     template<typename DerivedU>
     SparseSelfAdjointView &rankUpdate(const SparseMatrixBase <DerivedU> &u, const Scalar &alpha = Scalar(1));
-
+    
     /** \returns an expression of P H P^-1 */
     // TODO implement twists in a more evaluator friendly fashion
     SparseSymmetricPermutationProduct <_MatrixTypeNested, Mode>
@@ -408,7 +407,7 @@ product_evaluator(const XprType &xpr)
                                                                                                        xpr.lhs(),
                                                                                                        m_rhs);
 }
-
+  
 protected:
 typename Lhs::PlainObject m_rhs;
 PlainObject m_result;
@@ -597,9 +596,8 @@ public:
 
     SparseSymmetricPermutationProduct(const MatrixType &mat, const Perm &perm)
             : m_matrix(mat), m_perm(perm) {}
-
+    
     inline Index rows() const { return m_matrix.rows(); }
-
     inline Index cols() const { return m_matrix.cols(); }
 
     const NestedExpression &matrix() const { return m_matrix; }

@@ -64,24 +64,13 @@ namespace Eigen {
                 CoeffReadCost = internal::evaluator<XprType>::CoeffReadCost
             };
 
-            EIGEN_DEVICE_FUNC Index
+            EIGEN_DEVICE_FUNC Index rows() const { return m_xpr.rows(); }
 
-            rows() const { return m_xpr.rows(); }
+            EIGEN_DEVICE_FUNC Index cols() const { return m_xpr.cols(); }
 
-            EIGEN_DEVICE_FUNC Index
+            EIGEN_DEVICE_FUNC Index size() const { return m_xpr.size(); }
 
-            cols() const { return m_xpr.cols(); }
-
-            EIGEN_DEVICE_FUNC Index
-
-            size() const { return m_xpr.size(); }
-
-            EIGEN_DEVICE_FUNC CoeffReturnType
-            coeff(Index
-            row,
-            Index col
-            ) const
-            { return m_evaluator.coeff(row, col); }
+            EIGEN_DEVICE_FUNC CoeffReturnType coeff(Index row, Index col) const { return m_evaluator.coeff(row, col); }
 
         protected:
             internal::evaluator<XprType> m_evaluator;
@@ -132,7 +121,6 @@ namespace Eigen {
             typedef typename Derived::Scalar Scalar;
             Index row, col;
             Scalar res;
-
             EIGEN_DEVICE_FUNC
             inline void init(const Scalar &value, Index i, Index j) {
                 res = value;
@@ -149,7 +137,6 @@ namespace Eigen {
         template<typename Derived>
         struct min_coeff_visitor : coeff_visitor<Derived> {
             typedef typename Derived::Scalar Scalar;
-
             EIGEN_DEVICE_FUNC
             void operator()(const Scalar &value, Index i, Index j) {
                 if (value < this->res) {
@@ -175,7 +162,6 @@ namespace Eigen {
         template<typename Derived>
         struct max_coeff_visitor : coeff_visitor<Derived> {
             typedef typename Derived::Scalar Scalar;
-
             EIGEN_DEVICE_FUNC
             void operator()(const Scalar &value, Index i, Index j) {
                 if (value > this->res) {
@@ -205,19 +191,12 @@ namespace Eigen {
     template<typename IndexType>
     EIGEN_DEVICE_FUNC
     typename internal::traits<Derived>::Scalar
-    DenseBase<Derived>::minCoeff(IndexType
-    * rowId,
-    IndexType *colId
-    ) const {
-    internal::min_coeff_visitor<Derived> minVisitor;
-    this->
-    visit(minVisitor);
-    *
-    rowId = minVisitor.row;
-    if (colId) *
-    colId = minVisitor.col;
-    return minVisitor.
-    res;
+    DenseBase<Derived>::minCoeff(IndexType *rowId, IndexType *colId) const {
+        internal::min_coeff_visitor<Derived> minVisitor;
+        this->visit(minVisitor);
+        *rowId = minVisitor.row;
+        if (colId) *colId = minVisitor.col;
+        return minVisitor.res;
 }
 
 /** \returns the minimum of all coefficients of *this and puts in *index its location.
@@ -229,17 +208,13 @@ template<typename Derived>
 template<typename IndexType>
 EIGEN_DEVICE_FUNC
 typename internal::traits<Derived>::Scalar
-DenseBase<Derived>::minCoeff(IndexType
-* index) const
+DenseBase<Derived>::minCoeff(IndexType *index) const
 {
-EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
-internal::min_coeff_visitor <Derived> minVisitor;
-this->
-visit(minVisitor);
-*
-index = IndexType((RowsAtCompileTime == 1) ? minVisitor.col : minVisitor.row);
-return minVisitor.
-res;
+    EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
+    internal::min_coeff_visitor<Derived> minVisitor;
+    this->visit(minVisitor);
+    *index = IndexType((RowsAtCompileTime == 1) ? minVisitor.col : minVisitor.row);
+    return minVisitor.res;
 }
 
 /** \fn DenseBase<Derived>::maxCoeff(IndexType* rowId, IndexType* colId) const
@@ -252,20 +227,13 @@ template<typename Derived>
 template<typename IndexType>
 EIGEN_DEVICE_FUNC
 typename internal::traits<Derived>::Scalar
-DenseBase<Derived>::maxCoeff(IndexType
-* rowPtr,
-IndexType *colPtr
-) const
+DenseBase<Derived>::maxCoeff(IndexType *rowPtr, IndexType *colPtr) const
 {
-internal::max_coeff_visitor <Derived> maxVisitor;
-this->
-visit(maxVisitor);
-*
-rowPtr = maxVisitor.row;
-if (colPtr) *
-colPtr = maxVisitor.col;
-return maxVisitor.
-res;
+    internal::max_coeff_visitor<Derived> maxVisitor;
+    this->visit(maxVisitor);
+    *rowPtr = maxVisitor.row;
+    if (colPtr) *colPtr = maxVisitor.col;
+    return maxVisitor.res;
 }
 
 /** \returns the maximum of all coefficients of *this and puts in *index its location.
@@ -277,17 +245,13 @@ template<typename Derived>
 template<typename IndexType>
 EIGEN_DEVICE_FUNC
 typename internal::traits<Derived>::Scalar
-DenseBase<Derived>::maxCoeff(IndexType
-* index) const
+DenseBase<Derived>::maxCoeff(IndexType *index) const
 {
-EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
-internal::max_coeff_visitor <Derived> maxVisitor;
-this->
-visit(maxVisitor);
-*
-index = (RowsAtCompileTime == 1) ? maxVisitor.col : maxVisitor.row;
-return maxVisitor.
-res;
+    EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
+    internal::max_coeff_visitor<Derived> maxVisitor;
+    this->visit(maxVisitor);
+    *index = (RowsAtCompileTime == 1) ? maxVisitor.col : maxVisitor.row;
+    return maxVisitor.res;
 }
 
 } // end namespace Eigen

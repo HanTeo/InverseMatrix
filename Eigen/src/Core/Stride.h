@@ -10,7 +10,7 @@
 #ifndef EIGEN_STRIDE_H
 #define EIGEN_STRIDE_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \class Stride
   * \ingroup Core_Module
@@ -70,15 +70,10 @@ namespace Eigen {
 
         /** \returns the outer stride */
         EIGEN_DEVICE_FUNC
-        inline Index
-
-        outer() const { return m_outer.value(); }
-
+        inline Index outer() const { return m_outer.value(); }
         /** \returns the inner stride */
         EIGEN_DEVICE_FUNC
-        inline Index
-
-        inner() const { return m_inner.value(); }
+        inline Index inner() const { return m_inner.value(); }
 
     protected:
         internal::variable_if_dynamic <Index, OuterStrideAtCompileTime> m_outer;

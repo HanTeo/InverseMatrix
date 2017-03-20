@@ -13,7 +13,7 @@
 namespace Eigen {
 
     namespace internal {
-
+  
 /** \internal
   * \brief Template functor for scalar/packet assignment
   *
@@ -22,9 +22,8 @@ namespace Eigen {
         struct assign_op {
 
             EIGEN_EMPTY_STRUCT_CTOR(assign_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            void assignCoeff(DstScalar &a, const SrcScalar &b) const { a = b; }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void assignCoeff(DstScalar &a, const SrcScalar &b) const { a = b; }
 
             template<int Alignment, typename Packet>
             EIGEN_STRONG_INLINE void
@@ -53,9 +52,8 @@ namespace Eigen {
         struct add_assign_op {
 
             EIGEN_EMPTY_STRUCT_CTOR(add_assign_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            void assignCoeff(DstScalar &a, const SrcScalar &b) const { a += b; }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void assignCoeff(DstScalar &a, const SrcScalar &b) const { a += b; }
 
             template<int Alignment, typename Packet>
             EIGEN_STRONG_INLINE void
@@ -83,9 +81,8 @@ namespace Eigen {
         struct sub_assign_op {
 
             EIGEN_EMPTY_STRUCT_CTOR(sub_assign_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            void assignCoeff(DstScalar &a, const SrcScalar &b) const { a -= b; }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void assignCoeff(DstScalar &a, const SrcScalar &b) const { a -= b; }
 
             template<int Alignment, typename Packet>
             EIGEN_STRONG_INLINE void
@@ -113,9 +110,8 @@ namespace Eigen {
         struct mul_assign_op {
 
             EIGEN_EMPTY_STRUCT_CTOR(mul_assign_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            void assignCoeff(DstScalar &a, const SrcScalar &b) const { a *= b; }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void assignCoeff(DstScalar &a, const SrcScalar &b) const { a *= b; }
 
             template<int Alignment, typename Packet>
             EIGEN_STRONG_INLINE void
@@ -143,9 +139,8 @@ namespace Eigen {
         struct div_assign_op {
 
             EIGEN_EMPTY_STRUCT_CTOR(div_assign_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            void assignCoeff(DstScalar &a, const SrcScalar &b) const { a /= b; }
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void assignCoeff(DstScalar &a, const SrcScalar &b) const { a /= b; }
 
             template<int Alignment, typename Packet>
             EIGEN_STRONG_INLINE void
@@ -184,9 +179,8 @@ namespace Eigen {
         struct swap_assign_op {
 
             EIGEN_EMPTY_STRUCT_CTOR(swap_assign_op)
-            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 
-            void assignCoeff(Scalar &a, const Scalar &b) const {
+            EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void assignCoeff(Scalar &a, const Scalar &b) const {
 #ifdef __CUDACC__
                 // FIXME is there some kind of cuda::swap?
                 Scalar t=b; const_cast<Scalar&>(b)=a; a=t;

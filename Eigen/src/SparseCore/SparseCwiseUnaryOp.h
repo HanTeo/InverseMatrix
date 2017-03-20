@@ -79,7 +79,6 @@ const UnaryOp m_functor;
 private:
 
 Scalar &valueRef();
-
 };
 
 template<typename ViewOp, typename ArgType>

@@ -11,7 +11,7 @@
 #ifndef EIGEN_HOUSEHOLDER_SEQUENCE_H
 #define EIGEN_HOUSEHOLDER_SEQUENCE_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \ingroup Householder_Module
   * \householder_module

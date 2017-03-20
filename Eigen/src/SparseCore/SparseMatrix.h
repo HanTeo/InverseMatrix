@@ -10,7 +10,7 @@
 #ifndef EIGEN_SPARSEMATRIX_H
 #define EIGEN_SPARSEMATRIX_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \ingroup SparseCore_Module
   *
@@ -130,16 +130,14 @@ protected:
     Storage m_data;
 
 public:
-
+    
     /** \returns the number of rows of the matrix */
     inline Index rows() const { return IsRowMajor ? m_outerSize : m_innerSize; }
-
     /** \returns the number of columns of the matrix */
     inline Index cols() const { return IsRowMajor ? m_innerSize : m_outerSize; }
 
     /** \returns the number of rows (resp. columns) of the matrix if the storage order column major (resp. row major) */
     inline Index innerSize() const { return m_innerSize; }
-
     /** \returns the number of columns (resp. rows) of the matrix if the storage order column major (resp. row major) */
     inline Index outerSize() const { return m_outerSize; }
 
@@ -147,7 +145,6 @@ public:
       * This function is aimed at interoperability with other libraries.
       * \sa innerIndexPtr(), outerIndexPtr() */
     inline const Scalar *valuePtr() const { return m_data.valuePtr(); }
-
     /** \returns a non-const pointer to the array of values.
       * This function is aimed at interoperability with other libraries.
       * \sa innerIndexPtr(), outerIndexPtr() */
@@ -157,7 +154,6 @@ public:
       * This function is aimed at interoperability with other libraries.
       * \sa valuePtr(), outerIndexPtr() */
     inline const StorageIndex *innerIndexPtr() const { return m_data.indexPtr(); }
-
     /** \returns a non-const pointer to the array of inner indices.
       * This function is aimed at interoperability with other libraries.
       * \sa valuePtr(), outerIndexPtr() */
@@ -167,7 +163,6 @@ public:
       * This function is aimed at interoperability with other libraries.
       * \sa valuePtr(), innerIndexPtr() */
     inline const StorageIndex *outerIndexPtr() const { return m_outerIndex; }
-
     /** \returns a non-const pointer to the array of the starting positions of the inner vectors.
       * This function is aimed at interoperability with other libraries.
       * \sa valuePtr(), innerIndexPtr() */
@@ -177,7 +172,6 @@ public:
       * This function is aimed at interoperability with other libraries.
       * \warning it returns the null pointer 0 in compressed mode */
     inline const StorageIndex *innerNonZeroPtr() const { return m_innerNonZeros; }
-
     /** \returns a non-const pointer to the array of the number of non zeros of the inner vectors.
       * This function is aimed at interoperability with other libraries.
       * \warning it returns the null pointer 0 in compressed mode */
@@ -185,7 +179,6 @@ public:
 
     /** \internal */
     inline Storage &data() { return m_data; }
-
     /** \internal */
     inline const Storage &data() const { return m_data; }
 
@@ -283,7 +276,6 @@ public:
     template<class SizesType>
     inline void reserve(const SizesType& reserveSizes);
 #else
-
     template<class SizesType>
     inline void reserve(const SizesType &reserveSizes, const typename SizesType::value_type &enableif =
 #if (!EIGEN_COMP_MSVC) || (EIGEN_COMP_MSVC >= 1500) // MSVC 2005 fails to compile with this typename
@@ -358,7 +350,7 @@ protected:
             std::swap(m_outerIndex, newOuterIndex);
             std::free(newOuterIndex);
         }
-
+      
     }
 
 public:
@@ -734,10 +726,8 @@ public:
     }
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
     template<typename OtherDerived>
     inline SparseMatrix &operator=(const EigenBase <OtherDerived> &other) { return Base::operator=(other.derived()); }
-
 #endif // EIGEN_PARSED_BY_DOXYGEN
 
     template<typename OtherDerived>
@@ -825,7 +815,6 @@ protected:
         StorageIndex m_value;
     public:
         typedef StorageIndex value_type;
-
         SingletonVector(Index i, Index v)
                 : m_index(convert_index(i)), m_value(convert_index(v)) {}
 

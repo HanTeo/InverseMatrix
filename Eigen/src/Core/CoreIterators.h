@@ -10,7 +10,7 @@
 #ifndef EIGEN_COREITERATORS_H
 #define EIGEN_COREITERATORS_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /* This file contains the respective InnerIterator definition of the expressions defined in Eigen/Core
  */
@@ -41,53 +41,20 @@ namespace Eigen {
                 : m_eval(xpr), m_iter(m_eval, outerId, xpr.innerSize()) {}
 
         /// \returns the value of the current coefficient.
-        EIGEN_STRONG_INLINE Scalar
-
-        value() const { return m_iter.value(); }
-
+        EIGEN_STRONG_INLINE Scalar value() const { return m_iter.value(); }
         /** Increment the iterator \c *this to the next non-zero coefficient.
           * Explicit zeros are not skipped over. To skip explicit zeros, see class SparseView
           */
-        EIGEN_STRONG_INLINE InnerIterator
-        &
-
-        operator++() {
+        EIGEN_STRONG_INLINE InnerIterator &operator++() {
             m_iter.operator++();
             return *this;
         }
-
-        EIGEN_STRONG_INLINE InnerIterator
-        &
-
-        operator+=(Index i) {
-            m_iter.operator+=(i);
-            return *this;
-        }
-
-        EIGEN_STRONG_INLINE InnerIterator
-
-        operator+(Index i) {
-            InnerIterator result(*this);
-            result += i;
-            return result;
-        }
-
-
         /// \returns the column or row index of the current coefficient.
-        EIGEN_STRONG_INLINE Index
-
-        index() const { return m_iter.index(); }
-
+        EIGEN_STRONG_INLINE Index index() const { return m_iter.index(); }
         /// \returns the row index of the current coefficient.
-        EIGEN_STRONG_INLINE Index
-
-        row() const { return m_iter.row(); }
-
+        EIGEN_STRONG_INLINE Index row() const { return m_iter.row(); }
         /// \returns the column index of the current coefficient.
-        EIGEN_STRONG_INLINE Index
-
-        col() const { return m_iter.col(); }
-
+        EIGEN_STRONG_INLINE Index col() const { return m_iter.col(); }
         /// \returns \c true if the iterator \c *this still references a valid coefficient.
         EIGEN_STRONG_INLINE operator bool() const { return m_iter; }
 
@@ -115,28 +82,21 @@ namespace Eigen {
             };
 
         public:
-            EIGEN_STRONG_INLINE
-            inner_iterator_selector(const EvaluatorType &eval, const Index &outerId, const Index &innerSize)
+            EIGEN_STRONG_INLINE inner_iterator_selector(const EvaluatorType &eval, const Index &outerId,
+                                                        const Index &innerSize)
                     : m_eval(eval), m_inner(0), m_outer(outerId), m_end(innerSize) {}
 
-            EIGEN_STRONG_INLINE Scalar
-
-            value() const {
+            EIGEN_STRONG_INLINE Scalar value() const {
                 return (IsRowMajor) ? m_eval.coeff(m_outer, m_inner)
                                     : m_eval.coeff(m_inner, m_outer);
             }
 
-            EIGEN_STRONG_INLINE inner_iterator_selector
-            &
-
-            operator++() {
+            EIGEN_STRONG_INLINE inner_iterator_selector &operator++() {
                 m_inner++;
                 return *this;
             }
 
-            EIGEN_STRONG_INLINE Index
-
-            index() const { return m_inner; }
+            EIGEN_STRONG_INLINE Index index() const { return m_inner; }
 
             inline Index row() const { return IsRowMajor ? m_outer : index(); }
 
@@ -161,8 +121,8 @@ namespace Eigen {
             typedef evaluator <XprType> EvaluatorType;
 
         public:
-            EIGEN_STRONG_INLINE
-            inner_iterator_selector(const EvaluatorType &eval, const Index &outerId, const Index &/*innerSize*/)
+            EIGEN_STRONG_INLINE inner_iterator_selector(const EvaluatorType &eval, const Index &outerId,
+                                                        const Index &/*innerSize*/)
                     : Base(eval, outerId) {}
         };
 

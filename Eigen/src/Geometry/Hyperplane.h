@@ -11,7 +11,7 @@
 #ifndef EIGEN_HYPERPLANE_H
 #define EIGEN_HYPERPLANE_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \geometry_module \ingroup Geometry_Module
   *
@@ -33,10 +33,8 @@ namespace Eigen {
     template<typename _Scalar, int _AmbientDim, int _Options>
     class Hyperplane {
     public:
-        EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF_VECTORIZABLE_FIXED_SIZE(_Scalar, _AmbientDim
-        ==Dynamic ?
-        Dynamic : _AmbientDim
-        +1)
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF_VECTORIZABLE_FIXED_SIZE(_Scalar,
+                                                                   _AmbientDim == Dynamic ? Dynamic : _AmbientDim + 1)
         enum {
             AmbientDimAtCompileTime = _AmbientDim,
             Options = _Options
@@ -104,7 +102,7 @@ namespace Eigen {
             if (norm <= v0.norm() * v1.norm() * NumTraits<RealScalar>::epsilon()) {
                 Matrix<Scalar, 2, 3> m;
                 m << v0.transpose(), v1.transpose();
-                JacobiSVD<Matrix < Scalar, 2, 3> > svd(m, ComputeFullV);
+                JacobiSVD<Matrix<Scalar, 2, 3> > svd(m, ComputeFullV);
                 result.normal() = svd.matrixV().col(2);
             } else
                 result.normal() /= norm;
@@ -238,7 +236,7 @@ namespace Eigen {
           */
         template<int TrOptions>
         EIGEN_DEVICE_FUNC inline Hyperplane &
-        transform(const Transform<Scalar, AmbientDimAtCompileTime, Affine, TrOptions> &t,
+        transform(const Transform <Scalar, AmbientDimAtCompileTime, Affine, TrOptions> &t,
                   TransformTraits traits = Affine) {
             transform(t.linear(), traits);
             offset() -= normal().dot(t.translation());

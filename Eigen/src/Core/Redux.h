@@ -61,7 +61,7 @@ namespace Eigen {
             enum {
                 Unrolling = Cost <= UnrollingLimit ? CompleteUnrolling : NoUnrolling
             };
-
+  
 #ifdef EIGEN_DEBUG_ASSIGN
             static void debug()
             {
@@ -97,9 +97,7 @@ namespace Eigen {
             typedef typename Derived::Scalar Scalar;
 
             EIGEN_DEVICE_FUNC
-            static EIGEN_STRONG_INLINE
-
-            Scalar run(const Derived &mat, const Func &func) {
+            static EIGEN_STRONG_INLINE Scalar run(const Derived &mat, const Func &func) {
                 return func(redux_novec_unroller<Func, Derived, Start, HalfLength>::run(mat, func),
                             redux_novec_unroller<Func, Derived, Start + HalfLength, Length - HalfLength>::run(mat,
                                                                                                               func));
@@ -116,9 +114,7 @@ namespace Eigen {
             typedef typename Derived::Scalar Scalar;
 
             EIGEN_DEVICE_FUNC
-            static EIGEN_STRONG_INLINE
-
-            Scalar run(const Derived &mat, const Func &) {
+            static EIGEN_STRONG_INLINE Scalar run(const Derived &mat, const Func &) {
                 return mat.coeffByOuterInner(outer, inner);
             }
         };
@@ -130,9 +126,7 @@ namespace Eigen {
         struct redux_novec_unroller<Func, Derived, Start, 0> {
             typedef typename Derived::Scalar Scalar;
             EIGEN_DEVICE_FUNC
-            static EIGEN_STRONG_INLINE
-
-            Scalar run(const Derived &, const Func &) { return Scalar(); }
+            static EIGEN_STRONG_INLINE Scalar run(const Derived &, const Func &) { return Scalar(); }
         };
 
 /*** vectorization ***/
@@ -147,9 +141,7 @@ namespace Eigen {
             typedef typename Derived::Scalar Scalar;
             typedef typename redux_traits<Func, Derived>::PacketType PacketScalar;
 
-            static EIGEN_STRONG_INLINE PacketScalar
-
-            run(const Derived &mat, const Func &func) {
+            static EIGEN_STRONG_INLINE PacketScalar run(const Derived &mat, const Func &func) {
                 return func.packetOp(
                         redux_vec_unroller<Func, Derived, Start, HalfLength>::run(mat, func),
                         redux_vec_unroller<Func, Derived, Start + HalfLength, Length - HalfLength>::run(mat, func));
@@ -168,9 +160,7 @@ namespace Eigen {
             typedef typename Derived::Scalar Scalar;
             typedef typename redux_traits<Func, Derived>::PacketType PacketScalar;
 
-            static EIGEN_STRONG_INLINE PacketScalar
-
-            run(const Derived &mat, const Func &) {
+            static EIGEN_STRONG_INLINE PacketScalar run(const Derived &mat, const Func &) {
                 return mat.template packetByOuterInner<alignment, PacketScalar>(outer, inner);
             }
         };
@@ -189,9 +179,7 @@ namespace Eigen {
         struct redux_impl<Func, Derived, DefaultTraversal, NoUnrolling> {
             typedef typename Derived::Scalar Scalar;
             EIGEN_DEVICE_FUNC
-            static EIGEN_STRONG_INLINE
-
-            Scalar run(const Derived &mat, const Func &func) {
+            static EIGEN_STRONG_INLINE Scalar run(const Derived &mat, const Func &func) {
                 eigen_assert(mat.rows() > 0 && mat.cols() > 0 && "you are using an empty matrix");
                 Scalar res;
                 res = mat.coeffByOuterInner(0, 0);
@@ -274,9 +262,7 @@ namespace Eigen {
             typedef typename Derived::Scalar Scalar;
             typedef typename redux_traits<Func, Derived>::PacketType PacketType;
 
-            EIGEN_DEVICE_FUNC static Scalar
-
-            run(const Derived &mat, const Func &func) {
+            EIGEN_DEVICE_FUNC static Scalar run(const Derived &mat, const Func &func) {
                 eigen_assert(mat.rows() > 0 && mat.cols() > 0 && "you are using an empty matrix");
                 const Index innerSize = mat.innerSize();
                 const Index outerSize = mat.outerSize();
@@ -316,9 +302,7 @@ namespace Eigen {
                 Size = Derived::SizeAtCompileTime,
                 VectorizedSize = (Size / PacketSize) * PacketSize
             };
-            EIGEN_DEVICE_FUNC static EIGEN_STRONG_INLINE
-
-            Scalar run(const Derived &mat, const Func &func) {
+            EIGEN_DEVICE_FUNC static EIGEN_STRONG_INLINE Scalar run(const Derived &mat, const Func &func) {
                 eigen_assert(mat.rows() > 0 && mat.cols() > 0 && "you are using an empty matrix");
                 if (VectorizedSize > 0) {
                     Scalar res = func.predux(redux_vec_unroller<Func, Derived, 0, Size / PacketSize>::run(mat, func));
@@ -338,7 +322,6 @@ namespace Eigen {
         class redux_evaluator {
         public:
             typedef _XprType XprType;
-
             EIGEN_DEVICE_FUNC explicit redux_evaluator(const XprType &xpr) : m_evaluator(xpr), m_xpr(xpr) {}
 
             typedef typename XprType::Scalar Scalar;
@@ -358,39 +341,21 @@ namespace Eigen {
                 Alignment = evaluator<XprType>::Alignment
             };
 
-            EIGEN_DEVICE_FUNC Index
+            EIGEN_DEVICE_FUNC Index rows() const { return m_xpr.rows(); }
 
-            rows() const { return m_xpr.rows(); }
+            EIGEN_DEVICE_FUNC Index cols() const { return m_xpr.cols(); }
 
-            EIGEN_DEVICE_FUNC Index
+            EIGEN_DEVICE_FUNC Index size() const { return m_xpr.size(); }
 
-            cols() const { return m_xpr.cols(); }
+            EIGEN_DEVICE_FUNC Index innerSize() const { return m_xpr.innerSize(); }
 
-            EIGEN_DEVICE_FUNC Index
-
-            size() const { return m_xpr.size(); }
-
-            EIGEN_DEVICE_FUNC Index
-
-            innerSize() const { return m_xpr.innerSize(); }
-
-            EIGEN_DEVICE_FUNC Index
-
-            outerSize() const { return m_xpr.outerSize(); }
+            EIGEN_DEVICE_FUNC Index outerSize() const { return m_xpr.outerSize(); }
 
             EIGEN_DEVICE_FUNC
-                    CoeffReturnType
-            coeff(Index
-            row,
-            Index col
-            ) const
-            { return m_evaluator.coeff(row, col); }
+            CoeffReturnType coeff(Index row, Index col) const { return m_evaluator.coeff(row, col); }
 
             EIGEN_DEVICE_FUNC
-                    CoeffReturnType
-            coeff(Index
-            index) const
-            { return m_evaluator.coeff(index); }
+            CoeffReturnType coeff(Index index) const { return m_evaluator.coeff(index); }
 
             template<int LoadMode, typename PacketType>
             PacketType packet(Index row, Index col) const {
@@ -401,12 +366,9 @@ namespace Eigen {
             PacketType packet(Index index) const { return m_evaluator.template packet<LoadMode, PacketType>(index); }
 
             EIGEN_DEVICE_FUNC
-                    CoeffReturnType
-            coeffByOuterInner(Index
-            outer,
-            Index inner
-            ) const
-            { return m_evaluator.coeff(IsRowMajor ? outer : inner, IsRowMajor ? inner : outer); }
+            CoeffReturnType coeffByOuterInner(Index outer, Index inner) const {
+                return m_evaluator.coeff(IsRowMajor ? outer : inner, IsRowMajor ? inner : outer);
+            }
 
             template<int LoadMode, typename PacketType>
             PacketType packetByOuterInner(Index outer, Index inner) const {
@@ -437,8 +399,7 @@ namespace Eigen {
   */
     template<typename Derived>
     template<typename Func>
-    EIGEN_DEVICE_FUNC typename internal::traits<Derived>::Scalar
-
+    typename internal::traits<Derived>::Scalar
     DenseBase<Derived>::redux(const Func &func) const {
         eigen_assert(this->rows() > 0 && this->cols() > 0 && "you are using an empty matrix");
 
@@ -452,9 +413,7 @@ namespace Eigen {
   * \warning the result is undefined if \c *this contains NaN.
   */
     template<typename Derived>
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE typename
-
-    internal::traits<Derived>::Scalar
+    EIGEN_STRONG_INLINE typename internal::traits<Derived>::Scalar
     DenseBase<Derived>::minCoeff() const {
         return derived().redux(Eigen::internal::scalar_min_op<Scalar, Scalar>());
     }
@@ -463,9 +422,7 @@ namespace Eigen {
   * \warning the result is undefined if \c *this contains NaN.
   */
     template<typename Derived>
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE typename
-
-    internal::traits<Derived>::Scalar
+    EIGEN_STRONG_INLINE typename internal::traits<Derived>::Scalar
     DenseBase<Derived>::maxCoeff() const {
         return derived().redux(Eigen::internal::scalar_max_op<Scalar, Scalar>());
     }
@@ -477,9 +434,7 @@ namespace Eigen {
   * \sa trace(), prod(), mean()
   */
     template<typename Derived>
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE typename
-
-    internal::traits<Derived>::Scalar
+    EIGEN_STRONG_INLINE typename internal::traits<Derived>::Scalar
     DenseBase<Derived>::sum() const {
         if (SizeAtCompileTime == 0 || (SizeAtCompileTime == Dynamic && size() == 0))
             return Scalar(0);
@@ -491,9 +446,7 @@ namespace Eigen {
 * \sa trace(), prod(), sum()
 */
     template<typename Derived>
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE typename
-
-    internal::traits<Derived>::Scalar
+    EIGEN_STRONG_INLINE typename internal::traits<Derived>::Scalar
     DenseBase<Derived>::mean() const {
 #ifdef __INTEL_COMPILER
 #pragma warning push
@@ -513,9 +466,7 @@ namespace Eigen {
   * \sa sum(), mean(), trace()
   */
     template<typename Derived>
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE typename
-
-    internal::traits<Derived>::Scalar
+    EIGEN_STRONG_INLINE typename internal::traits<Derived>::Scalar
     DenseBase<Derived>::prod() const {
         if (SizeAtCompileTime == 0 || (SizeAtCompileTime == Dynamic && size() == 0))
             return Scalar(1);
@@ -529,9 +480,7 @@ namespace Eigen {
   * \sa diagonal(), sum()
   */
     template<typename Derived>
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE typename
-
-    internal::traits<Derived>::Scalar
+    EIGEN_STRONG_INLINE typename internal::traits<Derived>::Scalar
     MatrixBase<Derived>::trace() const {
         return derived().diagonal().sum();
     }

@@ -10,7 +10,7 @@
 #ifndef EIGEN_ANGLEAXIS_H
 #define EIGEN_ANGLEAXIS_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \geometry_module \ingroup Geometry_Module
   *
@@ -92,72 +92,46 @@ public:
     EIGEN_DEVICE_FUNC inline explicit AngleAxis(const MatrixBase <Derived> &m) { *this = m; }
 
     /** \returns the value of the rotation angle in radian */
-    EIGEN_DEVICE_FUNC Scalar
-
-    angle() const { return m_angle; }
-
+    EIGEN_DEVICE_FUNC Scalar angle() const { return m_angle; }
     /** \returns a read-write reference to the stored angle in radian */
-    EIGEN_DEVICE_FUNC Scalar
-    &
-
-    angle() { return m_angle; }
+    EIGEN_DEVICE_FUNC Scalar &angle() { return m_angle; }
 
     /** \returns the rotation axis */
-    EIGEN_DEVICE_FUNC const Vector3
-    &
-
-    axis() const { return m_axis; }
-
+    EIGEN_DEVICE_FUNC const Vector3 &axis() const { return m_axis; }
     /** \returns a read-write reference to the stored rotation axis.
       *
       * \warning The rotation axis must remain a \b unit vector.
       */
-    EIGEN_DEVICE_FUNC Vector3
-    &
-
-    axis() { return m_axis; }
+    EIGEN_DEVICE_FUNC Vector3 &axis() { return m_axis; }
 
     /** Concatenates two rotations */
-    EIGEN_DEVICE_FUNC inline QuaternionType
-
-    operator*(const AngleAxis &other) const { return QuaternionType(*this) * QuaternionType(other); }
-
-    /** Concatenates two rotations */
-    EIGEN_DEVICE_FUNC inline QuaternionType
-
-    operator*(const QuaternionType &other) const { return QuaternionType(*this) * other; }
+    EIGEN_DEVICE_FUNC inline QuaternionType operator*(const AngleAxis &other) const {
+        return QuaternionType(*this) * QuaternionType(other);
+    }
 
     /** Concatenates two rotations */
-    friend EIGEN_DEVICE_FUNC inline QuaternionType
+    EIGEN_DEVICE_FUNC inline QuaternionType operator*(const QuaternionType &other) const {
+        return QuaternionType(*this) * other;
+    }
 
-    operator*(const QuaternionType &a, const AngleAxis &b) { return a * QuaternionType(b); }
+    /** Concatenates two rotations */
+    friend EIGEN_DEVICE_FUNC inline QuaternionType operator*(const QuaternionType &a, const AngleAxis &b) {
+        return a * QuaternionType(b);
+    }
 
     /** \returns the inverse rotation, i.e., an angle-axis with opposite rotation angle */
-    EIGEN_DEVICE_FUNC AngleAxis
-
-    inverse() const { return AngleAxis(-m_angle, m_axis); }
+    EIGEN_DEVICE_FUNC AngleAxis inverse() const { return AngleAxis(-m_angle, m_axis); }
 
     template<class QuatDerived>
-    EIGEN_DEVICE_FUNC AngleAxis
-    &
-
-    operator=(const QuaternionBase <QuatDerived> &q);
+    EIGEN_DEVICE_FUNC AngleAxis &operator=(const QuaternionBase <QuatDerived> &q);
 
     template<typename Derived>
-    EIGEN_DEVICE_FUNC AngleAxis
-    &
-
-    operator=(const MatrixBase <Derived> &m);
+    EIGEN_DEVICE_FUNC AngleAxis &operator=(const MatrixBase <Derived> &m);
 
     template<typename Derived>
-    EIGEN_DEVICE_FUNC AngleAxis
-    &
+    EIGEN_DEVICE_FUNC AngleAxis &fromRotationMatrix(const MatrixBase <Derived> &m);
 
-    fromRotationMatrix(const MatrixBase <Derived> &m);
-
-    EIGEN_DEVICE_FUNC Matrix3
-
-    toRotationMatrix(void) const;
+    EIGEN_DEVICE_FUNC Matrix3 toRotationMatrix(void) const;
 
     /** \returns \c *this with scalar type casted to \a NewScalarType
       *
@@ -166,7 +140,6 @@ public:
       */
     template<typename NewScalarType>
     EIGEN_DEVICE_FUNC inline typename internal::cast_return_type<AngleAxis, AngleAxis<NewScalarType> >::type
-
     cast() const { return typename internal::cast_return_type<AngleAxis, AngleAxis<NewScalarType> >::type(*this); }
 
     /** Copy constructor with scalar type conversion */
@@ -176,9 +149,7 @@ public:
         m_angle = Scalar(other.angle());
     }
 
-    EIGEN_DEVICE_FUNC static inline const AngleAxis
-
-    Identity() { return AngleAxis(Scalar(0), Vector3::UnitX()); }
+    EIGEN_DEVICE_FUNC static inline const AngleAxis Identity() { return AngleAxis(Scalar(0), Vector3::UnitX()); }
 
     /** \returns \c true if \c *this is approximately equal to \a other, within the precision
       * determined by \a prec.
@@ -205,10 +176,7 @@ typedef AngleAxis<double> AngleAxisd;
   */
 template<typename Scalar>
 template<typename QuatDerived>
-EIGEN_DEVICE_FUNC AngleAxis<Scalar>
-&
-
-AngleAxis<Scalar>::operator=(const QuaternionBase <QuatDerived> &q) {
+EIGEN_DEVICE_FUNC AngleAxis<Scalar> &AngleAxis<Scalar>::operator=(const QuaternionBase <QuatDerived> &q) {
     EIGEN_USING_STD_MATH(atan2)
     EIGEN_USING_STD_MATH(abs)
     Scalar n = q.vec().norm();
@@ -231,10 +199,7 @@ AngleAxis<Scalar>::operator=(const QuaternionBase <QuatDerived> &q) {
   */
 template<typename Scalar>
 template<typename Derived>
-EIGEN_DEVICE_FUNC AngleAxis<Scalar>
-&
-
-AngleAxis<Scalar>::operator=(const MatrixBase <Derived> &mat) {
+EIGEN_DEVICE_FUNC AngleAxis<Scalar> &AngleAxis<Scalar>::operator=(const MatrixBase <Derived> &mat) {
     // Since a direct conversion would not be really faster,
     // let's use the robust Quaternion implementation:
     return *this = QuaternionType(mat);
@@ -245,10 +210,7 @@ AngleAxis<Scalar>::operator=(const MatrixBase <Derived> &mat) {
 **/
 template<typename Scalar>
 template<typename Derived>
-EIGEN_DEVICE_FUNC AngleAxis<Scalar>
-&
-
-AngleAxis<Scalar>::fromRotationMatrix(const MatrixBase <Derived> &mat) {
+EIGEN_DEVICE_FUNC AngleAxis<Scalar> &AngleAxis<Scalar>::fromRotationMatrix(const MatrixBase <Derived> &mat) {
     return *this = QuaternionType(mat);
 }
 
@@ -256,9 +218,7 @@ AngleAxis<Scalar>::fromRotationMatrix(const MatrixBase <Derived> &mat) {
   */
 template<typename Scalar>
 typename AngleAxis<Scalar>::Matrix3
-        EIGEN_DEVICE_FUNC
-
-AngleAxis<Scalar>::toRotationMatrix(void) const {
+EIGEN_DEVICE_FUNC AngleAxis<Scalar>::toRotationMatrix(void) const {
     EIGEN_USING_STD_MATH(sin)
     EIGEN_USING_STD_MATH(cos)
     Matrix3 res;

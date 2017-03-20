@@ -104,7 +104,7 @@ namespace Eigen {
           * The length of the vector is the size of \p _MatrixType.
           */
         typedef typename internal::plain_col_type<MatrixType, RealScalar>::type RealVectorType;
-        typedef Tridiagonalization<MatrixType> TridiagonalizationType;
+        typedef Tridiagonalization <MatrixType> TridiagonalizationType;
         typedef typename TridiagonalizationType::SubDiagonalType SubDiagonalType;
 
         /** \brief Default constructor for fixed-size matrices.
@@ -200,10 +200,7 @@ namespace Eigen {
           */
         template<typename InputType>
         EIGEN_DEVICE_FUNC
-                SelfAdjointEigenSolver
-        &
-
-        compute(const EigenBase <InputType> &matrix, int options = ComputeEigenvectors);
+        SelfAdjointEigenSolver &compute(const EigenBase <InputType> &matrix, int options = ComputeEigenvectors);
 
         /** \brief Computes eigendecomposition of given matrix using a closed-form algorithm
           *
@@ -224,10 +221,7 @@ namespace Eigen {
           * \sa compute(const MatrixType&, int options)
           */
         EIGEN_DEVICE_FUNC
-                SelfAdjointEigenSolver
-        &
-
-        computeDirect(const MatrixType &matrix, int options = ComputeEigenvectors);
+        SelfAdjointEigenSolver &computeDirect(const MatrixType &matrix, int options = ComputeEigenvectors);
 
         /**
           *\brief Computes the eigen decomposition from a tridiagonal symmetric matrix
@@ -263,10 +257,7 @@ namespace Eigen {
           * \sa eigenvalues()
           */
         EIGEN_DEVICE_FUNC
-        const EigenvectorsType
-        &
-
-        eigenvectors() const {
+        const EigenvectorsType &eigenvectors() const {
             eigen_assert(m_isInitialized && "SelfAdjointEigenSolver is not initialized.");
             eigen_assert(m_eigenvectorsOk && "The eigenvectors have not been computed together with the eigenvalues.");
             return m_eivec;
@@ -288,10 +279,7 @@ namespace Eigen {
           * \sa eigenvectors(), MatrixBase::eigenvalues()
           */
         EIGEN_DEVICE_FUNC
-        const RealVectorType
-        &
-
-        eigenvalues() const {
+        const RealVectorType &eigenvalues() const {
             eigen_assert(m_isInitialized && "SelfAdjointEigenSolver is not initialized.");
             return m_eivalues;
         }
@@ -314,9 +302,7 @@ namespace Eigen {
           * \sa operatorInverseSqrt(), <a href="unsupported/group__MatrixFunctions__Module.html">MatrixFunctions Module</a>
           */
         EIGEN_DEVICE_FUNC
-                MatrixType
-
-        operatorSqrt() const {
+        MatrixType operatorSqrt() const {
             eigen_assert(m_isInitialized && "SelfAdjointEigenSolver is not initialized.");
             eigen_assert(m_eigenvectorsOk && "The eigenvectors have not been computed together with the eigenvalues.");
             return m_eivec * m_eivalues.cwiseSqrt().asDiagonal() * m_eivec.adjoint();
@@ -340,9 +326,7 @@ namespace Eigen {
           * \sa operatorSqrt(), MatrixBase::inverse(), <a href="unsupported/group__MatrixFunctions__Module.html">MatrixFunctions Module</a>
           */
         EIGEN_DEVICE_FUNC
-                MatrixType
-
-        operatorInverseSqrt() const {
+        MatrixType operatorInverseSqrt() const {
             eigen_assert(m_isInitialized && "SelfAdjointEigenSolver is not initialized.");
             eigen_assert(m_eigenvectorsOk && "The eigenvectors have not been computed together with the eigenvalues.");
             return m_eivec * m_eivalues.cwiseInverse().cwiseSqrt().asDiagonal() * m_eivec.adjoint();
@@ -353,9 +337,7 @@ namespace Eigen {
           * \returns \c Success if computation was succesful, \c NoConvergence otherwise.
           */
         EIGEN_DEVICE_FUNC
-                ComputationInfo
-
-        info() const {
+        ComputationInfo info() const {
             eigen_assert(m_isInitialized && "SelfAdjointEigenSolver is not initialized.");
             return m_info;
         }
@@ -410,10 +392,7 @@ namespace Eigen {
     template<typename MatrixType>
     template<typename InputType>
     EIGEN_DEVICE_FUNC
-            SelfAdjointEigenSolver<MatrixType>
-    &
-
-    SelfAdjointEigenSolver<MatrixType>
+    SelfAdjointEigenSolver<MatrixType> &SelfAdjointEigenSolver<MatrixType>
     ::compute(const EigenBase <InputType> &a_matrix, int options) {
         check_template_parameters();
 
@@ -440,8 +419,8 @@ namespace Eigen {
         }
 
         // declare some aliases
-        RealVectorType & diag = m_eivalues;
-        EigenvectorsType & mat = m_eivec;
+        RealVectorType &diag = m_eivalues;
+        EigenvectorsType &mat = m_eivec;
 
         // map the matrix coefficients to [-1:1] to avoid over- and underflow.
         mat = matrix.template triangularView<Lower>();
@@ -793,10 +772,7 @@ namespace Eigen {
 
     template<typename MatrixType>
     EIGEN_DEVICE_FUNC
-            SelfAdjointEigenSolver<MatrixType>
-    &
-
-    SelfAdjointEigenSolver<MatrixType>
+    SelfAdjointEigenSolver<MatrixType> &SelfAdjointEigenSolver<MatrixType>
     ::computeDirect(const MatrixType &matrix, int options) {
         internal::direct_selfadjoint_eigenvalues<SelfAdjointEigenSolver, Size, NumTraits<Scalar>::IsComplex>::run(*this,
                                                                                                                   matrix,
@@ -831,7 +807,7 @@ namespace Eigen {
             RealScalar x = diag[start] - mu;
             RealScalar z = subdiag[start];
             for (Index k = start; k < end; ++k) {
-                JacobiRotation <RealScalar> rot;
+                JacobiRotation<RealScalar> rot;
                 rot.makeGivens(x, z);
 
                 // do T = G' T G
@@ -857,7 +833,7 @@ namespace Eigen {
                 // apply the givens rotation to the unit matrix Q = Q * G
                 if (matrixQ) {
                     // FIXME if StorageOrder == RowMajor this operation is not very efficient
-                    Map <Matrix<Scalar, Dynamic, Dynamic, StorageOrder>> q(matrixQ, n, n);
+                    Map<Matrix<Scalar, Dynamic, Dynamic, StorageOrder> > q(matrixQ, n, n);
                     q.applyOnTheRight(k, k + 1, rot);
                 }
             }

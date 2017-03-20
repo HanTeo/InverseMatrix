@@ -208,6 +208,7 @@ namespace Eigen {
 #ifndef EIGEN_PARSED_BY_DOXYGEN
 
         template<typename RhsType, typename DstType>
+        EIGEN_DEVICE_FUNC
         void _solve_impl(const RhsType &rhs, DstType &dst) const;
 
 #endif
@@ -263,7 +264,6 @@ namespace Eigen {
         tmp = m_singularValues.head(l_rank).asDiagonal().inverse() * tmp;
         dst = m_matrixV.leftCols(l_rank) * tmp;
     }
-
 #endif
 
     template<typename MatrixType>

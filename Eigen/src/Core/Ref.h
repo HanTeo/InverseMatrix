@@ -74,15 +74,11 @@ public:
     typedef MapBase <Derived> Base;
     EIGEN_DENSE_PUBLIC_INTERFACE(RefBase)
 
-    EIGEN_DEVICE_FUNC inline Index
-
-    innerStride() const {
+    EIGEN_DEVICE_FUNC inline Index innerStride() const {
         return StrideType::InnerStrideAtCompileTime != 0 ? m_stride.inner() : 1;
     }
 
-    EIGEN_DEVICE_FUNC inline Index
-
-    outerStride() const {
+    EIGEN_DEVICE_FUNC inline Index outerStride() const {
         return StrideType::OuterStrideAtCompileTime != 0 ? m_stride.outer()
                                                          : IsVectorAtCompileTime ? this->size()
                                                                                  : int(Flags) & RowMajorBit
@@ -191,8 +187,6 @@ protected:
   * void foo(const Ref<MatrixXf,0,Stride<> >& A) { foo_impl(A); }
   * \endcode
   *
-  * See also the following stackoverflow questions for further references:
-  *  - <a href="http://stackoverflow.com/questions/21132538/correct-usage-of-the-eigenref-class">Correct usage of the Eigen::Ref<> class</a>
   *
   * \sa PlainObjectBase::Map(), \ref TopicStorageOrders
   */
@@ -201,7 +195,6 @@ class Ref
         : public RefBase<Ref<PlainObjectType, Options, StrideType> > {
 private:
     typedef internal::traits <Ref> Traits;
-
     template<typename Derived>
     EIGEN_DEVICE_FUNC inline Ref(const PlainObjectBase <Derived> &expr,
                                  typename internal::enable_if<bool(
@@ -214,7 +207,6 @@ public:
 
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
     template<typename Derived>
     EIGEN_DEVICE_FUNC inline Ref(PlainObjectBase <Derived> &expr,
                                  typename internal::enable_if<bool(
@@ -222,7 +214,6 @@ public:
         EIGEN_STATIC_ASSERT(bool(Traits::template match<Derived>::MatchAtCompileTime), STORAGE_LAYOUT_DOES_NOT_MATCH);
         Base::construct(expr.derived());
     }
-
     template<typename Derived>
     EIGEN_DEVICE_FUNC inline Ref(const DenseBase <Derived> &expr,
                                  typename internal::enable_if<bool(

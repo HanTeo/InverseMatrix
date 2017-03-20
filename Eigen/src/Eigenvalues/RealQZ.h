@@ -481,7 +481,7 @@ namespace Eigen {
             essential2 = hr.template bottomRows<2>();
             {
                 Index lr = (std::min)(k + 4, dim); // last row to update
-                Map<Matrix < Scalar, Dynamic, 1> > tmp(m_workspace.data(), lr);
+                Map<Matrix<Scalar, Dynamic, 1> > tmp(m_workspace.data(), lr);
                 // S
                 tmp = m_S.template middleCols<2>(k).topRows(lr) * essential2;
                 tmp += m_S.col(k + 2).head(lr);
@@ -495,7 +495,7 @@ namespace Eigen {
             }
             if (m_computeQZ) {
                 // Z
-                Map<Matrix < Scalar, 1, Dynamic> > tmp(m_workspace.data(), dim);
+                Map<Matrix<Scalar, 1, Dynamic> > tmp(m_workspace.data(), dim);
                 tmp = essential2.adjoint() * (m_Z.template middleRows<2>(k));
                 tmp += m_Z.row(k + 2);
                 m_Z.row(k + 2) -= tau * tmp;
@@ -541,9 +541,9 @@ namespace Eigen {
 
         const Index dim = A_in.cols();
 
-        eigen_assert(A_in.rows() == dim && A_in.cols() == dim
-                     && B_in.rows() == dim && B_in.cols() == dim
-                     && "Need square matrices of the same dimension");
+        eigen_assert (A_in.rows() == dim && A_in.cols() == dim
+                      && B_in.rows() == dim && B_in.cols() == dim
+                      && "Need square matrices of the same dimension");
 
         m_isInitialized = true;
         m_computeQZ = computeQZ;

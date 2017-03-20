@@ -16,7 +16,7 @@
 // * Eigen/SVD
 // * Eigen/Array
 
-namespace Eigen {
+namespace Eigen { 
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
 
@@ -107,7 +107,7 @@ namespace Eigen {
         };
 
         typedef Matrix<Scalar, Dimension, 1> VectorType;
-        typedef Matrix <Scalar, Dimension, Dimension> MatrixType;
+        typedef Matrix<Scalar, Dimension, Dimension> MatrixType;
         typedef typename internal::plain_matrix_type_row_major<Derived>::type RowMajorMatrixType;
 
         const Index m = src.rows(); // dimension

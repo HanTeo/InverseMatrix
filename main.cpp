@@ -81,8 +81,8 @@ SCENARIO("7 choose 4 then 4 choose 3 the permute") {
 
                 REQUIRE(combination.size() == 140);
 
-
                 for (auto c : combination) {
+
                     auto mat = buildMatrix(c);
 
                     if (mat.determinant() == 0)

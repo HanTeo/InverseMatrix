@@ -14,47 +14,49 @@ namespace Eigen {
 
     namespace internal {
 
-        template<typename Derived, int UnrollCount, int Rows>
+        template<typename Derived, int UnrollCount>
         struct all_unroller {
+            typedef typename Derived::ExpressionTraits Traits;
             enum {
-                col = (UnrollCount - 1) / Rows,
-                row = (UnrollCount - 1) % Rows
+                col = (UnrollCount - 1) / Traits::RowsAtCompileTime,
+                row = (UnrollCount - 1) % Traits::RowsAtCompileTime
             };
 
             static inline bool run(const Derived &mat) {
-                return all_unroller<Derived, UnrollCount - 1, Rows>::run(mat) && mat.coeff(row, col);
+                return all_unroller<Derived, UnrollCount - 1>::run(mat) && mat.coeff(row, col);
             }
         };
 
-        template<typename Derived, int Rows>
-        struct all_unroller<Derived, 0, Rows> {
+        template<typename Derived>
+        struct all_unroller<Derived, 0> {
             static inline bool run(const Derived &/*mat*/) { return true; }
         };
 
-        template<typename Derived, int Rows>
-        struct all_unroller<Derived, Dynamic, Rows> {
+        template<typename Derived>
+        struct all_unroller<Derived, Dynamic> {
             static inline bool run(const Derived &) { return false; }
         };
 
-        template<typename Derived, int UnrollCount, int Rows>
+        template<typename Derived, int UnrollCount>
         struct any_unroller {
+            typedef typename Derived::ExpressionTraits Traits;
             enum {
-                col = (UnrollCount - 1) / Rows,
-                row = (UnrollCount - 1) % Rows
+                col = (UnrollCount - 1) / Traits::RowsAtCompileTime,
+                row = (UnrollCount - 1) % Traits::RowsAtCompileTime
             };
 
             static inline bool run(const Derived &mat) {
-                return any_unroller<Derived, UnrollCount - 1, Rows>::run(mat) || mat.coeff(row, col);
+                return any_unroller<Derived, UnrollCount - 1>::run(mat) || mat.coeff(row, col);
             }
         };
 
-        template<typename Derived, int Rows>
-        struct any_unroller<Derived, 0, Rows> {
+        template<typename Derived>
+        struct any_unroller<Derived, 0> {
             static inline bool run(const Derived & /*mat*/) { return false; }
         };
 
-        template<typename Derived, int Rows>
-        struct any_unroller<Derived, Dynamic, Rows> {
+        template<typename Derived>
+        struct any_unroller<Derived, Dynamic> {
             static inline bool run(const Derived &) { return false; }
         };
 
@@ -68,7 +70,7 @@ namespace Eigen {
   * \sa any(), Cwise::operator<()
   */
     template<typename Derived>
-    EIGEN_DEVICE_FUNC inline bool DenseBase<Derived>::all() const {
+    inline bool DenseBase<Derived>::all() const {
         typedef internal::evaluator<Derived> Evaluator;
         enum {
             unroll = SizeAtCompileTime != Dynamic
@@ -77,9 +79,7 @@ namespace Eigen {
         };
         Evaluator evaluator(derived());
         if (unroll)
-            return internal::all_unroller<Evaluator, unroll ? int(SizeAtCompileTime)
-                                                            : Dynamic, internal::traits<Derived>::RowsAtCompileTime>::run(
-                    evaluator);
+            return internal::all_unroller<Evaluator, unroll ? int(SizeAtCompileTime) : Dynamic>::run(evaluator);
         else {
             for (Index j = 0; j < cols(); ++j)
                 for (Index i = 0; i < rows(); ++i)
@@ -93,7 +93,7 @@ namespace Eigen {
   * \sa all()
   */
     template<typename Derived>
-    EIGEN_DEVICE_FUNC inline bool DenseBase<Derived>::any() const {
+    inline bool DenseBase<Derived>::any() const {
         typedef internal::evaluator<Derived> Evaluator;
         enum {
             unroll = SizeAtCompileTime != Dynamic
@@ -102,9 +102,7 @@ namespace Eigen {
         };
         Evaluator evaluator(derived());
         if (unroll)
-            return internal::any_unroller<Evaluator, unroll ? int(SizeAtCompileTime)
-                                                            : Dynamic, internal::traits<Derived>::RowsAtCompileTime>::run(
-                    evaluator);
+            return internal::any_unroller<Evaluator, unroll ? int(SizeAtCompileTime) : Dynamic>::run(evaluator);
         else {
             for (Index j = 0; j < cols(); ++j)
                 for (Index i = 0; i < rows(); ++i)
@@ -118,9 +116,7 @@ namespace Eigen {
   * \sa all(), any()
   */
     template<typename Derived>
-    EIGEN_DEVICE_FUNC inline Eigen::Index
-
-    DenseBase<Derived>::count() const {
+    inline Eigen::Index DenseBase<Derived>::count() const {
         return derived().template cast<bool>().
                 template cast<Index>().sum();
     }
@@ -150,7 +146,7 @@ namespace Eigen {
         return !((derived() - derived()).hasNaN());
 #endif
     }
-
+    
 } // end namespace Eigen
 
 #endif // EIGEN_ALLANDANY_H

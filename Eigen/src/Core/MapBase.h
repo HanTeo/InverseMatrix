@@ -15,7 +15,7 @@
       EIGEN_STATIC_ASSERT((int(internal::evaluator<Derived>::Flags) & LinearAccessBit) || Derived::IsVectorAtCompileTime, \
                           YOU_ARE_TRYING_TO_USE_AN_INDEX_BASED_ACCESSOR_ON_AN_EXPRESSION_THAT_DOES_NOT_SUPPORT_THAT)
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \ingroup Core_Module
   *
@@ -86,14 +86,9 @@ namespace Eigen {
         typedef typename Base::CoeffReturnType CoeffReturnType;
 
         /** \copydoc DenseBase::rows() */
-        EIGEN_DEVICE_FUNC inline Index
-
-        rows() const { return m_rows.value(); }
-
+        EIGEN_DEVICE_FUNC inline Index rows() const { return m_rows.value(); }
         /** \copydoc DenseBase::cols() */
-        EIGEN_DEVICE_FUNC inline Index
-
-        cols() const { return m_cols.value(); }
+        EIGEN_DEVICE_FUNC inline Index cols() const { return m_cols.value(); }
 
         /** Returns a pointer to the first coefficient of the matrix or vector.
           *
@@ -101,53 +96,30 @@ namespace Eigen {
           *
           * \sa innerStride(), outerStride()
           */
-        EIGEN_DEVICE_FUNC inline const Scalar
-        *
-
-        data() const { return m_data; }
+        EIGEN_DEVICE_FUNC inline const Scalar *data() const { return m_data; }
 
         /** \copydoc PlainObjectBase::coeff(Index,Index) const */
         EIGEN_DEVICE_FUNC
-        inline const Scalar
-        &
-        coeff(Index
-        rowId,
-        Index colId
-        ) const
-        {
+        inline const Scalar &coeff(Index rowId, Index colId) const {
             return m_data[colId * colStride() + rowId * rowStride()];
         }
 
         /** \copydoc PlainObjectBase::coeff(Index) const */
         EIGEN_DEVICE_FUNC
-        inline const Scalar
-        &
-        coeff(Index
-        index) const
-        {
+        inline const Scalar &coeff(Index index) const {
             EIGEN_STATIC_ASSERT_INDEX_BASED_ACCESS(Derived)
             return m_data[index * innerStride()];
         }
 
         /** \copydoc PlainObjectBase::coeffRef(Index,Index) const */
         EIGEN_DEVICE_FUNC
-        inline const Scalar
-        &
-        coeffRef(Index
-        rowId,
-        Index colId
-        ) const
-        {
+        inline const Scalar &coeffRef(Index rowId, Index colId) const {
             return this->m_data[colId * colStride() + rowId * rowStride()];
         }
 
         /** \copydoc PlainObjectBase::coeffRef(Index) const */
         EIGEN_DEVICE_FUNC
-        inline const Scalar
-        &
-        coeffRef(Index
-        index) const
-        {
+        inline const Scalar &coeffRef(Index index) const {
             EIGEN_STATIC_ASSERT_INDEX_BASED_ACCESS(Derived)
             return this->m_data[index * innerStride()];
         }
@@ -168,8 +140,8 @@ namespace Eigen {
 
         /** \internal Constructor for fixed size matrices or vectors */
         EIGEN_DEVICE_FUNC
-        explicit inline
-        MapBase(PointerType dataPtr) : m_data(dataPtr), m_rows(RowsAtCompileTime), m_cols(ColsAtCompileTime) {
+        explicit inline MapBase(PointerType dataPtr) : m_data(dataPtr), m_rows(RowsAtCompileTime),
+                                                       m_cols(ColsAtCompileTime) {
             EIGEN_STATIC_ASSERT_FIXED_SIZE(Derived)
             checkSanity<Derived>();
         }
@@ -206,8 +178,10 @@ namespace Eigen {
         EIGEN_DEVICE_FUNC
         void checkSanity(typename internal::enable_if<(internal::traits<T>::Alignment > 0), void *>::type = 0) const {
 #if EIGEN_MAX_ALIGN_BYTES > 0
-            eigen_assert((   ((internal::UIntPtr(m_data) % internal::traits<Derived>::Alignment) == 0)
-                          || (cols() * rows() * innerStride() * sizeof(Scalar)) < internal::traits<Derived>::Alignment ) && "data is not aligned");
+            eigen_assert((((internal::UIntPtr(m_data) % internal::traits<Derived>::Alignment) == 0)
+                          ||
+                          (cols() * rows() * innerStride() * sizeof(Scalar)) < internal::traits<Derived>::Alignment) &&
+                         "data is not aligned");
 #endif
         }
 
@@ -262,34 +236,19 @@ namespace Eigen {
         >::type ScalarWithConstIfNotLvalue;
 
         EIGEN_DEVICE_FUNC
-        inline const Scalar
-        *
-
-        data() const { return this->m_data; }
+        inline const Scalar *data() const { return this->m_data; }
 
         EIGEN_DEVICE_FUNC
-        inline ScalarWithConstIfNotLvalue
-        *
-
+        inline ScalarWithConstIfNotLvalue *
         data() { return this->m_data; } // no const-cast here so non-const-correct code will give a compile error
 
         EIGEN_DEVICE_FUNC
-        inline ScalarWithConstIfNotLvalue
-        &
-        coeffRef(Index
-        row,
-        Index col
-        )
-        {
+        inline ScalarWithConstIfNotLvalue &coeffRef(Index row, Index col) {
             return this->m_data[col * colStride() + row * rowStride()];
         }
 
         EIGEN_DEVICE_FUNC
-        inline ScalarWithConstIfNotLvalue
-        &
-        coeffRef(Index
-        index)
-        {
+        inline ScalarWithConstIfNotLvalue &coeffRef(Index index) {
             EIGEN_STATIC_ASSERT_INDEX_BASED_ACCESS(Derived)
             return this->m_data[index * innerStride()];
         }
@@ -314,10 +273,7 @@ namespace Eigen {
         EIGEN_DEVICE_FUNC inline MapBase(PointerType dataPtr, Index rows, Index cols) : Base(dataPtr, rows, cols) {}
 
         EIGEN_DEVICE_FUNC
-                Derived
-        &
-
-        operator=(const MapBase &other) {
+        Derived &operator=(const MapBase &other) {
             ReadOnlyMapBase::Base::operator=(other);
             return derived();
         }

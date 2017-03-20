@@ -39,8 +39,8 @@ namespace Eigen {
         };
 
     } // end namespace internal
-
-
+  
+  
 /** \ingroup SVD_Module
  *
  *
@@ -347,10 +347,10 @@ namespace Eigen {
             // If the matrices are large enough, let's exploit the sparse structure of A by
             // splitting it in half (wrt n1), and packing the non-zero columns.
             Index n2 = n - n1;
-            Map <MatrixXr> A1(m_workspace.data(), n1, n);
-            Map <MatrixXr> A2(m_workspace.data() + n1 * n, n2, n);
-            Map <MatrixXr> B1(m_workspace.data() + n * n, n, n);
-            Map <MatrixXr> B2(m_workspace.data() + 2 * n * n, n, n);
+            Map<MatrixXr> A1(m_workspace.data(), n1, n);
+            Map<MatrixXr> A2(m_workspace.data() + n1 * n, n2, n);
+            Map<MatrixXr> B1(m_workspace.data() + n * n, n, n);
+            Map<MatrixXr> B2(m_workspace.data() + 2 * n * n, n, n);
             Index k1 = 0, k2 = 0;
             for (Index j = 0; j < n; ++j) {
                 if ((A.col(j).head(n1).array() != 0).any()) {
@@ -368,7 +368,7 @@ namespace Eigen {
             A.topRows(n1).noalias() = A1.leftCols(k1) * B1.topRows(k1);
             A.bottomRows(n2).noalias() = A2.leftCols(k2) * B2.topRows(k2);
         } else {
-            Map <MatrixXr, Aligned> tmp(m_workspace.data(), n, n);
+            Map<MatrixXr, Aligned> tmp(m_workspace.data(), n, n);
             tmp.noalias() = A * B;
             A = tmp;
         }
@@ -447,7 +447,7 @@ namespace Eigen {
             c0 = alphaK * lambda / r0;
             s0 = betaK * phi / r0;
         }
-
+  
 #ifdef EIGEN_BDCSVD_SANITY_CHECKS
         assert(m_naiveU.allFinite());
         assert(m_naiveV.allFinite());
@@ -484,7 +484,7 @@ namespace Eigen {
             m_naiveU.row(1).segment(firstCol + 1, k).setZero();
             m_naiveU.row(0).segment(firstCol + k + 1, n - k - 1).setZero();
         }
-
+  
 #ifdef EIGEN_BDCSVD_SANITY_CHECKS
         assert(m_naiveU.allFinite());
         assert(m_naiveV.allFinite());
@@ -516,7 +516,7 @@ namespace Eigen {
         MatrixXr UofSVD, VofSVD;
         VectorType singVals;
         computeSVDofM(firstCol + shift, n, UofSVD, singVals, VofSVD);
-
+  
 #ifdef EIGEN_BDCSVD_SANITY_CHECKS
         assert(UofSVD.allFinite());
         assert(VofSVD.allFinite());
@@ -525,13 +525,13 @@ namespace Eigen {
         if (m_compU)
             structured_update(m_naiveU.block(firstCol, firstCol, n + 1, n + 1), UofSVD, (n + 2) / 2);
         else {
-            Map <Matrix<RealScalar, 2, Dynamic>, Aligned> tmp(m_workspace.data(), 2, n + 1);
+            Map<Matrix<RealScalar, 2, Dynamic>, Aligned> tmp(m_workspace.data(), 2, n + 1);
             tmp.noalias() = m_naiveU.middleCols(firstCol, n + 1) * UofSVD;
             m_naiveU.middleCols(firstCol, n + 1) = tmp;
         }
 
         if (m_compV) structured_update(m_naiveV.block(firstRowW, firstColW, n, n), VofSVD, (n + 1) / 2);
-
+  
 #ifdef EIGEN_BDCSVD_SANITY_CHECKS
         assert(m_naiveU.allFinite());
         assert(m_naiveV.allFinite());
@@ -578,11 +578,11 @@ namespace Eigen {
         for (Index k = 0; k < actual_n; ++k)
             if (abs(col0(k)) > considerZero)
                 m_workspaceI(m++) = k;
-        Map <ArrayXi> perm(m_workspaceI.data(), m);
+        Map<ArrayXi> perm(m_workspaceI.data(), m);
 
-        Map <ArrayXr> shifts(m_workspace.data() + 1 * n, n);
-        Map <ArrayXr> mus(m_workspace.data() + 2 * n, n);
-        Map <ArrayXr> zhat(m_workspace.data() + 3 * n, n);
+        Map<ArrayXr> shifts(m_workspace.data() + 1 * n, n);
+        Map<ArrayXr> mus(m_workspace.data() + 2 * n, n);
+        Map<ArrayXr> zhat(m_workspace.data() + 3 * n, n);
 
 #ifdef EIGEN_BDCSVD_DEBUG_VERBOSE
         std::cout << "computeSVDofM using:\n";
@@ -592,7 +592,7 @@ namespace Eigen {
 
         // Compute singVals, shifts, and mus
         computeSingVals(col0, diag, perm, singVals, shifts, mus);
-
+  
 #ifdef EIGEN_BDCSVD_DEBUG_VERBOSE
         std::cout << "  j:        " << (m_computed.block(firstCol, firstCol, n, n)).jacobiSvd().singularValues().transpose().reverse() << "\n\n";
         std::cout << "  sing-val: " << singVals.transpose() << "\n";
@@ -627,7 +627,7 @@ namespace Eigen {
 #endif
 
         computeSingVecs(zhat, diag, perm, singVals, shifts, mus, U, V);
-
+  
 #ifdef  EIGEN_BDCSVD_DEBUG_VERBOSE
         std::cout << "U^T U: " << (U.transpose() * U - MatrixXr(MatrixXr::Identity(U.cols(),U.cols()))).norm() << "\n";
         std::cout << "V^T V: " << (V.transpose() * V - MatrixXr(MatrixXr::Identity(V.cols(),V.cols()))).norm() << "\n";
@@ -659,7 +659,7 @@ namespace Eigen {
         singVals.head(actual_n).reverseInPlace();
         U.leftCols(actual_n).rowwise().reverseInPlace();
         if (m_compV) V.leftCols(actual_n).rowwise().reverseInPlace();
-
+  
 #ifdef EIGEN_BDCSVD_DEBUG_VERBOSE
         JacobiSVD<MatrixXr> jsvd(m_computed.block(firstCol, firstCol, n, n) );
         std::cout << "  * j:        " << jsvd.singularValues().transpose() << "\n\n";
@@ -710,10 +710,7 @@ namespace Eigen {
             else {
                 // Skip deflated singular values
                 Index l = k + 1;
-                while (col0(l) == 0) {
-                    ++l;
-                    eigen_internal_assert(l < actual_n);
-                }
+                while (col0(l) == 0) { ++l; eigen_internal_assert(l < actual_n); }
                 right = diag(l);
             }
 
@@ -738,7 +735,7 @@ namespace Eigen {
             RealScalar shift = (k == actual_n - 1 || fMid > 0) ? left : right;
 
             // measure everything relative to shift
-            Map <ArrayXr> diagShifted(m_workspace.data() + 4 * n, n);
+            Map<ArrayXr> diagShifted(m_workspace.data() + 4 * n, n);
             diagShifted = diag - shift;
 
             // initial guess
@@ -1002,15 +999,15 @@ namespace Eigen {
         const Index length = lastCol + 1 - firstCol;
 
         Block<MatrixXr, Dynamic, 1> col0(m_computed, firstCol + shift, firstCol + shift, length, 1);
-        Diagonal <MatrixXr> fulldiag(m_computed);
-        VectorBlock <Diagonal<MatrixXr>, Dynamic> diag(fulldiag, firstCol + shift, length);
+        Diagonal<MatrixXr> fulldiag(m_computed);
+        VectorBlock<Diagonal<MatrixXr>, Dynamic> diag(fulldiag, firstCol + shift, length);
 
         const RealScalar considerZero = (std::numeric_limits<RealScalar>::min)();
         RealScalar maxDiag = diag.tail((std::max)(Index(1), length - 1)).cwiseAbs().maxCoeff();
         RealScalar epsilon_strict = numext::maxi<RealScalar>(considerZero, NumTraits<RealScalar>::epsilon() * maxDiag);
         RealScalar epsilon_coarse =
                 8 * NumTraits<RealScalar>::epsilon() * numext::maxi<RealScalar>(col0.cwiseAbs().maxCoeff(), maxDiag);
-
+  
 #ifdef EIGEN_BDCSVD_SANITY_CHECKS
         assert(m_naiveU.allFinite());
         assert(m_naiveV.allFinite());
@@ -1148,7 +1145,7 @@ namespace Eigen {
                     deflation44(firstCol, firstCol + shift, firstRowW, firstColW, i - 1, i, length);
                 }
         }
-
+  
 #ifdef EIGEN_BDCSVD_SANITY_CHECKS
         for(Index j=2;j<length;++j)
           assert(diag(j-1)<=diag(j) || abs(diag(j))<considerZero);
@@ -1162,7 +1159,6 @@ namespace Eigen {
     }//end deflation
 
 #ifndef __CUDACC__
-
 /** \svd_module
   *
   * \return the singular value decomposition of \c *this computed by Divide & Conquer algorithm
@@ -1174,7 +1170,6 @@ namespace Eigen {
     MatrixBase<Derived>::bdcSvd(unsigned int computationOptions) const {
         return BDCSVD<PlainObject>(*this, computationOptions);
     }
-
 #endif
 
 } // end namespace Eigen

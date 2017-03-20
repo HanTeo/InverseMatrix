@@ -32,7 +32,7 @@
 
 namespace Eigen {
     namespace internal {
-
+  
 /**
  * \brief Performs the numerical pivotin on the current column of L, and the CDIV operation.
  * 

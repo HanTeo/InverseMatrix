@@ -36,7 +36,7 @@ namespace Eigen {
             typedef typename Derived::PlainObject ReturnType;
         };
     } // End namespace internal
-
+  
 /**
   * \ingroup SPQRSupport_Module
   * \class SPQR
@@ -168,7 +168,7 @@ namespace Eigen {
             // so let's apply it manually:
             for (Index i = 0; i < rk; ++i) dest.row(m_E[i]) = y.row(i);
             for (Index i = rk; i < cols(); ++i) dest.row(m_E[i]).setZero();
-
+      
 //       y.bottomRows(y.rows()-rk).setZero();
 //       dest = colsPermutation() * y.topRows(cols());
 

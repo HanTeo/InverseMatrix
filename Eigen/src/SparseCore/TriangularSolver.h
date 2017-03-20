@@ -174,7 +174,6 @@ namespace Eigen {
         if (copy)
             other = otherCopy;
     }
-
 #endif
 
 // pure sparse path
@@ -281,7 +280,6 @@ namespace Eigen {
 //   if (copy)
 //     other = otherCopy;
     }
-
 #endif
 
 } // end namespace Eigen

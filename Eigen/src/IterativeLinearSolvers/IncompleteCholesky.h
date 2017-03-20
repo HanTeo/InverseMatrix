@@ -14,7 +14,7 @@
 #include <vector>
 #include <list>
 
-namespace Eigen {
+namespace Eigen {  
 /** 
   * \brief Modified Incomplete Cholesky with dual threshold
   *

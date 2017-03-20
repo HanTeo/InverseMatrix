@@ -40,8 +40,8 @@ namespace Eigen {
   */
     template<typename Derived>
     void MatrixBase<Derived>::makeHouseholderInPlace(Scalar &tau, RealScalar &beta) {
-        VectorBlock <Derived, internal::decrement_size<Base::SizeAtCompileTime>::ret> essentialPart(derived(), 1,
-                                                                                                    size() - 1);
+        VectorBlock<Derived, internal::decrement_size<Base::SizeAtCompileTime>::ret> essentialPart(derived(), 1,
+                                                                                                   size() - 1);
         makeHouseholder(essentialPart, tau, beta);
     }
 
@@ -114,8 +114,8 @@ namespace Eigen {
             *this *= Scalar(1) - tau;
         } else if (tau != Scalar(0)) {
             Map<typename internal::plain_row_type<PlainObject>::type> tmp(workspace, cols());
-            Block <Derived, EssentialPart::SizeAtCompileTime, Derived::ColsAtCompileTime> bottom(derived(), 1, 0,
-                                                                                                 rows() - 1, cols());
+            Block<Derived, EssentialPart::SizeAtCompileTime, Derived::ColsAtCompileTime> bottom(derived(), 1, 0,
+                                                                                                rows() - 1, cols());
             tmp.noalias() = essential.adjoint() * bottom;
             tmp += this->row(0);
             this->row(0) -= tau * tmp;
@@ -148,8 +148,8 @@ namespace Eigen {
             *this *= Scalar(1) - tau;
         } else if (tau != Scalar(0)) {
             Map<typename internal::plain_col_type<PlainObject>::type> tmp(workspace, rows());
-            Block <Derived, Derived::RowsAtCompileTime, EssentialPart::SizeAtCompileTime> right(derived(), 0, 1, rows(),
-                                                                                                cols() - 1);
+            Block<Derived, Derived::RowsAtCompileTime, EssentialPart::SizeAtCompileTime> right(derived(), 0, 1, rows(),
+                                                                                               cols() - 1);
             tmp.noalias() = right * essential.conjugate();
             tmp += this->col(0);
             this->col(0) -= tau * tmp;

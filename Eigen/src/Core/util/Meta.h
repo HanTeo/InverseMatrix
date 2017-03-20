@@ -234,9 +234,6 @@ namespace Eigen {
             };
         };
 
-#if EIGEN_HAS_CXX11
-        using std::is_integral;
-#else
         template<typename T>
         struct is_integral {
             enum {
@@ -303,8 +300,6 @@ namespace Eigen {
                 value = true
             };
         };
-#endif
-
 
         template<typename T>
         struct add_const {
@@ -411,99 +406,99 @@ namespace Eigen {
 #define __DBL_EPSILON__ DBL_EPSILON
 #endif
 
-        namespace device {
+namespace device {
 
-        template<typename T> struct numeric_limits
-        {
-          EIGEN_DEVICE_FUNC
-          static T epsilon() { return 0; }
-          static T (max)() { assert(false && "Highest not supported for this type"); }
-          static T (min)() { assert(false && "Lowest not supported for this type"); }
-          static T infinity() { assert(false && "Infinity not supported for this type"); }
-          static T quiet_NaN() { assert(false && "quiet_NaN not supported for this type"); }
-        };
-        template<> struct numeric_limits<float>
-        {
-          EIGEN_DEVICE_FUNC
-          static float epsilon() { return __FLT_EPSILON__; }
-          EIGEN_DEVICE_FUNC
-          static float (max)() { return CUDART_MAX_NORMAL_F; }
-          EIGEN_DEVICE_FUNC
-          static float (min)() { return FLT_MIN; }
-          EIGEN_DEVICE_FUNC
-          static float infinity() { return CUDART_INF_F; }
-          EIGEN_DEVICE_FUNC
-          static float quiet_NaN() { return CUDART_NAN_F; }
-        };
-        template<> struct numeric_limits<double>
-        {
-          EIGEN_DEVICE_FUNC
-          static double epsilon() { return __DBL_EPSILON__; }
-          EIGEN_DEVICE_FUNC
-          static double (max)() { return DBL_MAX; }
-          EIGEN_DEVICE_FUNC
-          static double (min)() { return DBL_MIN; }
-          EIGEN_DEVICE_FUNC
-          static double infinity() { return CUDART_INF; }
-          EIGEN_DEVICE_FUNC
-          static double quiet_NaN() { return CUDART_NAN; }
-        };
-        template<> struct numeric_limits<int>
-        {
-          EIGEN_DEVICE_FUNC
-          static int epsilon() { return 0; }
-          EIGEN_DEVICE_FUNC
-          static int (max)() { return INT_MAX; }
-          EIGEN_DEVICE_FUNC
-          static int (min)() { return INT_MIN; }
-        };
-        template<> struct numeric_limits<unsigned int>
-        {
-          EIGEN_DEVICE_FUNC
-          static unsigned int epsilon() { return 0; }
-          EIGEN_DEVICE_FUNC
-          static unsigned int (max)() { return UINT_MAX; }
-          EIGEN_DEVICE_FUNC
-          static unsigned int (min)() { return 0; }
-        };
-        template<> struct numeric_limits<long>
-        {
-          EIGEN_DEVICE_FUNC
-          static long epsilon() { return 0; }
-          EIGEN_DEVICE_FUNC
-          static long (max)() { return LONG_MAX; }
-          EIGEN_DEVICE_FUNC
-          static long (min)() { return LONG_MIN; }
-        };
-        template<> struct numeric_limits<unsigned long>
-        {
-          EIGEN_DEVICE_FUNC
-          static unsigned long epsilon() { return 0; }
-          EIGEN_DEVICE_FUNC
-          static unsigned long (max)() { return ULONG_MAX; }
-          EIGEN_DEVICE_FUNC
-          static unsigned long (min)() { return 0; }
-        };
-        template<> struct numeric_limits<long long>
-        {
-          EIGEN_DEVICE_FUNC
-          static long long epsilon() { return 0; }
-          EIGEN_DEVICE_FUNC
-          static long long (max)() { return LLONG_MAX; }
-          EIGEN_DEVICE_FUNC
-          static long long (min)() { return LLONG_MIN; }
-        };
-        template<> struct numeric_limits<unsigned long long>
-        {
-          EIGEN_DEVICE_FUNC
-          static unsigned long long epsilon() { return 0; }
-          EIGEN_DEVICE_FUNC
-          static unsigned long long (max)() { return ULLONG_MAX; }
-          EIGEN_DEVICE_FUNC
-          static unsigned long long (min)() { return 0; }
-        };
+template<typename T> struct numeric_limits
+{
+  EIGEN_DEVICE_FUNC
+  static T epsilon() { return 0; }
+  static T (max)() { assert(false && "Highest not supported for this type"); }
+  static T (min)() { assert(false && "Lowest not supported for this type"); }
+  static T infinity() { assert(false && "Infinity not supported for this type"); }
+  static T quiet_NaN() { assert(false && "quiet_NaN not supported for this type"); }
+};
+template<> struct numeric_limits<float>
+{
+  EIGEN_DEVICE_FUNC
+  static float epsilon() { return __FLT_EPSILON__; }
+  EIGEN_DEVICE_FUNC
+  static float (max)() { return CUDART_MAX_NORMAL_F; }
+  EIGEN_DEVICE_FUNC
+  static float (min)() { return FLT_MIN; }
+  EIGEN_DEVICE_FUNC
+  static float infinity() { return CUDART_INF_F; }
+  EIGEN_DEVICE_FUNC
+  static float quiet_NaN() { return CUDART_NAN_F; }
+};
+template<> struct numeric_limits<double>
+{
+  EIGEN_DEVICE_FUNC
+  static double epsilon() { return __DBL_EPSILON__; }
+  EIGEN_DEVICE_FUNC
+  static double (max)() { return DBL_MAX; }
+  EIGEN_DEVICE_FUNC
+  static double (min)() { return DBL_MIN; }
+  EIGEN_DEVICE_FUNC
+  static double infinity() { return CUDART_INF; }
+  EIGEN_DEVICE_FUNC
+  static double quiet_NaN() { return CUDART_NAN; }
+};
+template<> struct numeric_limits<int>
+{
+  EIGEN_DEVICE_FUNC
+  static int epsilon() { return 0; }
+  EIGEN_DEVICE_FUNC
+  static int (max)() { return INT_MAX; }
+  EIGEN_DEVICE_FUNC
+  static int (min)() { return INT_MIN; }
+};
+template<> struct numeric_limits<unsigned int>
+{
+  EIGEN_DEVICE_FUNC
+  static unsigned int epsilon() { return 0; }
+  EIGEN_DEVICE_FUNC
+  static unsigned int (max)() { return UINT_MAX; }
+  EIGEN_DEVICE_FUNC
+  static unsigned int (min)() { return 0; }
+};
+template<> struct numeric_limits<long>
+{
+  EIGEN_DEVICE_FUNC
+  static long epsilon() { return 0; }
+  EIGEN_DEVICE_FUNC
+  static long (max)() { return LONG_MAX; }
+  EIGEN_DEVICE_FUNC
+  static long (min)() { return LONG_MIN; }
+};
+template<> struct numeric_limits<unsigned long>
+{
+  EIGEN_DEVICE_FUNC
+  static unsigned long epsilon() { return 0; }
+  EIGEN_DEVICE_FUNC
+  static unsigned long (max)() { return ULONG_MAX; }
+  EIGEN_DEVICE_FUNC
+  static unsigned long (min)() { return 0; }
+};
+template<> struct numeric_limits<long long>
+{
+  EIGEN_DEVICE_FUNC
+  static long long epsilon() { return 0; }
+  EIGEN_DEVICE_FUNC
+  static long long (max)() { return LLONG_MAX; }
+  EIGEN_DEVICE_FUNC
+  static long long (min)() { return LLONG_MIN; }
+};
+template<> struct numeric_limits<unsigned long long>
+{
+  EIGEN_DEVICE_FUNC
+  static unsigned long long epsilon() { return 0; }
+  EIGEN_DEVICE_FUNC
+  static unsigned long long (max)() { return ULLONG_MAX; }
+  EIGEN_DEVICE_FUNC
+  static unsigned long long (min)() { return 0; }
+};
 
-        }
+}
 
 #endif
 
@@ -523,71 +518,6 @@ namespace Eigen {
 
             EIGEN_DEVICE_FUNC ~noncopyable() {}
         };
-
-/** \internal
-  * Provides access to the number of elements in the object of as a compile-time constant expression.
-  * It "returns" Eigen::Dynamic if the size cannot be resolved at compile-time (default).
-  *
-  * Similar to std::tuple_size, but more general.
-  *
-  * It currently supports:
-  *  - any types T defining T::SizeAtCompileTime
-  *  - plain C arrays as T[N]
-  *  - std::array (c++11)
-  *  - some internal types such as SingleRange and AllRange
-  *
-  * The second template parameter eases SFINAE-based specializations.
-  */
-        template<typename T, typename EnableIf = void>
-        struct array_size {
-            enum {
-                value = Dynamic
-            };
-        };
-
-        template<typename T>
-        struct array_size<T, typename internal::enable_if<((T::SizeAtCompileTime & 0) == 0)>::type> {
-            enum {
-                value = T::SizeAtCompileTime
-            };
-        };
-
-        template<typename T, int N>
-        struct array_size<const T (&)[N]> {
-            enum {
-                value = N
-            };
-        };
-        template<typename T, int N>
-        struct array_size<T (&)[N]> {
-            enum {
-                value = N
-            };
-        };
-
-#if EIGEN_HAS_CXX11
-        template<typename T, std::size_t N> struct array_size<const std::array<T,N> > {
-          enum { value = N };
-        };
-        template<typename T, std::size_t N> struct array_size<std::array<T,N> > {
-          enum { value = N };
-        };
-#endif
-
-/** \internal
-  * Analogue of the std::size free function.
-  * It returns the size of the container or view \a x of type \c T
-  *
-  * It currently supports:
-  *  - any types T defining a member T::size() const
-  *  - plain C arrays as T[N]
-  *
-  */
-        template<typename T>
-        Index size(const T &x) { return x.size(); }
-
-        template<typename T, std::size_t N>
-        Index size(const T (&)[N]) { return N; }
 
 /** \internal
   * Convenient struct to get the result type of a unary or binary functor.
@@ -713,7 +643,6 @@ namespace Eigen {
             };
             typedef typename ternary_result_of_select<Func, ArgType0, ArgType1, ArgType2, FunctorType>::type type;
         };
-
 #endif
 
         struct meta_yes {
@@ -844,14 +773,13 @@ namespace Eigen {
     } // end namespace internal
 
     namespace numext {
-
+  
 #if defined(__CUDA_ARCH__)
         template<typename T> EIGEN_DEVICE_FUNC   void swap(T &a, T &b) { T tmp = b; b = a; a = tmp; }
 #else
 
         template<typename T>
         EIGEN_STRONG_INLINE void swap(T &a, T &b) { std::swap(a, b); }
-
 #endif
 
 #if defined(__CUDA_ARCH__)

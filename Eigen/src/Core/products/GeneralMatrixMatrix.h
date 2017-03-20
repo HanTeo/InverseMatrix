@@ -63,8 +63,8 @@ namespace Eigen {
                             ResScalar alpha,
                             level3_blocking<LhsScalar, RhsScalar> &blocking,
                             GemmParallelInfo <Index> *info = 0) {
-                typedef const_blas_data_mapper <LhsScalar, Index, LhsStorageOrder> LhsMapper;
-                typedef const_blas_data_mapper <RhsScalar, Index, RhsStorageOrder> RhsMapper;
+                typedef const_blas_data_mapper<LhsScalar, Index, LhsStorageOrder> LhsMapper;
+                typedef const_blas_data_mapper<RhsScalar, Index, RhsStorageOrder> RhsMapper;
                 typedef blas_data_mapper<typename Traits::ResScalar, Index, ColMajor> ResMapper;
                 LhsMapper lhs(_lhs, lhsStride);
                 RhsMapper rhs(_rhs, rhsStride);
@@ -74,9 +74,9 @@ namespace Eigen {
                 Index mc = (std::min)(rows, blocking.mc());  // cache block size along the M direction
                 Index nc = (std::min)(cols, blocking.nc());  // cache block size along the N direction
 
-                gemm_pack_lhs <LhsScalar, Index, LhsMapper, Traits::mr, Traits::LhsProgress, LhsStorageOrder> pack_lhs;
-                gemm_pack_rhs <RhsScalar, Index, RhsMapper, Traits::nr, RhsStorageOrder> pack_rhs;
-                gebp_kernel <LhsScalar, RhsScalar, Index, ResMapper, Traits::mr, Traits::nr, ConjugateLhs, ConjugateRhs> gebp;
+                gemm_pack_lhs<LhsScalar, Index, LhsMapper, Traits::mr, Traits::LhsProgress, LhsStorageOrder> pack_lhs;
+                gemm_pack_rhs<RhsScalar, Index, RhsMapper, Traits::nr, RhsStorageOrder> pack_rhs;
+                gebp_kernel<LhsScalar, RhsScalar, Index, ResMapper, Traits::mr, Traits::nr, ConjugateLhs, ConjugateRhs> gebp;
 
 #ifdef EIGEN_HAS_OPENMP
                 if(info)
@@ -285,12 +285,8 @@ namespace Eigen {
             };
 
 #if EIGEN_MAX_STATIC_ALIGN_BYTES >= EIGEN_DEFAULT_ALIGN_BYTES
-            EIGEN_ALIGN_MAX LhsScalar
-            m_staticA
-            [SizeA];
-            EIGEN_ALIGN_MAX RhsScalar
-            m_staticB
-            [SizeB];
+            EIGEN_ALIGN_MAX LhsScalar m_staticA[SizeA];
+            EIGEN_ALIGN_MAX RhsScalar m_staticB[SizeB];
 #else
             EIGEN_ALIGN_MAX char m_staticA[SizeA * sizeof(LhsScalar) + EIGEN_DEFAULT_ALIGN_BYTES-1];
             EIGEN_ALIGN_MAX char m_staticB[SizeB * sizeof(RhsScalar) + EIGEN_DEFAULT_ALIGN_BYTES-1];

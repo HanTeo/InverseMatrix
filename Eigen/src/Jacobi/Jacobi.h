@@ -11,7 +11,7 @@
 #ifndef EIGEN_JACOBI_H
 #define EIGEN_JACOBI_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \ingroup Jacobi_Module
   * \jacobi_module
@@ -295,10 +295,8 @@ namespace Eigen {
             Index incrx = xpr_x.derived().innerStride();
             Index incry = xpr_y.derived().innerStride();
 
-            Scalar *EIGEN_RESTRICT
-            x = &xpr_x.derived().coeffRef(0);
-            Scalar *EIGEN_RESTRICT
-            y = &xpr_y.derived().coeffRef(0);
+            Scalar *EIGEN_RESTRICT x = &xpr_x.derived().coeffRef(0);
+            Scalar *EIGEN_RESTRICT y = &xpr_y.derived().coeffRef(0);
 
             OtherScalar c = j.c();
             OtherScalar s = j.s();
@@ -329,10 +327,8 @@ namespace Eigen {
                     y[i] = -s * xi + numext::conj(c) * yi;
                 }
 
-                Scalar *EIGEN_RESTRICT
-                px = x + alignedStart;
-                Scalar *EIGEN_RESTRICT
-                py = y + alignedStart;
+                Scalar *EIGEN_RESTRICT px = x + alignedStart;
+                Scalar *EIGEN_RESTRICT py = y + alignedStart;
 
                 if (internal::first_default_aligned(x, size) == alignedStart) {
                     for (Index i = alignedStart; i < alignedEnd; i += PacketSize) {
@@ -383,10 +379,8 @@ namespace Eigen {
                 const Packet pc = pset1<Packet>(c);
                 const Packet ps = pset1<Packet>(s);
                 conj_helper<Packet, Packet, NumTraits<Scalar>::IsComplex, false> pcj;
-                Scalar *EIGEN_RESTRICT
-                px = x;
-                Scalar *EIGEN_RESTRICT
-                py = y;
+                Scalar *EIGEN_RESTRICT px = x;
+                Scalar *EIGEN_RESTRICT py = y;
                 for (Index i = 0; i < size; i += PacketSize) {
                     Packet xi = pload<Packet>(px);
                     Packet yi = pload<Packet>(py);

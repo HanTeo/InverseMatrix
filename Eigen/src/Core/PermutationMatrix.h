@@ -211,7 +211,6 @@ namespace Eigen {
             eigen_assert(lhs.cols() == rhs.rows());
             for (Index i = 0; i < rows(); ++i) indices().coeffRef(i) = lhs.indices().coeff(rhs.indices().coeff(i));
         }
-
 #endif
 
     public:
@@ -328,7 +327,6 @@ public:
             : m_indices(other.indices()) {}
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
     /** Standard copy constructor. Defined only to prevent a default copy constructor
       * from hiding the other templated constructor */
     inline PermutationMatrix(const PermutationMatrix &other) : m_indices(other.indices()) {}
@@ -366,7 +364,6 @@ public:
     }
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
     /** This is a special case of the templated operator=. Its purpose is to
       * prevent a default operator= from hiding the templated operator=.
       */
@@ -379,7 +376,6 @@ public:
 
     /** const version of indices(). */
     const IndicesType &indices() const { return m_indices; }
-
     /** \returns a reference to the stored array representing the permutation. */
     IndicesType &indices() { return m_indices; }
 
@@ -387,7 +383,6 @@ public:
     /**** multiplication helpers to hopefully get RVO ****/
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
     template<typename Other>
     PermutationMatrix(const InverseImpl <Other, PermutationStorage> &other)
             : m_indices(other.derived().nestedExpression().size()) {
@@ -402,7 +397,6 @@ public:
             : m_indices(lhs.indices().size()) {
         Base::assignProduct(lhs, rhs);
     }
-
 #endif
 
 protected:
@@ -450,7 +444,6 @@ public:
     Map &operator=(const TranspositionsBase <Other> &tr) { return Base::operator=(tr.derived()); }
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
     /** This is a special case of the templated operator=. Its purpose is to
       * prevent a default operator= from hiding the templated operator=.
       */
@@ -463,7 +456,6 @@ public:
 
     /** const version of indices(). */
     const IndicesType &indices() const { return m_indices; }
-
     /** \returns a reference to the stored array representing the permutation. */
     IndicesType &indices() { return m_indices; }
 
@@ -530,7 +522,6 @@ protected:
 template<typename MatrixDerived, typename PermutationDerived>
 EIGEN_DEVICE_FUNC
 const Product<MatrixDerived, PermutationDerived, AliasFreeProduct>
-
 operator*(const MatrixBase <MatrixDerived> &matrix,
           const PermutationBase <PermutationDerived> &permutation) {
     return Product<MatrixDerived, PermutationDerived, AliasFreeProduct>
@@ -542,7 +533,6 @@ operator*(const MatrixBase <MatrixDerived> &matrix,
 template<typename PermutationDerived, typename MatrixDerived>
 EIGEN_DEVICE_FUNC
 const Product<PermutationDerived, MatrixDerived, AliasFreeProduct>
-
 operator*(const PermutationBase <PermutationDerived> &permutation,
           const MatrixBase <MatrixDerived> &matrix) {
     return Product<PermutationDerived, MatrixDerived, AliasFreeProduct>
@@ -596,7 +586,7 @@ DenseMatrixType toDenseMatrix() const { return derived(); }
   */
 template<typename OtherDerived>
 friend
-const Product<OtherDerived, InverseType, AliasFreeProduct>
+const Product <OtherDerived, InverseType, AliasFreeProduct>
 operator*(const MatrixBase <OtherDerived> &matrix, const InverseType &trPerm) {
     return Product<OtherDerived, InverseType, AliasFreeProduct>(matrix.derived(), trPerm.derived());
 }
@@ -604,11 +594,10 @@ operator*(const MatrixBase <OtherDerived> &matrix, const InverseType &trPerm) {
 /** \returns the matrix with the inverse permutation applied to the rows.
   */
 template<typename OtherDerived>
-const Product<InverseType, OtherDerived, AliasFreeProduct>
+const Product <InverseType, OtherDerived, AliasFreeProduct>
 operator*(const MatrixBase <OtherDerived> &matrix) const {
     return Product<InverseType, OtherDerived, AliasFreeProduct>(derived(), matrix.derived());
 }
-
 };
 
 template<typename Derived>

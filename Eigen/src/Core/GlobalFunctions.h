@@ -16,10 +16,10 @@
 #define EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(NAME,FUNCTOR,DOC_OP,DOC_DETAILS) \
   /** \returns an expression of the coefficient-wise DOC_OP of \a x
 
-DOC_DETAILS
+    DOC_DETAILS
 
-\sa <a href="group__CoeffwiseMathFunctions.html#cwisetable_##NAME">Math functions</a>, class CwiseUnaryOp
-*/ \
+    \sa <a href="group__CoeffwiseMathFunctions.html#cwisetable_##NAME">Math functions</a>, class CwiseUnaryOp
+    */ \
   template<typename Derived> \
   inline const Eigen::CwiseUnaryOp<Eigen::internal::FUNCTOR<typename Derived::Scalar>, const Derived> \
   NAME(const Eigen::ArrayBase<Derived>& x);
@@ -103,13 +103,6 @@ namespace Eigen {
             function, \sa ArrayBase::erfc)
 
     EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(exp, scalar_exp_op, exponential, \sa ArrayBase::exp)
-
-    EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(expm1, scalar_expm1_op, exponential
-            of
-            a
-            value
-            minus
-            1, \sa ArrayBase::expm1)
 
     EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(log, scalar_log_op, natural
             logarithm, \sa Eigen::log10 DOXCOMMA ArrayBase::log)
@@ -198,19 +191,16 @@ namespace Eigen {
     template<typename Derived, typename ScalarExponent>
     inline typename internal::enable_if<!(internal::is_same<typename Derived::Scalar, ScalarExponent>::value) &&
                                         EIGEN_SCALAR_BINARY_SUPPORTED(pow, typename Derived::Scalar, ScalarExponent),
-            const EIGEN_EXPR_BINARYOP_SCALAR_RETURN_TYPE(Derived, ScalarExponent, pow)>::type
+            const EIGEN_EXPR_BINARYOP_SCALAR_RETURN_TYPE(Derived, ScalarExponent, pow) >::type
     pow(const Eigen::ArrayBase<Derived> &x, const ScalarExponent &exponent) {
         return x.derived().pow(exponent);
     }
 
     template<typename Derived>
-    inline const EIGEN_EXPR_BINARYOP_SCALAR_RETURN_TYPE(Derived,
-    typename Derived::Scalar,pow)
-
+    inline const EIGEN_EXPR_BINARYOP_SCALAR_RETURN_TYPE(Derived, typename Derived::Scalar, pow)
     pow(const Eigen::ArrayBase<Derived> &x, const typename Derived::Scalar &exponent) {
         return x.derived().pow(exponent);
     }
-
 #endif
 
     /** \returns an expression of the coefficient-wise power of \a x to the given array of \a exponents.
@@ -255,7 +245,7 @@ namespace Eigen {
     template<typename Scalar, typename Derived>
     inline typename internal::enable_if<!(internal::is_same<typename Derived::Scalar, Scalar>::value) &&
                                         EIGEN_SCALAR_BINARY_SUPPORTED(pow, Scalar, typename Derived::Scalar),
-            const EIGEN_SCALAR_BINARYOP_EXPR_RETURN_TYPE(Scalar, Derived, pow)>::type
+            const EIGEN_SCALAR_BINARYOP_EXPR_RETURN_TYPE(Scalar, Derived, pow) >::type
     pow(const Scalar &x, const Eigen::ArrayBase<Derived> &exponents) {
         return EIGEN_SCALAR_BINARYOP_EXPR_RETURN_TYPE(Scalar, Derived, pow)(
                 typename internal::plain_constant_type<Derived, Scalar>::type(exponents.rows(), exponents.cols(), x),
@@ -264,14 +254,12 @@ namespace Eigen {
 
     template<typename Derived>
     inline const EIGEN_SCALAR_BINARYOP_EXPR_RETURN_TYPE(typename Derived::Scalar, Derived, pow)
-
     pow(const typename Derived::Scalar &x, const Eigen::ArrayBase<Derived> &exponents) {
         return EIGEN_SCALAR_BINARYOP_EXPR_RETURN_TYPE(typename Derived::Scalar, Derived, pow)(
                 typename internal::plain_constant_type<Derived, typename Derived::Scalar>::type(exponents.rows(),
                                                                                                 exponents.cols(), x),
                 exponents.derived());
     }
-
 #endif
 
 

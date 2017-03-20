@@ -66,7 +66,7 @@ namespace internal {
     typedef typename evaluator<ArgType>::InnerIterator EvalIterator;
     public:
     typedef Transpose <ArgType> XprType;
-
+    
     inline Index nonZerosEstimate() const {
         return m_argImpl.nonZerosEstimate();
     }

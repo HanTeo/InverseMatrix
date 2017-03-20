@@ -10,7 +10,7 @@
 #ifndef EIGEN_ALIGNEDBOX_H
 #define EIGEN_ALIGNEDBOX_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \geometry_module \ingroup Geometry_Module
   *
@@ -29,8 +29,7 @@ namespace Eigen {
     template<typename _Scalar, int _AmbientDim>
     class AlignedBox {
     public:
-        EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF_VECTORIZABLE_FIXED_SIZE(_Scalar, _AmbientDim
-        )
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF_VECTORIZABLE_FIXED_SIZE(_Scalar, _AmbientDim)
         enum {
             AmbientDimAtCompileTime = _AmbientDim
         };
@@ -63,9 +62,7 @@ namespace Eigen {
 
 
         /** Default constructor initializing a null box. */
-        EIGEN_DEVICE_FUNC inline AlignedBox() {
-            if (EIGEN_CONST_CONDITIONAL(AmbientDimAtCompileTime != Dynamic))setEmpty();
-        }
+        EIGEN_DEVICE_FUNC inline AlignedBox() { if (AmbientDimAtCompileTime != Dynamic) setEmpty(); }
 
         /** Constructs a null box with \a _dim the dimension of the ambient space. */
         EIGEN_DEVICE_FUNC inline explicit AlignedBox(Index _dim) : m_min(_dim), m_max(_dim) { setEmpty(); }
@@ -114,9 +111,7 @@ namespace Eigen {
         EIGEN_DEVICE_FUNC inline VectorType &(max)() { return m_max; }
 
         /** \returns the center of the box */
-        EIGEN_DEVICE_FUNC inline const EIGEN_EXPR_BINARYOP_SCALAR_RETURN_TYPE(VectorTypeSum, RealScalar, quotient
-        )
-
+        EIGEN_DEVICE_FUNC inline const EIGEN_EXPR_BINARYOP_SCALAR_RETURN_TYPE(VectorTypeSum, RealScalar, quotient)
         center() const { return (m_min + m_max) / RealScalar(2); }
 
         /** \returns the lengths of the sides of the bounding box.

@@ -10,7 +10,7 @@
 #ifndef EIGEN_SPARSEVECTOR_H
 #define EIGEN_SPARSEVECTOR_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /** \ingroup SparseCore_Module
   * \class SparseVector
@@ -75,7 +75,7 @@ public:
     enum {
         IsColVector = internal::traits<SparseVector>::IsColVector
     };
-
+    
     enum {
         Options = _Options
     };
@@ -123,10 +123,9 @@ public:
     inline const StorageIndex *innerNonZeroPtr() const { return 0; }
 
     inline StorageIndex *innerNonZeroPtr() { return 0; }
-
+    
     /** \internal */
     inline Storage &data() { return m_data; }
-
     /** \internal */
     inline const Storage &data() const { return m_data; }
 
@@ -340,7 +339,6 @@ public:
     }
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
     template<typename Lhs, typename Rhs>
     inline SparseVector &operator=(const SparseSparseProduct <Lhs, Rhs> &product) {
         return Base::operator=(product);
@@ -421,13 +419,12 @@ public:
     &
 
     _data() { return m_data; }
-
     /** \internal \deprecated use data() */
     EIGEN_DEPRECATED const Storage
     &
 
     _data() const { return m_data; }
-
+    
 #   ifdef EIGEN_SPARSEVECTOR_PLUGIN
 #     include EIGEN_SPARSEVECTOR_PLUGIN
 #   endif

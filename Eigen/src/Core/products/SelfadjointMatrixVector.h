@@ -51,16 +51,16 @@ namespace Eigen {
                 FirstTriangular = IsRowMajor == IsLower
             };
 
-            conj_helper < Scalar, Scalar, NumTraits<Scalar>::IsComplex && EIGEN_LOGICAL_XOR(ConjugateLhs, IsRowMajor),
-                    ConjugateRhs > cj0;
-            conj_helper < Scalar, Scalar, NumTraits<Scalar>::IsComplex && EIGEN_LOGICAL_XOR(ConjugateLhs, !IsRowMajor),
-                    ConjugateRhs > cj1;
+            conj_helper<Scalar, Scalar,
+                    NumTraits<Scalar>::IsComplex && EIGEN_LOGICAL_XOR(ConjugateLhs, IsRowMajor), ConjugateRhs> cj0;
+            conj_helper<Scalar, Scalar,
+                    NumTraits<Scalar>::IsComplex && EIGEN_LOGICAL_XOR(ConjugateLhs, !IsRowMajor), ConjugateRhs> cj1;
             conj_helper<RealScalar, Scalar, false, ConjugateRhs> cjd;
 
-            conj_helper < Packet, Packet, NumTraits<Scalar>::IsComplex && EIGEN_LOGICAL_XOR(ConjugateLhs, IsRowMajor),
-                    ConjugateRhs > pcj0;
-            conj_helper < Packet, Packet, NumTraits<Scalar>::IsComplex && EIGEN_LOGICAL_XOR(ConjugateLhs, !IsRowMajor),
-                    ConjugateRhs > pcj1;
+            conj_helper<Packet, Packet,
+                    NumTraits<Scalar>::IsComplex && EIGEN_LOGICAL_XOR(ConjugateLhs, IsRowMajor), ConjugateRhs> pcj0;
+            conj_helper<Packet, Packet,
+                    NumTraits<Scalar>::IsComplex && EIGEN_LOGICAL_XOR(ConjugateLhs, !IsRowMajor), ConjugateRhs> pcj1;
 
             Scalar cjAlpha = ConjugateRhs ? numext::conj(alpha) : alpha;
 
@@ -71,10 +71,8 @@ namespace Eigen {
 
             for (Index j = FirstTriangular ? bound : 0;
                  j < (FirstTriangular ? size : bound); j += 2) {
-                const Scalar *EIGEN_RESTRICT
-                A0 = lhs + j * lhsStride;
-                const Scalar *EIGEN_RESTRICT
-                A1 = lhs + (j + 1) * lhsStride;
+                const Scalar *EIGEN_RESTRICT A0 = lhs + j * lhsStride;
+                const Scalar *EIGEN_RESTRICT A1 = lhs + (j + 1) * lhsStride;
 
                 Scalar t0 = cjAlpha * rhs[j];
                 Packet ptmp0 = pset1<Packet>(t0);
@@ -108,14 +106,10 @@ namespace Eigen {
                 }
                 // Yes this an optimization for gcc 4.3 and 4.4 (=> huge speed up)
                 // gcc 4.2 does this optimization automatically.
-                const Scalar *EIGEN_RESTRICT
-                a0It = A0 + alignedStart;
-                const Scalar *EIGEN_RESTRICT
-                a1It = A1 + alignedStart;
-                const Scalar *EIGEN_RESTRICT
-                rhsIt = rhs + alignedStart;
-                Scalar *EIGEN_RESTRICT
-                resIt = res + alignedStart;
+                const Scalar *EIGEN_RESTRICT a0It = A0 + alignedStart;
+                const Scalar *EIGEN_RESTRICT a1It = A1 + alignedStart;
+                const Scalar *EIGEN_RESTRICT rhsIt = rhs + alignedStart;
+                Scalar *EIGEN_RESTRICT resIt = res + alignedStart;
                 for (Index i = alignedStart; i < alignedEnd; i += PacketSize) {
                     Packet A0i = ploadu<Packet>(a0It);
                     a0It += PacketSize;
@@ -141,8 +135,7 @@ namespace Eigen {
                 res[j + 1] += alpha * (t3 + predux(ptmp3));
             }
             for (Index j = FirstTriangular ? 0 : bound; j < (FirstTriangular ? bound : size); j++) {
-                const Scalar *EIGEN_RESTRICT
-                A0 = lhs + j * lhsStride;
+                const Scalar *EIGEN_RESTRICT A0 = lhs + j * lhsStride;
 
                 Scalar t1 = cjAlpha * rhs[j];
                 Scalar t2(0);
@@ -183,8 +176,8 @@ namespace Eigen {
             static void run(Dest &dest, const Lhs &a_lhs, const Rhs &a_rhs, const Scalar &alpha) {
                 typedef typename Dest::Scalar ResScalar;
                 typedef typename Rhs::Scalar RhsScalar;
-                typedef Map<Matrix < ResScalar, Dynamic, 1>,
-                EIGEN_PLAIN_ENUM_MIN(AlignedMax, internal::packet_traits<ResScalar>::size) > MappedDest;
+                typedef Map<Matrix<ResScalar, Dynamic, 1>, EIGEN_PLAIN_ENUM_MIN(AlignedMax,
+                                                                                internal::packet_traits<ResScalar>::size)> MappedDest;
 
                 eigen_assert(dest.rows() == a_lhs.rows() && dest.cols() == a_rhs.cols());
 
@@ -252,7 +245,7 @@ namespace Eigen {
             template<typename Dest>
             static void run(Dest &dest, const Lhs &a_lhs, const Rhs &a_rhs, const Scalar &alpha) {
                 // let's simply transpose the product
-                Transpose <Dest> destT(dest);
+                Transpose<Dest> destT(dest);
                 selfadjoint_product_impl<Transpose<const Rhs>, int(RhsUpLo) == Upper ? Lower : Upper, false,
                         Transpose<const Lhs>, 0, true>::run(destT, a_rhs.transpose(), a_lhs.transpose(), alpha);
             }

@@ -60,7 +60,6 @@ namespace Eigen {
                 HasSqrt = 0,
                 HasRsqrt = 0,
                 HasExp = 0,
-                HasExpm1 = 0,
                 HasLog = 0,
                 HasLog1p = 0,
                 HasLog10 = 0,
@@ -134,126 +133,123 @@ namespace Eigen {
 /** \internal \returns static_cast<TgtType>(a) (coeff-wise) */
         template<typename SrcPacket, typename TgtPacket>
         EIGEN_DEVICE_FUNC inline TgtPacket
-
         pcast(const SrcPacket &a) {
             return static_cast<TgtPacket>(a);
         }
 
         template<typename SrcPacket, typename TgtPacket>
         EIGEN_DEVICE_FUNC inline TgtPacket
-
         pcast(const SrcPacket &a, const SrcPacket & /*b*/) {
             return static_cast<TgtPacket>(a);
         }
 
         template<typename SrcPacket, typename TgtPacket>
         EIGEN_DEVICE_FUNC inline TgtPacket
-
         pcast(const SrcPacket &a, const SrcPacket & /*b*/, const SrcPacket & /*c*/, const SrcPacket & /*d*/) {
             return static_cast<TgtPacket>(a);
         }
 
 /** \internal \returns a + b (coeff-wise) */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         padd(const Packet &a,
              const Packet &b) { return a + b; }
 
 /** \internal \returns a - b (coeff-wise) */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         psub(const Packet &a,
              const Packet &b) { return a - b; }
 
 /** \internal \returns -a (coeff-wise) */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         pnegate(const Packet &a) { return -a; }
 
 /** \internal \returns conj(a) (coeff-wise) */
 
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         pconj(const Packet &a) { return numext::conj(a); }
 
 /** \internal \returns a * b (coeff-wise) */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         pmul(const Packet &a,
              const Packet &b) { return a * b; }
 
 /** \internal \returns a / b (coeff-wise) */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         pdiv(const Packet &a,
              const Packet &b) { return a / b; }
 
 /** \internal \returns the min of \a a and \a b  (coeff-wise) */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         pmin(const Packet &a,
              const Packet &b) { return numext::mini(a, b); }
 
 /** \internal \returns the max of \a a and \a b  (coeff-wise) */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         pmax(const Packet &a,
              const Packet &b) { return numext::maxi(a, b); }
 
 /** \internal \returns the absolute value of \a a */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         pabs(const Packet &a) {
             using std::abs;
             return abs(a);
         }
 
 /** \internal \returns the phase angle of \a a */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         parg(const Packet &a) {
             using numext::arg;
             return arg(a);
         }
 
 /** \internal \returns the bitwise and of \a a and \a b */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         pand(const Packet &a, const Packet &b) { return a & b; }
 
 /** \internal \returns the bitwise or of \a a and \a b */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         por(const Packet &a, const Packet &b) { return a | b; }
 
 /** \internal \returns the bitwise xor of \a a and \a b */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         pxor(const Packet &a, const Packet &b) { return a ^ b; }
 
 /** \internal \returns the bitwise andnot of \a a and \a b */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         pandnot(const Packet &a, const Packet &b) { return a & (!b); }
 
 /** \internal \returns a packet version of \a *from, from must be 16 bytes aligned */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         pload(const typename unpacket_traits<Packet>::type *from) { return *from; }
 
 /** \internal \returns a packet version of \a *from, (un-aligned load) */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         ploadu(const typename unpacket_traits<Packet>::type *from) { return *from; }
 
 /** \internal \returns a packet with constant coefficients \a a, e.g.: (a,a,a,a) */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         pset1(const typename unpacket_traits<Packet>::type &a) { return a; }
 
 /** \internal \returns a packet with constant coefficients \a a[0], e.g.: (a[0],a[0],a[0],a[0]) */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         pload1(const typename unpacket_traits<Packet>::type *a) { return pset1<Packet>(*a); }
 
 /** \internal \returns a packet with elements of \a *from duplicated.
@@ -261,9 +257,8 @@ namespace Eigen {
   * duplicated to form: {from[0],from[0],from[1],from[1],from[2],from[2],from[3],from[3]}
   * Currently, this function is only used for scalar * complex products.
   */
-        template<typename Packet> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-        Packet
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         ploaddup(const typename unpacket_traits<Packet>::type *from) { return *from; }
 
 /** \internal \returns a packet with elements of \a *from quadrupled.
@@ -272,8 +267,8 @@ namespace Eigen {
   * Currently, this function is only used in matrix products.
   * For packet-size smaller or equal to 4, this function is equivalent to pload1 
   */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         ploadquad(const typename unpacket_traits<Packet>::type *from) { return pload1<Packet>(from); }
 
 /** \internal equivalent to
@@ -311,9 +306,8 @@ namespace Eigen {
         }
 
 /** \internal \brief Returns a packet with coefficients (a,a+1,...,a+packet_size-1). */
-        template<typename Packet> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-
-        Packet
+        template<typename Packet>
+        inline Packet
         plset(const typename unpacket_traits<Packet>::type &a) { return a; }
 
 /** \internal copy the packet \a from to \a *to, \a to must be 16 bytes aligned */
@@ -324,9 +318,8 @@ namespace Eigen {
         template<typename Scalar, typename Packet>
         EIGEN_DEVICE_FUNC inline void pstoreu(Scalar *to, const Packet &from) { (*to) = from; }
 
-        template<typename Scalar, typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
-        pgather(const Scalar *from, Index /*stride*/) { return ploadu<Packet>(from); }
+        template<typename Scalar, typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet pgather(const Scalar *from, Index /*stride*/) { return ploadu<Packet>(from); }
 
         template<typename Scalar, typename Packet>
         EIGEN_DEVICE_FUNC inline void pscatter(Scalar *to, const Packet &from, Index /*stride*/) { pstore(to, from); }
@@ -336,11 +329,11 @@ namespace Eigen {
         EIGEN_DEVICE_FUNC inline void prefetch(const Scalar *addr) {
 #ifdef __CUDA_ARCH__
 #if defined(__LP64__)
-            // 64-bit pointer operand constraint for inlined asm
-            asm(" prefetch.L1 [ %1 ];" : "=l"(addr) : "l"(addr));
+  // 64-bit pointer operand constraint for inlined asm
+  asm(" prefetch.L1 [ %1 ];" : "=l"(addr) : "l"(addr));
 #else
-            // 32-bit pointer operand constraint for inlined asm
-            asm(" prefetch.L1 [ %1 ];" : "=r"(addr) : "r"(addr));
+  // 32-bit pointer operand constraint for inlined asm
+  asm(" prefetch.L1 [ %1 ];" : "=r"(addr) : "r"(addr));
 #endif
 #elif (!EIGEN_COMP_MSVC) && (EIGEN_COMP_GNUC || EIGEN_COMP_CLANG || EIGEN_COMP_ICC)
             __builtin_prefetch(addr);
@@ -348,54 +341,47 @@ namespace Eigen {
         }
 
 /** \internal \returns the first element of a packet */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline typename unpacket_traits<Packet>::type
-
-        pfirst(const Packet &a) { return a; }
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline typename unpacket_traits<Packet>::type pfirst(const Packet &a) { return a; }
 
 /** \internal \returns a packet where the element i contains the sum of the packet of \a vec[i] */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         preduxp(const Packet *vecs) { return vecs[0]; }
 
 /** \internal \returns the sum of the elements of \a a*/
-        template<typename Packet> EIGEN_DEVICE_FUNC inline typename unpacket_traits<Packet>::type
-
-        predux(const Packet &a) { return a; }
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline typename unpacket_traits<Packet>::type predux(const Packet &a) { return a; }
 
 /** \internal \returns the sum of the elements of \a a by block of 4 elements.
   * For a packet {a0, a1, a2, a3, a4, a5, a6, a7}, it returns a half packet {a0+a4, a1+a5, a2+a6, a3+a7}
   * For packet-size smaller or equal to 4, this boils down to a noop.
   */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline
         typename conditional<
                 (unpacket_traits<Packet>::size % 8) == 0, typename unpacket_traits<Packet>::half, Packet>::type
-
         predux_downto4(const Packet &a) { return a; }
 
 /** \internal \returns the product of the elements of \a a*/
-        template<typename Packet> EIGEN_DEVICE_FUNC inline typename unpacket_traits<Packet>::type
-
-        predux_mul(const Packet &a) { return a; }
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline typename unpacket_traits<Packet>::type predux_mul(const Packet &a) { return a; }
 
 /** \internal \returns the min of the elements of \a a*/
-        template<typename Packet> EIGEN_DEVICE_FUNC inline typename unpacket_traits<Packet>::type
-
-        predux_min(const Packet &a) { return a; }
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline typename unpacket_traits<Packet>::type predux_min(const Packet &a) { return a; }
 
 /** \internal \returns the max of the elements of \a a*/
-        template<typename Packet> EIGEN_DEVICE_FUNC inline typename unpacket_traits<Packet>::type
-
-        predux_max(const Packet &a) { return a; }
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline typename unpacket_traits<Packet>::type predux_max(const Packet &a) { return a; }
 
 /** \internal \returns the reversed elements of \a a*/
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
-        preverse(const Packet &a) { return a; }
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet preverse(const Packet &a) { return a; }
 
 /** \internal \returns \a a with real and imaginary part flipped (for complex type only) */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
-        pcplxflip(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet pcplxflip(const Packet &a) {
             // FIXME: uncomment the following in case we drop the internal imag and real functions.
 //   using std::imag;
 //   using std::real;
@@ -407,165 +393,141 @@ namespace Eigen {
 ***************************/
 
 /** \internal \returns the sine of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        psin(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet psin(const Packet &a) {
             using std::sin;
             return sin(a);
         }
 
 /** \internal \returns the cosine of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        pcos(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet pcos(const Packet &a) {
             using std::cos;
             return cos(a);
         }
 
 /** \internal \returns the tan of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        ptan(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet ptan(const Packet &a) {
             using std::tan;
             return tan(a);
         }
 
 /** \internal \returns the arc sine of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        pasin(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet pasin(const Packet &a) {
             using std::asin;
             return asin(a);
         }
 
 /** \internal \returns the arc cosine of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        pacos(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet pacos(const Packet &a) {
             using std::acos;
             return acos(a);
         }
 
 /** \internal \returns the arc tangent of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        patan(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet patan(const Packet &a) {
             using std::atan;
             return atan(a);
         }
 
 /** \internal \returns the hyperbolic sine of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        psinh(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet psinh(const Packet &a) {
             using std::sinh;
             return sinh(a);
         }
 
 /** \internal \returns the hyperbolic cosine of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        pcosh(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet pcosh(const Packet &a) {
             using std::cosh;
             return cosh(a);
         }
 
 /** \internal \returns the hyperbolic tan of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        ptanh(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet ptanh(const Packet &a) {
             using std::tanh;
             return tanh(a);
         }
 
 /** \internal \returns the exp of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        pexp(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet pexp(const Packet &a) {
             using std::exp;
             return exp(a);
         }
 
-/** \internal \returns the expm1 of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        pexpm1(const Packet &a) { return numext::expm1(a); }
-
 /** \internal \returns the log of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        plog(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet plog(const Packet &a) {
             using std::log;
             return log(a);
         }
 
 /** \internal \returns the log1p of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        plog1p(const Packet &a) { return numext::log1p(a); }
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet plog1p(const Packet &a) { return numext::log1p(a); }
 
 /** \internal \returns the log10 of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        plog10(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet plog10(const Packet &a) {
             using std::log10;
             return log10(a);
         }
 
 /** \internal \returns the square-root of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        psqrt(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet psqrt(const Packet &a) {
             using std::sqrt;
             return sqrt(a);
         }
 
 /** \internal \returns the reciprocal square-root of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        prsqrt(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet prsqrt(const Packet &a) {
             return pdiv(pset1<Packet>(1), psqrt(a));
         }
 
 /** \internal \returns the rounded value of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        pround(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet pround(const Packet &a) {
             using numext::round;
             return round(a);
         }
 
 /** \internal \returns the floor of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        pfloor(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet pfloor(const Packet &a) {
             using numext::floor;
             return floor(a);
         }
 
 /** \internal \returns the ceil of \a a (coeff-wise) */
-        template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-                Packet
-
-        pceil(const Packet &a) {
+        template<typename Packet>
+        EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+        Packet pceil(const Packet &a) {
             using numext::ceil;
             return ceil(a);
         }
@@ -583,8 +545,8 @@ namespace Eigen {
         }
 
 /** \internal \returns a * b + c (coeff-wise) */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         pmadd(const Packet &a,
               const Packet &b,
               const Packet &c) { return padd(pmul(a, b), c); }
@@ -592,9 +554,7 @@ namespace Eigen {
 /** \internal \returns a packet version of \a *from.
   * The pointer \a from must be aligned on a \a Alignment bytes boundary. */
         template<typename Packet, int Alignment>
-        EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE
-
-        Packet ploadt(const typename unpacket_traits<Packet>::type *from) {
+        EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE Packet ploadt(const typename unpacket_traits<Packet>::type *from) {
             if (Alignment >= unpacket_traits<Packet>::alignment)
                 return pload<Packet>(from);
             else
@@ -604,9 +564,7 @@ namespace Eigen {
 /** \internal copy the packet \a from to \a *to.
   * The pointer \a from must be aligned on a \a Alignment bytes boundary. */
         template<typename Scalar, typename Packet, int Alignment>
-        EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE
-
-        void pstoret(Scalar *to, const Packet &from) {
+        EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE void pstoret(Scalar *to, const Packet &from) {
             if (Alignment >= unpacket_traits<Packet>::alignment)
                 pstore(to, from);
             else
@@ -619,9 +577,7 @@ namespace Eigen {
   * by the current computation.
   */
         template<typename Packet, int LoadMode>
-        EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE
-
-        Packet ploadt_ro(const typename unpacket_traits<Packet>::type *from) {
+        inline Packet ploadt_ro(const typename unpacket_traits<Packet>::type *from) {
             return ploadt<Packet, LoadMode>(from);
         }
 
@@ -696,16 +652,16 @@ namespace Eigen {
             bool select[N];
         };
 
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         pblend(const Selector<unpacket_traits<Packet>::size> &ifPacket, const Packet &thenPacket,
                const Packet &elsePacket) {
             return ifPacket.select[0] ? thenPacket : elsePacket;
         }
 
 /** \internal \returns \a a with the first coefficient replaced by the scalar b */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         pinsertfirst(const Packet &a, typename unpacket_traits<Packet>::type b) {
             // Default implementation based on pblend.
             // It must be specialized for higher performance.
@@ -718,8 +674,8 @@ namespace Eigen {
         }
 
 /** \internal \returns \a a with the last coefficient replaced by the scalar b */
-        template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-
+        template<typename Packet>
+        EIGEN_DEVICE_FUNC inline Packet
         pinsertlast(const Packet &a, typename unpacket_traits<Packet>::type b) {
             // Default implementation based on pblend.
             // It must be specialized for higher performance.

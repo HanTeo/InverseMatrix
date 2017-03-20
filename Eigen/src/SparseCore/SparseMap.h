@@ -57,7 +57,7 @@ public:
     };
     using Base::operator=;
 protected:
-
+    
     typedef typename internal::conditional<
             bool(internal::is_lvalue<Derived>::value),
             Scalar *, const Scalar *>::type ScalarPointer;
@@ -77,16 +77,12 @@ public:
 
     /** \copydoc SparseMatrixBase::rows() */
     inline Index rows() const { return IsRowMajor ? m_outerSize : m_innerSize; }
-
     /** \copydoc SparseMatrixBase::cols() */
     inline Index cols() const { return IsRowMajor ? m_innerSize : m_outerSize; }
-
     /** \copydoc SparseMatrixBase::innerSize() */
     inline Index innerSize() const { return m_innerSize; }
-
     /** \copydoc SparseMatrixBase::outerSize() */
     inline Index outerSize() const { return m_outerSize; }
-
     /** \copydoc SparseCompressedBase::nonZeros */
     inline Index nonZeros() const { return m_zero_nnz[1]; }
 
@@ -97,13 +93,10 @@ public:
     // direct access interface
     /** \copydoc SparseMatrix::valuePtr */
     inline const Scalar *valuePtr() const { return m_values; }
-
     /** \copydoc SparseMatrix::innerIndexPtr */
     inline const StorageIndex *innerIndexPtr() const { return m_innerIndices; }
-
     /** \copydoc SparseMatrix::outerIndexPtr */
     inline const StorageIndex *outerIndexPtr() const { return m_outerIndex; }
-
     /** \copydoc SparseMatrix::innerNonZeroPtr */
     inline const StorageIndex *innerNonZeroPtr() const { return m_innerNonZeros; }
     //----------------------------------------
@@ -162,27 +155,23 @@ public:
     enum {
         IsRowMajor = Base::IsRowMajor
     };
-
+    
     using Base::operator=;
 
 public:
-
+    
     //----------------------------------------
     // direct access interface
     using Base::valuePtr;
     using Base::innerIndexPtr;
     using Base::outerIndexPtr;
     using Base::innerNonZeroPtr;
-
     /** \copydoc SparseMatrix::valuePtr */
     inline Scalar *valuePtr() { return Base::m_values; }
-
     /** \copydoc SparseMatrix::innerIndexPtr */
     inline StorageIndex *innerIndexPtr() { return Base::m_innerIndices; }
-
     /** \copydoc SparseMatrix::outerIndexPtr */
     inline StorageIndex *outerIndexPtr() { return Base::m_outerIndex; }
-
     /** \copydoc SparseMatrix::innerNonZeroPtr */
     inline StorageIndex *innerNonZeroPtr() { return Base::m_innerNonZeros; }
     //----------------------------------------
@@ -226,7 +215,6 @@ protected:
   * \sa class Map, class SparseMatrix, class Ref<SparseMatrixType,Options>
   */
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-
 template<typename MatScalar, int MatOptions, typename MatIndex, int Options, typename StrideType>
 class Map<SparseMatrix < MatScalar, MatOptions, MatIndex>
 
@@ -275,7 +263,6 @@ Base(rows, cols, nnz, outerIndexPtr, innerIndexPtr, valuePtr, innerNonZerosPtr
 
 /** Empty destructor */
 inline ~Map() {}
-
 };
 
 template<typename MatScalar, int MatOptions, typename MatIndex, int Options, typename StrideType>
@@ -290,7 +277,6 @@ public:
 
 public:
 #endif
-
     /** This is the const version of the above constructor.
       *
       * This constructor is available only if \c SparseMatrixType is const, e.g.:

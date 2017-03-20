@@ -10,7 +10,7 @@
 #ifndef EIGEN_PASTIXSUPPORT_H
 #define EIGEN_PASTIXSUPPORT_H
 
-namespace Eigen {
+namespace Eigen { 
 
 #if defined(DCOMPLEX)
 #define PASTIX_COMPLEX  COMPLEX

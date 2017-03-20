@@ -115,7 +115,6 @@ namespace std {
             else if (new_size > deque_base::size())
                 deque_base::insert(deque_base::end(), new_size - deque_base::size(), x);
         }
-
 #endif
     };
 }

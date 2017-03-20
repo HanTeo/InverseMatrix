@@ -71,13 +71,9 @@ public:
 
     EIGEN_INHERIT_ASSIGNMENT_OPERATORS(CwiseUnaryView)
 
-    EIGEN_STRONG_INLINE Index
+    EIGEN_STRONG_INLINE Index rows() const { return m_matrix.rows(); }
 
-    rows() const { return m_matrix.rows(); }
-
-    EIGEN_STRONG_INLINE Index
-
-    cols() const { return m_matrix.cols(); }
+    EIGEN_STRONG_INLINE Index cols() const { return m_matrix.cols(); }
 
     /** \returns the functor representing unary operation */
     const ViewOp &functor() const { return m_functor; }
@@ -114,26 +110,16 @@ public:
     EIGEN_DENSE_PUBLIC_INTERFACE(Derived)
     EIGEN_INHERIT_ASSIGNMENT_OPERATORS(CwiseUnaryViewImpl)
 
-    EIGEN_DEVICE_FUNC inline Scalar
-    *
+    EIGEN_DEVICE_FUNC inline Scalar *data() { return &(this->coeffRef(0)); }
 
-    data() { return &(this->coeffRef(0)); }
+    EIGEN_DEVICE_FUNC inline const Scalar *data() const { return &(this->coeff(0)); }
 
-    EIGEN_DEVICE_FUNC inline const Scalar
-    *
-
-    data() const { return &(this->coeff(0)); }
-
-    EIGEN_DEVICE_FUNC inline Index
-
-    innerStride() const {
+    EIGEN_DEVICE_FUNC inline Index innerStride() const {
         return derived().nestedExpression().innerStride() * sizeof(typename internal::traits<MatrixType>::Scalar) /
                sizeof(Scalar);
     }
 
-    EIGEN_DEVICE_FUNC inline Index
-
-    outerStride() const {
+    EIGEN_DEVICE_FUNC inline Index outerStride() const {
         return derived().nestedExpression().outerStride() * sizeof(typename internal::traits<MatrixType>::Scalar) /
                sizeof(Scalar);
     }

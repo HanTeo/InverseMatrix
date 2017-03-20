@@ -164,7 +164,7 @@ namespace Eigen {
             typedef InnerStride<int(StorageOrder) == int(ColMajor) ? Dynamic : 1> RowInnerStride;
             typedef Ref<Matrix<Scalar, Dynamic, 1>, 0, ColInnerStride> SubColumnType;
             typedef Ref<Matrix<Scalar, 1, Dynamic>, 0, RowInnerStride> SubRowType;
-            typedef Ref <Matrix<Scalar, Dynamic, Dynamic, StorageOrder>> SubMatType;
+            typedef Ref<Matrix<Scalar, Dynamic, Dynamic, StorageOrder> > SubMatType;
 
             Index brows = A.rows();
             Index bcols = A.cols();
@@ -280,7 +280,7 @@ namespace Eigen {
                                                     Index maxBlockSize = 32,
                                                     typename MatrixType::Scalar * /*tempData*/ = 0) {
             typedef typename MatrixType::Scalar Scalar;
-            typedef Block <MatrixType, Dynamic, Dynamic> BlockType;
+            typedef Block<MatrixType, Dynamic, Dynamic> BlockType;
 
             Index rows = A.rows();
             Index cols = A.cols();
@@ -290,16 +290,16 @@ namespace Eigen {
             enum {
                 StorageOrder = traits<MatrixType>::Flags & RowMajorBit
             };
-            Matrix <Scalar,
-            MatrixType::RowsAtCompileTime,
-            Dynamic,
-            StorageOrder,
-            MatrixType::MaxRowsAtCompileTime> X(rows, maxBlockSize);
-            Matrix <Scalar,
-            MatrixType::ColsAtCompileTime,
-            Dynamic,
-            StorageOrder,
-            MatrixType::MaxColsAtCompileTime> Y(cols, maxBlockSize);
+            Matrix<Scalar,
+                    MatrixType::RowsAtCompileTime,
+                    Dynamic,
+                    StorageOrder,
+                    MatrixType::MaxRowsAtCompileTime> X(rows, maxBlockSize);
+            Matrix<Scalar,
+                    MatrixType::ColsAtCompileTime,
+                    Dynamic,
+                    StorageOrder,
+                    MatrixType::MaxColsAtCompileTime> Y(cols, maxBlockSize);
             Index blockSize = (std::min)(maxBlockSize, size);
 
             Index k = 0;

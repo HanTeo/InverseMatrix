@@ -120,7 +120,6 @@ static void run( \
 EIGEN_BLAS_GEMV_SPECIALIZATION(double, double, d)
 
 EIGEN_BLAS_GEMV_SPECIALIZATION(float, float, s)
-
 EIGEN_BLAS_GEMV_SPECIALIZATION(dcomplex, double, z)
 
 EIGEN_BLAS_GEMV_SPECIALIZATION(scomplex, float, c)

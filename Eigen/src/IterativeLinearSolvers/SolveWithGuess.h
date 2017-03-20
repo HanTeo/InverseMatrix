@@ -14,7 +14,7 @@ namespace Eigen {
 
     template<typename Decomposition, typename RhsType, typename GuessType>
     class SolveWithGuess;
-
+  
 /** \class SolveWithGuess
   * \ingroup IterativeLinearSolvers_Module
   *
@@ -77,7 +77,7 @@ protected:
     const Decomposition &m_dec;
     const RhsType &m_rhs;
     const GuessType &m_guess;
-
+  
 private:
     Scalar coeff(Index row, Index col) const;
 

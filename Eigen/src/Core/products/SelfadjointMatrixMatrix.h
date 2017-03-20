@@ -48,7 +48,7 @@ namespace Eigen {
                 enum {
                     PacketSize = packet_traits<Scalar>::size
                 };
-                const_blas_data_mapper <Scalar, Index, StorageOrder> lhs(_lhs, lhsStride);
+                const_blas_data_mapper<Scalar, Index, StorageOrder> lhs(_lhs, lhsStride);
                 Index count = 0;
                 //Index peeled_mc3 = (rows/Pack1)*Pack1;
 
@@ -92,7 +92,7 @@ namespace Eigen {
             void operator()(Scalar *blockB, const Scalar *_rhs, Index rhsStride, Index rows, Index cols, Index k2) {
                 Index end_k = k2 + rows;
                 Index count = 0;
-                const_blas_data_mapper <Scalar, Index, StorageOrder> rhs(_rhs, rhsStride);
+                const_blas_data_mapper<Scalar, Index, StorageOrder> rhs(_rhs, rhsStride);
                 Index packet_cols8 = nr >= 8 ? (cols / 8) * 8 : 0;
                 Index packet_cols4 = nr >= 4 ? (cols / 4) * 4 : 0;
 
@@ -271,9 +271,9 @@ namespace Eigen {
                     Scalar *res, Index resStride,
                     const Scalar &alpha, level3_blocking <Scalar, Scalar> &blocking) {
                 product_selfadjoint_matrix<Scalar, Index,
-                        EIGEN_LOGICAL_XOR(RhsSelfAdjoint, RhsStorageOrder == RowMajor) ? ColMajor : RowMajor,
+                                EIGEN_LOGICAL_XOR(RhsSelfAdjoint, RhsStorageOrder == RowMajor) ? ColMajor : RowMajor,
                         RhsSelfAdjoint, NumTraits<Scalar>::IsComplex && EIGEN_LOGICAL_XOR(RhsSelfAdjoint, ConjugateRhs),
-                        EIGEN_LOGICAL_XOR(LhsSelfAdjoint, LhsStorageOrder == RowMajor) ? ColMajor : RowMajor,
+                                EIGEN_LOGICAL_XOR(LhsSelfAdjoint, LhsStorageOrder == RowMajor) ? ColMajor : RowMajor,
                         LhsSelfAdjoint, NumTraits<Scalar>::IsComplex && EIGEN_LOGICAL_XOR(LhsSelfAdjoint, ConjugateLhs),
                         ColMajor>
                 ::run(cols, rows, rhs, rhsStride, lhs, lhsStride, res, resStride, alpha, blocking);
@@ -305,12 +305,12 @@ namespace Eigen {
                 const Scalar &alpha, level3_blocking <Scalar, Scalar> &blocking) {
             Index size = rows;
 
-            typedef gebp_traits <Scalar, Scalar> Traits;
+            typedef gebp_traits<Scalar, Scalar> Traits;
 
-            typedef const_blas_data_mapper <Scalar, Index, LhsStorageOrder> LhsMapper;
+            typedef const_blas_data_mapper<Scalar, Index, LhsStorageOrder> LhsMapper;
             typedef const_blas_data_mapper<Scalar, Index, (LhsStorageOrder == RowMajor) ? ColMajor
                                                                                         : RowMajor> LhsTransposeMapper;
-            typedef const_blas_data_mapper <Scalar, Index, RhsStorageOrder> RhsMapper;
+            typedef const_blas_data_mapper<Scalar, Index, RhsStorageOrder> RhsMapper;
             typedef blas_data_mapper<typename Traits::ResScalar, Index, ColMajor> ResMapper;
             LhsMapper lhs(_lhs, lhsStride);
             LhsTransposeMapper lhs_transpose(_lhs, lhsStride);
@@ -326,13 +326,11 @@ namespace Eigen {
             ei_declare_aligned_stack_constructed_variable(Scalar, blockA, sizeA, blocking.blockA());
             ei_declare_aligned_stack_constructed_variable(Scalar, blockB, sizeB, blocking.blockB());
 
-            gebp_kernel <Scalar, Scalar, Index, ResMapper, Traits::mr, Traits::nr, ConjugateLhs, ConjugateRhs> gebp_kernel;
+            gebp_kernel<Scalar, Scalar, Index, ResMapper, Traits::mr, Traits::nr, ConjugateLhs, ConjugateRhs> gebp_kernel;
             symm_pack_lhs<Scalar, Index, Traits::mr, Traits::LhsProgress, LhsStorageOrder> pack_lhs;
-            gemm_pack_rhs <Scalar, Index, RhsMapper, Traits::nr, RhsStorageOrder> pack_rhs;
-            gemm_pack_lhs < Scalar, Index, LhsTransposeMapper, Traits::mr, Traits::LhsProgress, LhsStorageOrder ==
-                                                                                                RowMajor ? ColMajor
-                                                                                                         : RowMajor,
-                    true > pack_lhs_transposed;
+            gemm_pack_rhs<Scalar, Index, RhsMapper, Traits::nr, RhsStorageOrder> pack_rhs;
+            gemm_pack_lhs<Scalar, Index, LhsTransposeMapper, Traits::mr, Traits::LhsProgress,
+                    LhsStorageOrder == RowMajor ? ColMajor : RowMajor, true> pack_lhs_transposed;
 
             for (Index k2 = 0; k2 < size; k2 += kc) {
                 const Index actual_kc = (std::min)(k2 + kc, size) - k2;
@@ -398,9 +396,9 @@ namespace Eigen {
                 const Scalar &alpha, level3_blocking <Scalar, Scalar> &blocking) {
             Index size = cols;
 
-            typedef gebp_traits <Scalar, Scalar> Traits;
+            typedef gebp_traits<Scalar, Scalar> Traits;
 
-            typedef const_blas_data_mapper <Scalar, Index, LhsStorageOrder> LhsMapper;
+            typedef const_blas_data_mapper<Scalar, Index, LhsStorageOrder> LhsMapper;
             typedef blas_data_mapper<typename Traits::ResScalar, Index, ColMajor> ResMapper;
             LhsMapper lhs(_lhs, lhsStride);
             ResMapper res(_res, resStride);
@@ -412,8 +410,8 @@ namespace Eigen {
             ei_declare_aligned_stack_constructed_variable(Scalar, blockA, sizeA, blocking.blockA());
             ei_declare_aligned_stack_constructed_variable(Scalar, blockB, sizeB, blocking.blockB());
 
-            gebp_kernel <Scalar, Scalar, Index, ResMapper, Traits::mr, Traits::nr, ConjugateLhs, ConjugateRhs> gebp_kernel;
-            gemm_pack_lhs <Scalar, Index, LhsMapper, Traits::mr, Traits::LhsProgress, LhsStorageOrder> pack_lhs;
+            gebp_kernel<Scalar, Scalar, Index, ResMapper, Traits::mr, Traits::nr, ConjugateLhs, ConjugateRhs> gebp_kernel;
+            gemm_pack_lhs<Scalar, Index, LhsMapper, Traits::mr, Traits::LhsProgress, LhsStorageOrder> pack_lhs;
             symm_pack_rhs<Scalar, Index, Traits::nr, RhsStorageOrder> pack_rhs;
 
             for (Index k2 = 0; k2 < size; k2 += kc) {
@@ -471,12 +469,12 @@ namespace Eigen {
                 BlockingType blocking(lhs.rows(), rhs.cols(), lhs.cols(), 1, false);
 
                 internal::product_selfadjoint_matrix<Scalar, Index,
-                        EIGEN_LOGICAL_XOR(LhsIsUpper, internal::traits<Lhs>::Flags & RowMajorBit) ? RowMajor
-                                                                                                  : ColMajor, LhsIsSelfAdjoint,
+                                EIGEN_LOGICAL_XOR(LhsIsUpper, internal::traits<Lhs>::Flags & RowMajorBit) ? RowMajor
+                                                                                                          : ColMajor, LhsIsSelfAdjoint,
                         NumTraits<Scalar>::IsComplex &&
                         EIGEN_LOGICAL_XOR(LhsIsUpper, bool(LhsBlasTraits::NeedToConjugate)),
-                        EIGEN_LOGICAL_XOR(RhsIsUpper, internal::traits<Rhs>::Flags & RowMajorBit) ? RowMajor
-                                                                                                  : ColMajor, RhsIsSelfAdjoint,
+                                EIGEN_LOGICAL_XOR(RhsIsUpper, internal::traits<Rhs>::Flags & RowMajorBit) ? RowMajor
+                                                                                                          : ColMajor, RhsIsSelfAdjoint,
                         NumTraits<Scalar>::IsComplex &&
                         EIGEN_LOGICAL_XOR(RhsIsUpper, bool(RhsBlasTraits::NeedToConjugate)),
                         internal::traits<Dest>::Flags & RowMajorBit ? RowMajor : ColMajor>

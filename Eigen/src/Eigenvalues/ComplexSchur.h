@@ -72,7 +72,7 @@ namespace Eigen {
           * \c float or \c double) and just \c Scalar if #Scalar is
           * complex.
           */
-        typedef std::complex <RealScalar> ComplexScalar;
+        typedef std::complex<RealScalar> ComplexScalar;
 
         /** \brief Type for the matrices in the Schur decomposition.
           *
@@ -242,7 +242,7 @@ namespace Eigen {
 
     protected:
         ComplexMatrixType m_matT, m_matU;
-        HessenbergDecomposition<MatrixType> m_hess;
+        HessenbergDecomposition <MatrixType> m_hess;
         ComputationInfo m_info;
         bool m_isInitialized;
         bool m_matUisUptodate;
@@ -417,7 +417,7 @@ namespace Eigen {
                bulge is chased down to the bottom of the active submatrix. */
 
             ComplexScalar shift = computeShift(iu, iter);
-            JacobiRotation <ComplexScalar> rot;
+            JacobiRotation<ComplexScalar> rot;
             rot.makeGivens(m_matT.coeff(il, il) - shift, m_matT.coeff(il + 1, il));
             m_matT.rightCols(m_matT.cols() - il).applyOnTheLeft(il, il + 1, rot.adjoint());
             m_matT.topRows((std::min)(il + 2, iu) + 1).applyOnTheRight(il, il + 1, rot);

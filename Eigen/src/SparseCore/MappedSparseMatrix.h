@@ -60,7 +60,6 @@ Base(rows, cols, nnz, outerIndexPtr, innerIndexPtr, valuePtr, innerNonZeroPtr
 
 /** Empty destructor */
 inline ~MappedSparseMatrix() {}
-
 };
 
 namespace internal {

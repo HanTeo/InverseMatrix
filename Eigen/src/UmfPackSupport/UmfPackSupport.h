@@ -10,7 +10,7 @@
 #ifndef EIGEN_UMFPACKSUPPORT_H
 #define EIGEN_UMFPACKSUPPORT_H
 
-namespace Eigen {
+namespace Eigen { 
 
 /* TODO extract L, extract U, compute det, etc... */
 
@@ -21,27 +21,6 @@ namespace Eigen {
 
     inline void umfpack_defaults(double control[UMFPACK_CONTROL], std::complex<double>) {
         umfpack_zi_defaults(control);
-    }
-
-    inline void umfpack_report_info(double control[UMFPACK_CONTROL], double info[UMFPACK_INFO], double) {
-        umfpack_di_report_info(control, info);
-    }
-
-    inline void umfpack_report_info(double control[UMFPACK_CONTROL], double info[UMFPACK_INFO],
-                                    std::complex<double>) { umfpack_zi_report_info(control, info); }
-
-    inline void umfpack_report_status(double control[UMFPACK_CONTROL], int status, double) {
-        umfpack_di_report_status(control, status);
-    }
-
-    inline void umfpack_report_status(double control[UMFPACK_CONTROL], int status, std::complex<double>) {
-        umfpack_zi_report_status(control, status);
-    }
-
-    inline void umfpack_report_control(double control[UMFPACK_CONTROL], double) { umfpack_di_report_control(control); }
-
-    inline void umfpack_report_control(double control[UMFPACK_CONTROL], std::complex<double>) {
-        umfpack_zi_report_control(control);
     }
 
     inline void umfpack_free_numeric(void **Numeric, double) {
@@ -176,7 +155,6 @@ namespace Eigen {
     public:
 
         typedef Array<double, UMFPACK_CONTROL, 1> UmfpackControl;
-        typedef Array<double, UMFPACK_INFO, 1> UmfpackInfo;
 
         UmfPackLU()
                 : m_dummy(0, 0), mp_matrix(m_dummy) {
@@ -305,32 +283,6 @@ namespace Eigen {
             factorize_impl();
         }
 
-        /** Prints the current UmfPack control settings.
-          *
-          * \sa umfpackControl()
-          */
-        void printUmfpackControl() {
-            umfpack_report_control(m_control.data(), Scalar());
-        }
-
-        /** Prints statistics collected by UmfPack.
-          *
-          * \sa analyzePattern(), compute()
-          */
-        void printUmfpackInfo() {
-            eigen_assert(m_analysisIsOk && "UmfPackLU: you must first call analyzePattern()");
-            umfpack_report_info(m_control.data(), m_umfpackInfo.data(), Scalar());
-        }
-
-        /** Prints the status of the previous factorization operation performed by UmfPack (symbolic or numerical factorization).
-          *
-          * \sa analyzePattern(), compute()
-          */
-        void printUmfpackStatus() {
-            eigen_assert(m_analysisIsOk && "UmfPackLU: you must first call analyzePattern()");
-            umfpack_report_status(m_control.data(), m_fact_errorCode, Scalar());
-        }
-
         /** \internal */
         template<typename BDerived, typename XDerived>
         bool _solve_impl(const MatrixBase <BDerived> &b, MatrixBase <XDerived> &x) const;
@@ -347,29 +299,27 @@ namespace Eigen {
             m_numeric = 0;
             m_symbolic = 0;
             m_extractedDataAreDirty = true;
-
-            umfpack_defaults(m_control.data(), Scalar());
         }
 
         void analyzePattern_impl() {
-            m_fact_errorCode = umfpack_symbolic(internal::convert_index<int>(mp_matrix.rows()),
-                                                internal::convert_index<int>(mp_matrix.cols()),
-                                                mp_matrix.outerIndexPtr(), mp_matrix.innerIndexPtr(),
-                                                mp_matrix.valuePtr(),
-                                                &m_symbolic, m_control.data(), m_umfpackInfo.data());
+            umfpack_defaults(m_control.data(), Scalar());
+            int errorCode = 0;
+            errorCode = umfpack_symbolic(internal::convert_index<int>(mp_matrix.rows()),
+                                         internal::convert_index<int>(mp_matrix.cols()),
+                                         mp_matrix.outerIndexPtr(), mp_matrix.innerIndexPtr(), mp_matrix.valuePtr(),
+                                         &m_symbolic, m_control.data(), 0);
 
             m_isInitialized = true;
-            m_info = m_fact_errorCode ? InvalidInput : Success;
+            m_info = errorCode ? InvalidInput : Success;
             m_analysisIsOk = true;
             m_factorizationIsOk = false;
             m_extractedDataAreDirty = true;
         }
 
         void factorize_impl() {
-
             m_fact_errorCode = umfpack_numeric(mp_matrix.outerIndexPtr(), mp_matrix.innerIndexPtr(),
                                                mp_matrix.valuePtr(),
-                                               m_symbolic, &m_numeric, m_control.data(), m_umfpackInfo.data());
+                                               m_symbolic, &m_numeric, m_control.data(), 0);
 
             m_info = m_fact_errorCode == UMFPACK_OK ? Success : NumericalIssue;
             m_factorizationIsOk = true;
@@ -393,7 +343,6 @@ namespace Eigen {
         mutable LUMatrixType m_l;
         int m_fact_errorCode;
         UmfpackControl m_control;
-        mutable UmfpackInfo m_umfpackInfo;
 
         mutable LUMatrixType m_u;
         mutable IntColVectorType m_p;
@@ -471,7 +420,7 @@ namespace Eigen {
             errorCode = umfpack_solve(UMFPACK_A,
                                       mp_matrix.outerIndexPtr(), mp_matrix.innerIndexPtr(), mp_matrix.valuePtr(),
                                       x_ptr, &b.const_cast_derived().col(j).coeffRef(0), m_numeric, m_control.data(),
-                                      m_umfpackInfo.data());
+                                      0);
             if (x.innerStride() != 1)
                 x.col(j) = x_tmp;
             if (errorCode != 0)
