@@ -75,15 +75,15 @@ JacobiSVD<Matrix<EIGTYPE, Dynamic, Dynamic, EIGCOLROW, Dynamic, Dynamic>, ColPiv
   return *this; \
 }
 
-EIGEN_LAPACKE_SVD(double, double, double, d, ColMajor, LAPACK_COL_MAJOR)
-EIGEN_LAPACKE_SVD(float, float, float, s, ColMajor, LAPACK_COL_MAJOR)
+EIGEN_LAPACKE_SVD(double,   double,                double, d, ColMajor, LAPACK_COL_MAJOR)
+EIGEN_LAPACKE_SVD(float,    float,                 float , s, ColMajor, LAPACK_COL_MAJOR)
 EIGEN_LAPACKE_SVD(dcomplex, lapack_complex_double, double, z, ColMajor, LAPACK_COL_MAJOR)
-EIGEN_LAPACKE_SVD(scomplex, lapack_complex_float, float, c, ColMajor, LAPACK_COL_MAJOR)
+EIGEN_LAPACKE_SVD(scomplex, lapack_complex_float,  float , c, ColMajor, LAPACK_COL_MAJOR)
 
-EIGEN_LAPACKE_SVD(double, double, double, d, RowMajor, LAPACK_ROW_MAJOR)
-EIGEN_LAPACKE_SVD(float, float, float, s, RowMajor, LAPACK_ROW_MAJOR)
+EIGEN_LAPACKE_SVD(double,   double,                double, d, RowMajor, LAPACK_ROW_MAJOR)
+EIGEN_LAPACKE_SVD(float,    float,                 float , s, RowMajor, LAPACK_ROW_MAJOR)
 EIGEN_LAPACKE_SVD(dcomplex, lapack_complex_double, double, z, RowMajor, LAPACK_ROW_MAJOR)
-EIGEN_LAPACKE_SVD(scomplex, lapack_complex_float, float, c, RowMajor, LAPACK_ROW_MAJOR)
+EIGEN_LAPACKE_SVD(scomplex, lapack_complex_float,  float , c, RowMajor, LAPACK_ROW_MAJOR)
 
 } // end namespace Eigen
 

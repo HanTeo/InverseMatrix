@@ -99,7 +99,6 @@ SCENARIO("7 choose 4 then 4 choose 3 the permute") {
                     cout << "Inverse:" << endl;
                     cout << mat.inverse() << endl << endl;
                 }
-
             }
         }
     }
